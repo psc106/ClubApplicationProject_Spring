@@ -5,5 +5,9 @@
 <mapper namespace="com.teamproject.club_application.DB.iDao">
 <!-- oracle 쿼리문 작성 시작-->
 
+<select id="getTestData" resultType="com.teamproject.club_application.data.TestData">
+select * from TestData
+</select>
+
 <!-- oracle 쿼리문 작성 끝-->
 </mapper>
