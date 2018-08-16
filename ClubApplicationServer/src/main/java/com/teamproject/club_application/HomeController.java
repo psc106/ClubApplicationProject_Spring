@@ -35,6 +35,11 @@ public class HomeController {
 		return "home";
 	}
 	
+	@RequestMapping("home.do")
+	public String home2() {		
+		return "home";
+	}
+	
 	@RequestMapping(value="androidTest.do",produces = "application/json; charset=utf8")
 	@ResponseBody
 	public String testJson(HttpServletRequest request) {

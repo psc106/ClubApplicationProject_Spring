@@ -4,7 +4,22 @@
 <head>
 	<title>Home</title>
 </head>
+<style>
+#header {
+	position:fixed;
+	border:1px solid black;
+	width:800px;
+	margin:0px auto;
+}
+
+</style>
+
+<script>
+</script>
 <body>
-깃허브 테스트
+<div id="header">
+<h1>hi</h1>
+</div>
+
 </body>
 </html>
