@@ -5,20 +5,13 @@
 	<title>Home</title>
 </head>
 <style>
-#header {
-	position:fixed;
-	border:1px solid black;
-	width:800px;
-	margin:0px auto;
-}
-
 </style>
 
 <script>
 </script>
 <body>
 <div id="header">
-<h1>hi</h1>
+<jsp:include page="header.jsp"></jsp:include>
 </div>
 
 </body>
