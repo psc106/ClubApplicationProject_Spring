@@ -5,9 +5,50 @@
 <mapper namespace="com.teamproject.club_application.DB.iDao">
 <!-- oracle 쿼리문 작성 시작-->
 
+<!-- 테스트 항목 -->
 <select id="getTestData" resultType="com.teamproject.club_application.data.TestData">
 select * from TestData
 </select>
+<!-- 테스트 항목 끝 -->
+
+<!-- 로그인 항목 -->
+<select id="chechId" resultType="Integer">
+select count(*) from Member where login_id=#{param1}
+</select>
+<!-- 로그인 항목 끝 -->
+
+<!-- 회원가입 항목 -->
+<select id="selectLoginUser" resultType="com.teamproject.club_application.data.Member">
+select * from Member where login_id=#{param1} and login_pw=#{param2}
+</select>
+<!-- 회원가입 항목 끝 -->
+
+<!-- 메뉴 항목 -->
+<select id="selectMyAlarm" resultType="com.teamproject.club_application.data.Alarm">
+select * from Alarm where member_id=#{param1}
+</select>
+<select id="selectMyPost" resultType="com.teamproject.club_application.data.Post">
+select * from Post where member_id=#{param1}
+</select>
+<select id="selectMyComment" resultType="com.teamproject.club_application.data.Comment">
+select * from Comment where member_id=#{param1}
+</select>
+<select id="selectMySchedule" resultType="com.teamproject.club_application.data.Schedule">
+select * from Schedule where member_id=#{param1}
+</select>
+<select id="selectMyClub" resultType="com.teamproject.club_application.data.Club">
+select * from Club where member_id=#{param1}
+</select>
+<!-- 메뉴 항목 끝 -->
 
 <!-- oracle 쿼리문 작성 끝-->
 </mapper>
+
+
+<!-- 	
+    public ArrayList<Alarm> selectMyAlarm(Long userId);
+    public ArrayList<Post> selectMyPost(Long userId);
+    public ArrayList<Comment> selectMyComment(Long userId);
+    public ArrayList<Schedule> selectMySchedule(Long userId);
+    public ArrayList<Club> selectMyClub(Long userId);
+ -->

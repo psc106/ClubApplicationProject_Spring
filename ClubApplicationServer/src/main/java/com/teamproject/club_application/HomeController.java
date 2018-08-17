@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 import com.teamproject.club_application.DB.iDao;
+import com.teamproject.club_application.data.Member;
 import com.teamproject.club_application.data.TestData;
 
 /**
@@ -37,7 +38,7 @@ public class HomeController {
 	
 	@RequestMapping(value="androidTest.do",produces = "application/json; charset=utf8")
 	@ResponseBody
-	public String testJson(HttpServletRequest request) {
+	public String testJson() {
 				
 		iDao iDAO = sqlSession.getMapper(iDao.class);
 		ArrayList<TestData> items = iDAO.getTestData();
@@ -49,6 +50,21 @@ public class HomeController {
 		return gson.toJson(items);
 	}
 
+	@RequestMapping(value="mobile/SelectLoginUser.do",produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String selectLoginUserToMobile(HttpServletRequest request) {
+		String loginId = request.getParameter("id");
+		String loginPw = request.getParameter("pw");
+				
+		iDao iDAO = sqlSession.getMapper(iDao.class);
+//		Member item = iDAO
+		
+		Gson gson = new Gson();
+		
+//		return gson.toJson(items);
+		return null;
+	}
+	
 	public String getRandomString(){
         return UUID.randomUUID().toString().replaceAll("-", "");
     }
