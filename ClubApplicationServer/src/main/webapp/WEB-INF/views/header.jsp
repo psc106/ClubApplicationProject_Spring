@@ -9,6 +9,7 @@
 *{
 	box-sizing:border-box;
 }
+
 #header {
 	position:fixed;
 	border:1px solid black;
@@ -25,8 +26,8 @@
 	margin-left: 10px;
 }
 
-#header_search {
-	
+.header_search {
+	display: inline;
 }
 
 #header_box {
@@ -44,11 +45,13 @@
 <div id="header">
 <img id="logo" width="50px" height="50px" src="resources/logo.png" />
 
-<input type="text" id="header_search" name="header_search" />
-<input type="button" id="header_search_btn" name="header_search_btn" value="검색" />
+<div class="header_search">
+	<input type="text" id="header_search" name="header_search" placeholder="검색어 입력" />
+	<button id="header_search_btn" name="header_search_btn">검색</button>
+</div>
 
 <div id="header_box" name="header_box">
-<input type="button" id="header_login_btn" name="header_login_btn" value="로그인" />
+<button id="header_login_btn" name="header_login_btn">로그인</button>
 </div>
 </div>
 

@@ -4,18 +4,9 @@
 <head>
 	<title>Home</title>
 </head>
+<link rel="stylesheet" href="resources/css/home.css" type="text/css">
 <style>
-*{
-	box-sizing:border-box;
-}
-#wrap {
-	margin:0 auto;
-	margin-top:70px;
-	border:1px solid black;
-	width:900px;
-	height: 1000px;
-	display: block;
-}
+
 #top_content {
 	border: 1px solid black;
 	height: 400px;
@@ -45,7 +36,11 @@
 </div>
 
 <div id="bot_content">
-
+<ul>
+	<li>a</li>
+	<li>b</li>
+	<li>c</li>
+</ul>
 </div>
 
 </div>

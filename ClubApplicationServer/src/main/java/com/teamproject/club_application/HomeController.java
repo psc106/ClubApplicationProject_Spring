@@ -35,9 +35,44 @@ public class HomeController {
 		return "home";
 	}
 	
-	@RequestMapping("home.do")
-	public String home2() {		
-		return "home";
+	@RequestMapping("login.do")
+	public String login() {		
+		return "login";
+	}
+	
+	@RequestMapping("search.do")
+	public String search() {		
+		return "search";
+	}
+	
+	@RequestMapping("make_club.do")
+	public String makeClub() {		
+		return "make_club";
+	}
+	
+	@RequestMapping("my_schedule.do")
+	public String mySchedule() {		
+		return "my_schedule";
+	}
+	
+	@RequestMapping("my_write.do")
+	public String myWrite() {		
+		return "my_write";
+	}
+	
+	@RequestMapping("my_club.do")
+	public String myClub() {		
+		return "my_club";
+	}
+	
+	@RequestMapping("my_info.do")
+	public String myInfo() {		
+		return "my_info";
+	}
+	
+	@RequestMapping("myclub.do")
+	public String myclub() {		
+		return "myclub";
 	}
 	
 	@RequestMapping(value="androidTest.do",produces = "application/json; charset=utf8")

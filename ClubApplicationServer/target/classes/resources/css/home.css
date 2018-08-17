@@ -1,0 +1,14 @@
+@charset "UTF-8";
+
+*{
+	box-sizing:border-box;
+}
+
+#wrap {
+	margin:0 auto;
+	margin-top:70px;
+	border:1px solid black;
+	width:900px;
+	height: 1000px;
+	display: block;
+}
