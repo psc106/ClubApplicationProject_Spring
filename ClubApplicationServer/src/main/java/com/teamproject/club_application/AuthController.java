@@ -1,6 +1,9 @@
 package com.teamproject.club_application;
 
+import java.io.UnsupportedEncodingException;
+
 import javax.inject.Inject;
+import javax.mail.MessagingException;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,40 +28,48 @@ public class AuthController {
 	public void setSqlSession(SqlSession sqlSession) {
 		this.sqlSession = sqlSession;
 	}	
-
-//	
-//	MailAuthService service = new MailAuthService() {
-//		@Inject
-//		private JavaMailSender mailSender;
-//
-//		@Transactional
-//		@Override
-//		public void create(Member member) {
-//			dao.insertMember(); // 회원가입 DAO
-//
-//			String key = new TempKey().getKey(50, false); // 인증키 생성
-//
-//			dao.createAuthKey(member.getEmail(), key); // 인증키 DB저장
-//
-//			MailHandler sendMail = new MailHandler(mailSender);
-//			sendMail.setSubject("[ALMOM 서비스 이메일 인증]");
-//			sendMail.setText(
-//					new StringBuffer().append("<h1>메일인증</h1>").append("<a href='http://localhost/user/emailConfirm?user_email=").append(vo.getUser_email()).append("&key=").append(key).append("' target='_blenk'>이메일 인증 확인</a>").toString());
-//			sendMail.setFrom("호스트 이메일 아이디", "알몸개발자");
-//			sendMail.setTo(vo.getUser_email());
-//			sendMail.send();		
-//		}
-//		
-//	};
 	
-	
+	MailAuthService service = new MailAuthService() {
+		@Inject
+		private JavaMailSender mailSender;
 
+		@Transactional
+		@Override
+		public void create(Member member) {
+			dao.insertMember(member); // 회원가입 DAO
+
+			String key = new TempKey().getKey(50, false); // 인증키 생성
+			
+			MailHandler sendMail;
+			try {
+				sendMail = new MailHandler(mailSender);
+				sendMail.setSubject("[ALMOM 서비스 이메일 인증]");
+				sendMail.setText(
+						new StringBuffer().append("<h1>메일인증</h1>").
+						append("<a href='http://192.168.0.70:8090/club_application/emailConfirm?login_id=").
+						append(member.getEmail()).
+						append("&key=").
+						append(key).
+						append("' target='_blenk'>이메일 인증 확인</a>").toString());
+				sendMail.setFrom("호스트 이메일 아이디", "알몸개발자");
+				sendMail.setTo(member.getEmail());
+				sendMail.send();		
+			
+			} catch (MessagingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+	};
 	
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	public String RegisterPost(Member member) throws Exception {
-//		service.create(member);
-		return "";
+		service.create(member);
+		return "/";
 	}
 	
-
 }

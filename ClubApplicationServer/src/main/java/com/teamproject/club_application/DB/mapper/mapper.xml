@@ -3,6 +3,22 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.teamproject.club_application.DB.iDao">
+<!-- 맵핑 데이터 -->
+
+
+
+<!-- 맵핑 데이터 끝-->
+<parameterMap type="com.teamproject.club_application.data.Member" id="insertMemberType">
+	<parameter property="login_id" />
+	<parameter property="login_pw" />
+	<parameter property="name" />
+	<parameter property="birthday" />
+	<parameter property="gender" />
+	<parameter property="local" />
+	<parameter property="email" />
+	<parameter property="phone" />
+</parameterMap>
+
 <!-- oracle 쿼리문 작성 시작-->
 
 <!-- 테스트 항목 -->
@@ -11,16 +27,44 @@ select * from TestData
 </select>
 <!-- 테스트 항목 끝 -->
 
+
 <!-- 로그인 항목 -->
-<select id="chechId" resultType="Integer">
-select count(*) from Member where login_id=#{param1}
+<select id="selectLoginUser" resultType="com.teamproject.club_application.data.Member">
+select * from Member where login_id=#{param1} and login_pw=#{param2}
 </select>
 <!-- 로그인 항목 끝 -->
 
 <!-- 회원가입 항목 -->
-<select id="selectLoginUser" resultType="com.teamproject.club_application.data.Member">
-select * from Member where login_id=#{param1} and login_pw=#{param2}
+<select id="checkId" resultType="Integer">
+select count(*) from Member where login_id=#{param1}
 </select>
+
+<insert id="insertMember" parameterMap="insertMemberType"> 
+	<selectKey keyProperty="id" resultType="_int" order="BEFORE"> 
+		select member_seq.nextval from dual
+	</selectKey>	
+	insert into member values ( id, #login_id#, #login_pw#, #name#, #birthday#, #gender#, #local#, #email#, #phone#)
+</insert>
+
+	<!-- 이메일 인증 -->
+	
+	<insert id="createAuth">
+		insert into member values ( #{param1}, #{param2})
+	</insert>	
+	
+	<select id="checkAuth" resultType="Integer">
+		select count(*) from Auth where login_id=#{param1} and key=#{param2}
+	</select>
+	
+	<update id="updateAuth">
+		update Member set VERIFY='Y' where login_id=#{param1}
+	</update>	
+	
+	<delete id="deleteAuth">
+		delete from auth where login_id=#{param1}
+	</delete>
+	
+	<!-- 이메일 인증 끝 -->
 <!-- 회원가입 항목 끝 -->
 
 <!-- 메뉴 항목 -->
