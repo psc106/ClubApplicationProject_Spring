@@ -15,15 +15,24 @@ import com.teamproject.club_application.data.TestData;
 public interface iDao {
 	public ArrayList<TestData> getTestData(); 
 	
+	//로그인
     public Member selectLoginUser(String id, String pw);
-
-    public Integer checkId(String id);
-    public void insertMember(Member member);
-    public void createAuth(Long loginId, String key);
-    public Integer checkAuth(Long loginId, String key);
-    public void updateAuth(Long loginId);
-    public void deleteAuth(Long loginId);
     
+    //회원가입
+    public Integer checkId(String id);    
+    public void insertMember(String id, String pw, String name, String birthday, int gender, String local, String email, String phone, String verify);
+    
+    public void createAuth(String loginId, String key);
+    public Integer checkAuth(String loginId, String key);
+    public void updateAuth(String loginId);
+    public void deleteAuth(String loginId);
+    
+    //정보 찾기
+    public String selectFindId(String email) ;
+    public Integer selectFindPw(String email, String loginId) ;
+    public void updatePw(String loginId, String newPw);
+    
+    //내 메뉴
     public ArrayList<Alarm> selectMyAlarm(Long userId);
     public ArrayList<Post> selectMyPost(Long userId);
     public ArrayList<Comment> selectMyComment(Long userId);

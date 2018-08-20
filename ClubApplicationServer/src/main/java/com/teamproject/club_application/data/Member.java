@@ -10,6 +10,7 @@ public class Member {
     private String local;
     private String email;
     private String phone;
+    private String verify;
     
     public Member() {
 		// TODO Auto-generated constructor stub
@@ -18,7 +19,7 @@ public class Member {
     
     
 	public Member(long id, String login_id, String login_pw, String name, String birthday, int gender, String local,
-			String email, String phone) {
+			String email, String phone, String verify) {
 		super();
 		this.id = id;
 		this.login_id = login_id;
@@ -29,6 +30,7 @@ public class Member {
 		this.local = local;
 		this.email = email;
 		this.phone = phone;
+		this.verify = verify;
 	}
 
 
@@ -66,6 +68,9 @@ public class Member {
 	public int getGender() {
 		return gender;
 	}
+	public String getVerify() {
+		return verify;
+	}
 	public void setGender(int gender) {
 		this.gender = gender;
 	}
@@ -86,6 +91,9 @@ public class Member {
 	}
 	public void setPhone(String phone) {
 		this.phone = phone;
+	}
+	public void setVerify(String verify) {
+		this.verify = verify;
 	}
     
     
