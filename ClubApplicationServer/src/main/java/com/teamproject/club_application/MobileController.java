@@ -1,6 +1,9 @@
 package com.teamproject.club_application;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +18,7 @@ import com.google.gson.Gson;
 import com.teamproject.club_application.DB.iDao;
 import com.teamproject.club_application.authorized.MailService;
 import com.teamproject.club_application.data.Alarm;
+import com.teamproject.club_application.data.CalendarSchedule;
 import com.teamproject.club_application.data.Club;
 import com.teamproject.club_application.data.Comment;
 import com.teamproject.club_application.data.Member;
@@ -86,7 +90,7 @@ public class MobileController {
 		if(userIdStr!=null) {
 			userId = Long.parseLong(userIdStr);
 		} else {
-			return gson.toJson(-1L);
+			return gson.toJson(null);
 		}
 				
 		ArrayList<Alarm> items = dao.selectMyAlarm(userId);
@@ -105,7 +109,7 @@ public class MobileController {
 		if(userIdStr!=null) {
 			userId = Long.parseLong(userIdStr);
 		} else {
-			return gson.toJson(-1L);
+			return gson.toJson(null);
 		}
 				
 		ArrayList<Post> items = dao.selectMyPost(userId);
@@ -124,7 +128,7 @@ public class MobileController {
 		if(userIdStr!=null) {
 			userId = Long.parseLong(userIdStr);
 		} else {
-			return gson.toJson(-1L);
+			return gson.toJson(null);
 		}
 				
 		ArrayList<Comment> items = dao.selectMyComment(userId);
@@ -143,12 +147,59 @@ public class MobileController {
 		if(userIdStr!=null) {
 			userId = Long.parseLong(userIdStr);
 		} else {
-			return gson.toJson(-1L);
+			return gson.toJson(null);
 		}
 		
 		ArrayList<Schedule> items = dao.selectMySchedule(userId);
 		
 		return gson.toJson(items);
+	}
+
+	@RequestMapping(value="mobile/selectMyCalendar.do",produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String selectMyCalendar_toMobile(HttpServletRequest request) {
+		iDao dao = sqlSession.getMapper(iDao.class);
+		String userIdStr = request.getParameter("userId");
+		String yearStr = request.getParameter("year");
+		String monthStr = request.getParameter("month");
+		Long userId;
+		Integer year;
+		Integer month;
+		Gson gson = new Gson();
+		
+		if(userIdStr!=null) {
+			userId = Long.parseLong(userIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+
+		if(yearStr!=null) {
+			year = Integer.parseInt(yearStr);
+		} else {
+			return gson.toJson(null);
+		}
+
+		if(monthStr!=null) {
+			month = Integer.parseInt(monthStr);
+		} else {
+			return gson.toJson(null);
+		}
+		
+		Calendar cal = Calendar.getInstance();
+		cal.clear();
+		cal.set(Calendar.YEAR, year);
+		cal.set(Calendar.MONTH, month);
+		int maxDay = cal.getActualMaximum(Calendar.DATE);
+		ArrayList<CalendarSchedule> realItems = new ArrayList<CalendarSchedule>();
+		String dateFormat = null;
+		for(int i = 1  ; i <= maxDay; ++i) {
+			cal.set(Calendar.DATE, i);
+			dateFormat = new SimpleDateFormat("yyyyMMdd").format(cal.getTime());
+			ArrayList<Schedule> tmpItems = dao.selectMyDaySchedule(userId, dateFormat);
+			CalendarSchedule calendarSchedule = new CalendarSchedule(dateFormat, tmpItems);
+			realItems.add(calendarSchedule);
+		}		
+		return gson.toJson(realItems);
 	}
 
 	@RequestMapping(value="mobile/selectMyGroup.do",produces = "application/json; charset=utf8")
@@ -162,7 +213,7 @@ public class MobileController {
 		if(userIdStr!=null) {
 			userId = Long.parseLong(userIdStr);
 		} else {
-			return gson.toJson(-1L);
+			return gson.toJson(null);
 		}
 				
 		ArrayList<Club> items = dao.selectMyClub(userId);

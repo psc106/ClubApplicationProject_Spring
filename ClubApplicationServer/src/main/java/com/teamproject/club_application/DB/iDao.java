@@ -3,6 +3,7 @@ package com.teamproject.club_application.DB;
 import java.util.ArrayList;
 
 import com.teamproject.club_application.data.Alarm;
+import com.teamproject.club_application.data.CalendarSchedule;
 import com.teamproject.club_application.data.Club;
 import com.teamproject.club_application.data.Comment;
 import com.teamproject.club_application.data.Member;
@@ -37,6 +38,7 @@ public interface iDao {
     public ArrayList<Post> selectMyPost(Long userId);
     public ArrayList<Comment> selectMyComment(Long userId);
     public ArrayList<Schedule> selectMySchedule(Long userId);
+    public ArrayList<Schedule> selectMyDaySchedule(Long userId, String dateFormat);//yyyymmdd
     public ArrayList<Club> selectMyClub(Long userId);   
     
 }
