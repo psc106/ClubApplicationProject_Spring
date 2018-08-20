@@ -43,7 +43,7 @@
 </head>
 <body>
 <div id="header">
-<img id="logo" width="50px" height="50px" src="resources/logo.png" />
+<a href="home.do"><img id="logo" width="50px" height="50px" src="resources/logo.png" /></a>
 
 <div class="header_search">
 	<input type="text" id="header_search" name="header_search" placeholder="검색어 입력" />
