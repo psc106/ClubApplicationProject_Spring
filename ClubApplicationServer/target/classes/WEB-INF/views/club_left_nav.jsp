@@ -14,6 +14,9 @@
 </style>
 
 <script>
+function club_join() {
+	document.location.href = "club_join.do";
+}
 </script>
 </head>
 <body>
@@ -21,7 +24,7 @@
 <h5>리더 : 홍길동</h5>
 <h5>멤버 : 40명</h5>
 <h6>게임을 좋아하는 사람들의 모임</h6>
-<button>가입</button>
+<button onclick="club_join();">가입</button>
 
 </body>
 </html>

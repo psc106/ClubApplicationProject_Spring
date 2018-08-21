@@ -22,6 +22,6 @@
 공지사항
 </div>
 
-<a href=""><img width="20px" height="20px" src="resources/setting_icon.png"/>동호회 설정</a>
+<a href="myclub_setting.do"><img width="20px" height="20px" src="resources/setting_icon.png"/>동호회 설정</a>
 </body>
 </html>

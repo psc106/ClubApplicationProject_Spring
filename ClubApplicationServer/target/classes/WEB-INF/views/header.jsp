@@ -36,6 +36,11 @@
 	margin-top: 20px;
 	margin-right: 50px;
 }
+
+#login_top {
+	font-size: 10px;
+}
+
 </style>
 
 <script>
@@ -51,7 +56,19 @@
 </div>
 
 <div id="header_box" name="header_box">
-<button id="header_login_btn" name="header_login_btn">로그인</button>
+<%
+int login = 1;
+if(login == 0) { // 비로그인 %>
+	<button id="header_login_btn" name="header_login_btn">로그인</button>
+<%} else if(login == 1) { // 로그인 %>
+	<font id="login_top">~~님 환영합니다.
+	<select name="myclub">
+    <option value="">내 동호회</option>
+	</select>
+	<img width="30px" height="30px" src="resources/setting_icon.png" />
+	</font>
+<%}%>
+
 </div>
 </div>
 

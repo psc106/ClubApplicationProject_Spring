@@ -95,14 +95,24 @@ public class HomeController {
 		return "myclub_calendar";
 	}
 	
-	@RequestMapping("myclub_admin.do")
-	public String myclub_admin() {		
-		return "myclub_admin";
+	@RequestMapping("myclub_setting.do")
+	public String myclub_setting() {		
+		return "myclub_setting";
 	}
 	
 	@RequestMapping("myclub_member.do")
 	public String myclub_member() {		
 		return "myclub_member";
+	}
+	
+	@RequestMapping("join.do")
+	public String join() {		
+		return "join";
+	}
+	
+	@RequestMapping("club_join.do")
+	public String club_join() {		
+		return "club_join";
 	}
 	
 	@RequestMapping(value="androidTest.do",produces = "application/json; charset=utf8")
