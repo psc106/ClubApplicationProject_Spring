@@ -37,8 +37,8 @@ public interface iDao {
     public ArrayList<Alarm> selectMyAlarm(Long userId);
     public ArrayList<Post> selectMyPost(Long userId);
     public ArrayList<Comment> selectMyComment(Long userId);
+    public ArrayList<Club> selectMyClub(Long userId);   
     public ArrayList<Schedule> selectMySchedule(Long userId);
     public ArrayList<Schedule> selectMyDaySchedule(Long userId, String dateFormat);//yyyymmdd
-    public ArrayList<Club> selectMyClub(Long userId);   
     
 }

@@ -46,8 +46,6 @@ public class MobileController {
 		ArrayList<TestData> items = dao.getTestData();
 		
 		Gson gson = new Gson();
-		System.out.println("테스트");		
-		System.out.println(gson.toJson(items).toString());
 		
 		return gson.toJson(items);
 	}
@@ -61,8 +59,6 @@ public class MobileController {
 		Gson gson = new Gson();
 		
 		Member item = dao.selectLoginUser(loginId, loginPw);
-		
-		System.out.println(gson.toJson(item));
 		
 		return gson.toJson(item);
 	}
@@ -151,7 +147,8 @@ public class MobileController {
 		}
 		
 		ArrayList<Schedule> items = dao.selectMySchedule(userId);
-		
+
+
 		return gson.toJson(items);
 	}
 
@@ -189,8 +186,15 @@ public class MobileController {
 		cal.clear();
 		cal.set(Calendar.YEAR, year);
 		cal.set(Calendar.MONTH, month);
+		cal.set(Calendar.DATE, 1);
+		
+		int week = cal.get(Calendar.DAY_OF_WEEK);
 		int maxDay = cal.getActualMaximum(Calendar.DATE);
 		ArrayList<CalendarSchedule> realItems = new ArrayList<CalendarSchedule>();
+		
+		for(int i = 1; i < week; ++i) {
+			realItems.add(new CalendarSchedule());
+		}
 		String dateFormat = null;
 		for(int i = 1  ; i <= maxDay; ++i) {
 			cal.set(Calendar.DATE, i);
@@ -199,6 +203,7 @@ public class MobileController {
 			CalendarSchedule calendarSchedule = new CalendarSchedule(dateFormat, tmpItems);
 			realItems.add(calendarSchedule);
 		}		
+		
 		return gson.toJson(realItems);
 	}
 
@@ -250,13 +255,11 @@ public class MobileController {
 	@RequestMapping(value="mobile/findId.do",produces = "application/json; charset=utf8")
 	@ResponseBody
 	public String findId_toMobile(HttpServletRequest request) {
-		System.out.println("들어온다");
 		iDao dao = sqlSession.getMapper(iDao.class);
 		String email = request.getParameter("email");
 		
 		Gson gson = new Gson();
 		String id = dao.selectFindId(email);
-		System.out.println(id);
 
 		return gson.toJson(id);
 	}

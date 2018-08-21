@@ -77,11 +77,11 @@
 </select>
 
 <select id="selectMyComment" resultType="com.teamproject.club_application.data.Comment">
-	select * from Comment where member_id=#{param1}
+	select * from Comments where member_id=#{param1}
 </select>
 
 <select id="selectMySchedule" resultType="com.teamproject.club_application.data.Schedule">
-	select * from Schedule where member_id=#{param1}
+	select S.* from schedule S, schedule_member SM where S.start_date>=sysdate and S.id=SM.schedule_id and SM.member_id=#{param1}
 </select>
 
 <select id="selectMyClub" resultType="com.teamproject.club_application.data.Club">
@@ -89,8 +89,10 @@
 </select>
 
 <select id="selectMyDaySchedule" resultType="com.teamproject.club_application.data.Schedule">
-	<!--  select * from schedule S, schedule_member SM  where S.start_date BETWEEN TO_DATE(#{param2}, 'yyyymmdd') and LAST_DAY(TO_DATE(#{param2}, 'yyyymmdd')) and SM.member_id=#{param1};-->
-	select S.* from schedule S, schedule_member SM  where S.start_date BETWEEN TO_DATE(#{param2}, 'yyyymmdd') and TO_DATE(#{param2}, 'yyyymmdd')+1 and SM.member_id=#{param1}
+	select S.* 
+	from schedule S, schedule_member SM  
+	where S.start_date BETWEEN TO_DATE(#{param2}, 'yyyymmdd') and (TO_DATE(#{param2}, 'yyyymmdd')+1-(1/(24*60*60))) 
+		and S.id=SM.schedule_id and SM.member_id=#{param1}
 </select>
 <!-- 메뉴 항목 끝 -->
 
