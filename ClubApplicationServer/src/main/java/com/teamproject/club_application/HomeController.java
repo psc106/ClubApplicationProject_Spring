@@ -48,7 +48,7 @@ public class HomeController{
 			return "success";
 		} else {
 			//인증 실패
-			return "fail";				
+			return "fail";
 		}
 	}
 }
