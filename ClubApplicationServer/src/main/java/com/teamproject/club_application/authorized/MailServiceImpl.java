@@ -11,7 +11,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.teamproject.club_application.DB.iDao;
+import com.teamproject.club_application.DB.iDaoMobile;
 import com.teamproject.club_application.data.Member;
 
 @Service("MailAuthService")
@@ -29,7 +29,7 @@ public class MailServiceImpl implements MailService {
 	@Transactional
 	@Override
 	public void authCreate(Member member) {
-		iDao dao = sqlSession.getMapper(iDao.class);
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
 		dao.insertMember(member.getLogin_id(), member.getLogin_pw(), member.getName(), member.getBirthday(), member.getGender(), member.getLocal(), member.getEmail(), member.getPhone(), "N"); // 회원가입 DAO
 
 		String key = new TempKey().getKey(50, false); // 인증키 생성
@@ -62,7 +62,7 @@ public class MailServiceImpl implements MailService {
 	@Transactional
 	@Override
 	public boolean authUpdate(String loginId, String key) {
-		iDao dao = sqlSession.getMapper(iDao.class);
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
 		
 		//1, 0
 		int userCount = dao.checkAuth(loginId, key);
@@ -79,7 +79,7 @@ public class MailServiceImpl implements MailService {
 	
 	@Override
 	public boolean findPw(String email, String id) {
-		iDao dao = sqlSession.getMapper(iDao.class);
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
 		int userCount = dao.selectFindPw(email, id);
 		
 		//reset방식
