@@ -2,6 +2,8 @@ package com.teamproject.club_application;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -63,7 +65,7 @@ public class MobileController {
 		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
 		Gson gson = new Gson();
 		String rootPath = request.getSession().getServletContext().getRealPath("/");
-		String attachPath = "resources\\upload\\";
+		String attachPath = "resources/upload/";
 		String uploadPath = rootPath+attachPath;
 		System.out.println(rootPath);
 		System.out.println(attachPath);
@@ -76,9 +78,12 @@ public class MobileController {
 		}
 		
 		MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
-		Iterator iter = multiRequest.getFileNames();
+		String str = request.getParameter("description");
+		System.out.println(str);
+		Iterator<?> iter = multiRequest.getFileNames();
 		MultipartFile file = null;
 		while(iter.hasNext()) {
+			System.out.println("1");
 			String fileName = (String)(iter.next());
 			file = multiRequest.getFile(fileName);
 			String orgFileName;
@@ -103,6 +108,29 @@ public class MobileController {
 		return gson.toJson("");
 	}
 	
+	@RequestMapping(value="test2.do",produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String testImage2(HttpServletRequest request) {
+		Gson gson = new Gson();
+		String rootPath = request.getSession().getServletContext().getRealPath("/");
+		String attachPath = "resources/upload/";
+		String uploadPath = rootPath+attachPath;
+		
+		File dir = new File(uploadPath);
+		if (!dir.isDirectory()) {
+			dir.mkdirs();
+		}
+		
+		File[] file = dir.listFiles();
+		ArrayList<String> list = new ArrayList<String>();
+		for(int i = 0; i < file.length; ++i) {
+			String filePath = attachPath+file[i].getName();
+			list.add(filePath);
+		}
+				
+		return gson.toJson(list);
+	}
+	
 	@RequestMapping(value="mobile/selectLoginUser.do",produces = "application/json; charset=utf8")
 	@ResponseBody
 	public String selectLoginUser_toMobile(HttpServletRequest request) {
@@ -112,6 +140,19 @@ public class MobileController {
 		Gson gson = new Gson();
 		
 		Member item = dao.selectLoginUser(loginId, loginPw);
+		
+		return gson.toJson(item);
+	}
+
+	@RequestMapping(value="mobile/refreshMemberInfo.do",produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String refreshMemberInfo_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		String idStr = request.getParameter("id");
+		Long id = Long.parseLong(idStr);
+		Gson gson = new Gson();
+		
+		Member item = dao.refreshLoginUser(id);
 		
 		return gson.toJson(item);
 	}

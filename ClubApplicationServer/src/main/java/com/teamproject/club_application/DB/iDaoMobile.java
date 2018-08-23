@@ -18,6 +18,7 @@ public interface iDaoMobile {
 	
 	//로그인
     public Member selectLoginUser(String id, String pw);
+    public Member refreshLoginUser(Long id);
     
     //회원가입
     public Integer checkId(String id);    

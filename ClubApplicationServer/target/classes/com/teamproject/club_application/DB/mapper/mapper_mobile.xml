@@ -20,6 +20,9 @@
 <select id="selectLoginUser" resultType="com.teamproject.club_application.data.Member">
 	select * from Member where login_id=#{param1} and login_pw=#{param2}
 </select>
+<select id="refreshMemberInfo" resultType="com.teamproject.club_application.data.Member">
+	select * from Member where id=#{param1}
+</select>
 <!-- 로그인 항목 끝 -->
 
 <!-- 회원가입 항목 -->
