@@ -4,15 +4,12 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>밴드제목</title>
+<title>가입 신청 완료</title>
 <link rel="stylesheet" href="resources/css/myclub.css" type="text/css">
 <style>
 </style>
 
 <script>
-function club_join_ok() {
-	document.location.href = "club_join_confirm.do";
-}
 </script>
 </head>
 <body>
@@ -26,13 +23,9 @@ function club_join_ok() {
 </div>
 
 <div id="club_content">
-<h3>동호회 회원가입</h3>
 
-별명 : <input type="text" /></br>
-</br>
-신청 메시지</br>
-<textarea cols="30" rows="4"></textarea></br>
-<button onclick="club_join_ok();">신청</button>
+가입신청이 완료되었습니다.</br>
+<button>확인</button>
 
 </div>
 

@@ -39,12 +39,24 @@ public class HomeController {
 	public String home2() {		
 		return "home";
 	}	
-	
+	//////////////////////////////////////////////////////////////////////////////////
 	@RequestMapping("login.do")
 	public String login() {		
 		return "login";
 	}
 	
+	@RequestMapping("login_ok.do")
+	public String login_ok(HttpServletRequest request) {
+		String login_id = request.getParameter("login_mail");
+		String login_pw = request.getParameter("login_pw");
+		
+		iDao iDAO = sqlSession.getMapper(iDao.class);
+		
+		
+		return "login"; 
+	}
+	
+	//////////////////////////////////////////////////////////////////////////////////
 	@RequestMapping("search.do")
 	public String search() {		
 		return "search";
@@ -104,15 +116,33 @@ public class HomeController {
 	public String myclub_member() {		
 		return "myclub_member";
 	}
-	
+	//////////////////////////////////////////////////////////////////////////////////
 	@RequestMapping("join.do")
 	public String join() {		
 		return "join";
 	}
 	
+	@RequestMapping("join_ok.do")
+	public String join_ok() {		
+		return "login";
+	}
+	
+	
+	//////////////////////////////////////////////////////////////////////////////////
+
 	@RequestMapping("club_join.do")
 	public String club_join() {		
 		return "club_join";
+	}
+	
+	@RequestMapping("join_confirm.do")
+	public String join_confirm() {		
+		return "join_confirm";
+	}
+	
+	@RequestMapping("club_join_confirm.do")
+	public String club_join_confirm() {		
+		return "club_join_confirm";
 	}
 	
 	@RequestMapping(value="androidTest.do",produces = "application/json; charset=utf8")

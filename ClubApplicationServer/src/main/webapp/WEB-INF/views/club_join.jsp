@@ -10,6 +10,9 @@
 </style>
 
 <script>
+function club_join_ok() {
+	document.location.href = "club_join_confirm.do";
+}
 </script>
 </head>
 <body>
@@ -25,7 +28,11 @@
 <div id="club_content">
 <h3>동호회 회원가입</h3>
 
-별명 : <input type="text" />
+별명 : <input type="text" /></br>
+</br>
+신청 메시지</br>
+<textarea cols="30" rows="4"></textarea></br>
+<button onclick="club_join_ok();">신청</button>
 
 </div>
 

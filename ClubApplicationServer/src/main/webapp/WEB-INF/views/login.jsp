@@ -78,12 +78,12 @@ table, th, td {
 </style>
 
 <script>
-function login() {
-	var login_id = document.getElementById("login_id");
+function login_ok() {
+	var login_mail = document.getElementById("login_mail");
 	var login_pw = document.getElementById("login_pw");
 	
-	if(login_id.value == ""){
-		window.alert("아이디를 입력하세요.");
+	if(login_mail.value == ""){
+		window.alert("이메일을 입력하세요.");
 		login_id.focus();
 		return;
 	}
@@ -102,12 +102,12 @@ function login() {
 </head>
 <body>
 <div id="wrap">
-<div id="main_logo" name="main_logo"><img width="400px" height="250px" src="resources/main_logo.png" /></div><br>
+<div id="login_logo" name="login_logo"><img width="400px" height="250px" src="resources/main_logo.png" /></div><br>
 <form action="login_ok.do" id="login_form" method="post">
 	<table id="table_login">
 	<tr>
-		<td><input type="text" tabindex="1" placeholder="아이디" name="login_id" id="login_id" /></td>
-		<td rowspan="2"><input type="button" tabindex="3" value="login" class="loginBtn" onclick="login();" /></td>
+		<td><input type="text" tabindex="1" placeholder="이메일" name="login_mail" id="login_mail" /></td>
+		<td rowspan="2"><input type="button" tabindex="3" value="login" class="loginBtn" onclick="login_ok();" /></td>
 	</tr>
 	<tr>
 		<td><input type="password" tabindex="2" placeholder="비밀번호" name="login_pw" id="login_pw" value="" /></td>
