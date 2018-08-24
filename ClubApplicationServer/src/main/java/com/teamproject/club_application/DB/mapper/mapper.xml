@@ -17,24 +17,5 @@ Insert into member values (member_seq.nextval, '123', #{param1}, #{param2}, #{pa
 </select>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!-- oracle 쿼리문 작성 끝-->
 </mapper>

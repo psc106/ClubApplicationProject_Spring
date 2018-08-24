@@ -1,8 +1,7 @@
 package com.teamproject.club_application;
 
-import java.util.ArrayList;
-import java.util.UUID;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.ibatis.session.SqlSession;
@@ -12,17 +11,21 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.google.gson.Gson;
 import com.teamproject.club_application.DB.iDao;
-import com.teamproject.club_application.data.TestData;
+import com.teamproject.club_application.DB.iDaoMobile;
+import com.teamproject.club_application.authorized.MailService;
 
 /**
  * Handles requests for the application home page.
  */
 @Controller
-public class HomeController {
+public class HomeController{
 	SqlSession sqlSession;
+	
+	@Resource(name="MailAuthService")
+	MailService service;
 	
 	@Autowired
 	public void setSqlSession(SqlSession sqlSession) {
@@ -33,7 +36,8 @@ public class HomeController {
 	 * Simply selects the home view to render by returning its name.
 	 */
 	@RequestMapping("/")
-	public String home() {		
+	public String home() {	
+		int a=1;
 		return "home";
 	}
 	
@@ -191,21 +195,19 @@ public class HomeController {
 		return "club_join_confirm";
 	}
 	
-	@RequestMapping(value="androidTest.do",produces = "application/json; charset=utf8")
-	@ResponseBody
-	public String testJson(HttpServletRequest request) {
-				
-		iDao iDAO = sqlSession.getMapper(iDao.class);
-		ArrayList<TestData> items = iDAO.getTestData();
+	@RequestMapping(value="/authOk.do", method=RequestMethod.GET)
+	public String authMember(HttpServletRequest request) {
+		String id = request.getParameter("login_id");
+		String key = request.getParameter("key");
 		
-		Gson gson = new Gson();
-		System.out.println("테스트");		
-		System.out.println(gson.toJson(items).toString());
+		boolean isSuccess = service.authUpdate(id, key);
 		
-		return gson.toJson(items);
+		if(isSuccess) {	
+			//인증 성공
+			return "success";
+		} else {
+			//인증 실패
+			return "fail";
+		}
 	}
-
-	public String getRandomString(){
-        return UUID.randomUUID().toString().replaceAll("-", "");
-    }
 }

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"      
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.teamproject.club_application.DB.iDaoMobile">
+<!-- 맵핑 데이터 -->
+
+<!-- 맵핑 데이터 끝-->
+
+<!-- oracle 쿼리문 작성 시작-->
+
+<!-- 테스트 항목 -->
+<select id="getTestData" resultType="com.teamproject.club_application.data.TestData">
+	select * from TestData
+</select>
+<!-- 테스트 항목 끝 -->
+
+
+<!-- 로그인 항목 -->
+<select id="selectLoginUser" resultType="com.teamproject.club_application.data.Member">
+	select * from Member where login_id=#{param1} and login_pw=#{param2}
+</select>
+<select id="refreshMemberInfo" resultType="com.teamproject.club_application.data.Member">
+	select * from Member where id=#{param1}
+</select>
+<!-- 로그인 항목 끝 -->
+
+<!-- 회원가입 항목 -->
+<select id="checkId" resultType="Integer">
+	select count(*) from Member where login_id=#{param1}
+</select>
+
+<insert id="insertMember" parameterType="com.teamproject.club_application.data.Member"> 
+	<selectKey keyProperty="id" resultType="Integer" order="BEFORE"> 
+		select member_seq.nextval from dual
+	</selectKey>	
+	insert into member values ( #{id}, #{login_id}, #{login_pw}, #{name}, #{birthday}, #{gender}, #{local}, #{email}, #{phone}, #{verify})
+</insert>
+
+	<!-- 이메일 인증 -->
+	
+	<insert id="createAuth">
+		insert into Auth values ( #{param1}, #{param2})
+	</insert>	
+	
+	<select id="checkAuth" resultType="Integer">
+		select count(*) from Auth A, Member m where A.login_id=#{param1} and A.key=#{param2} and m.verify='N'
+	</select>
+	
+	<update id="updateAuth">
+		update Member set VERIFY='Y' where login_id=#{param1}
+	</update>	
+	
+	<delete id="deleteAuth">
+		delete from auth where login_id=#{param1}
+	</delete>
+	
+	<!-- 이메일 인증 끝 -->
+<!-- 회원가입 항목 끝 -->
+
+<!-- 정보찾기 항목 -->
+<select id="selectFindId" resultType="String">
+	select M.login_id from Member M where M.email=#{param1}
+</select>
+<select id="selectFindPw" resultType="Integer">
+	select count(*) from Member M where M.email=#{param1} and M.login_id=#{param2}
+</select>
+<update id="updatePw">
+	update Member set login_pw=#{param2} where login_id=#{param1}
+</update>
+<!-- 정보찾기 항목 끝 -->
+
+<!-- 메뉴 항목 -->
+<select id="selectMyAlarm" resultType="com.teamproject.club_application.data.Alarm">
+	select * from Alarm where member_id=#{param1}
+</select>
+
+<select id="selectMyPost" resultType="com.teamproject.club_application.data.Post">
+	select * from Post where member_id=#{param1}
+</select>
+
+<select id="selectMyComment" resultType="com.teamproject.club_application.data.Comment">
+	select * from Comments where member_id=#{param1}
+</select>
+
+<select id="selectMySchedule" resultType="com.teamproject.club_application.data.Schedule">
+	select S.* from schedule S, schedule_member SM where S.start_date>=sysdate and S.id=SM.schedule_id and SM.member_id=#{param1}
+</select>
+
+<select id="selectMyClub" resultType="com.teamproject.club_application.data.Club">
+	select * from Club where member_id=#{param1}
+</select>
+
+<select id="selectMyDaySchedule" resultType="com.teamproject.club_application.data.Schedule">
+	select S.* 
+	from schedule S, schedule_member SM  
+	where S.start_date BETWEEN TO_DATE(#{param2}, 'yyyymmdd') and (TO_DATE(#{param2}, 'yyyymmdd')+1-(1/(24*60*60))) 
+		and S.id=SM.schedule_id and SM.member_id=#{param1}
+</select>
+<!-- 메뉴 항목 끝 -->
+
+<!-- oracle 쿼리문 작성 끝-->
+</mapper>
+
+
+
+
+<!-- 	
+    public ArrayList<Alarm> selectMyAlarm(Long userId);
+    public ArrayList<Post> selectMyPost(Long userId);
+    public ArrayList<Comment> selectMyComment(Long userId);
+    public ArrayList<Schedule> selectMySchedule(Long userId);
+    public ArrayList<Club> selectMyClub(Long userId);
+ -->
