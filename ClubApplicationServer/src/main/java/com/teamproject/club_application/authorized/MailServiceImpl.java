@@ -30,7 +30,7 @@ public class MailServiceImpl implements MailService {
 	@Override
 	public void authCreate(Member member) {
 		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
-		dao.insertMember(member.getLogin_id(), member.getLogin_pw(), member.getName(), member.getBirthday(), member.getGender(), member.getLocal(), member.getEmail(), member.getPhone(), "N"); // 회원가입 DAO
+		dao.insertMember(member); // 회원가입 DAO
 
 		String key = new TempKey().getKey(50, false); // 인증키 생성
 		dao.createAuth(member.getLogin_id(), key);
@@ -49,7 +49,7 @@ public class MailServiceImpl implements MailService {
 			sendMail.setFrom("clubapplicationproject@gmail.com", "동호회");
 			sendMail.setTo(member.getEmail());
 			sendMail.send();		
-		
+		//http://192.168.0.70:8090/club_application/authOk.do?login_id=113&key=U2I6wTocYfWaGMCrDEWr1znPjAcLdWUR2fEsJ7B6mlZSmMQIPW
 		} catch (MessagingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

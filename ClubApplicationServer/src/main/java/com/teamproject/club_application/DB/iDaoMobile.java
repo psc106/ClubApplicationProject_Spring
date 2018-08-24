@@ -22,7 +22,7 @@ public interface iDaoMobile {
     
     //회원가입
     public Integer checkId(String id);    
-    public void insertMember(String id, String pw, String name, String birthday, int gender, String local, String email, String phone, String verify);
+    public void insertMember(Member memeber);
     
     public void createAuth(String loginId, String key);
     public Integer checkAuth(String loginId, String key);
