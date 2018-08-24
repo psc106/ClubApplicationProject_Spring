@@ -4,10 +4,37 @@
 
 <mapper namespace="com.teamproject.club_application.DB.iDao">
 <!-- oracle 쿼리문 작성 시작-->
-
 <select id="getTestData" resultType="com.teamproject.club_application.data.TestData">
 select * from TestData
 </select>
+
+<!-- 회원가입 관련 -->
+<select id="mailCheck" resultType="Integer">
+select count(*) from member where email=#{param1}
+</select>
+<select id="insertMember" >
+Insert into member values (member_seq.nextval, '123', #{param1}, #{param2}, #{param3}, #{param4}, #{param5}, #{param6}, #{param7}, 'n')
+</select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!-- oracle 쿼리문 작성 끝-->
 </mapper>

@@ -8,5 +8,9 @@ import com.teamproject.club_application.data.TestData;
 
 public interface iDao {
 	public ArrayList<TestData> getTestData(); 
-
+	
+	// 회원가입 관련
+	public Integer mailCheck(String mail);
+	public void insertMember(String pw, String name, String birthday, Integer i_gender, String local, String login_mail, String phone);
+	 
 }
