@@ -2,19 +2,21 @@ package com.teamproject.club_application;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,10 +40,15 @@ import com.teamproject.club_application.util.Util;
 @Controller
 public class MobileController {
 	SqlSession sqlSession;
+	JdbcTemplate template;
 	
 	@Resource(name="MailAuthService")
 	MailService service;
-	
+	 
+    @Autowired
+    public void setTemplate(JdbcTemplate template) {
+        this.template = template;
+    }
 	@Autowired
 	public void setSqlSession(SqlSession sqlSession) {
 		this.sqlSession = sqlSession;
@@ -330,7 +337,6 @@ public class MobileController {
 		String birthday = request.getParameter("birthday");
 		String genderStr = request.getParameter("gender");
 		String local = request.getParameter("local");
-		String email = request.getParameter("email");
 		String phone = request.getParameter("phone");
 		int gender;
 		Gson gson = new Gson();
@@ -339,7 +345,7 @@ public class MobileController {
 		} else {
 			return gson.toJson("fail");
 		}
-		Member member = new Member(-1, loginId, loginPw, name, birthday, gender, local, email, phone, "N");
+		Member member = new Member(-1, loginId, loginPw, name, birthday, gender, local, phone, "N");
 		service.authCreate(member);
 
 		return gson.toJson("");
@@ -350,10 +356,10 @@ public class MobileController {
 	@ResponseBody
 	public String findId_toMobile(HttpServletRequest request) {
 		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
-		String email = request.getParameter("email");
+		String id = request.getParameter("id");
 		
 		Gson gson = new Gson();
-		String id = dao.selectFindId(email);
+		String check = dao.selectFindId(id);
 
 		return gson.toJson(id);
 	}
@@ -362,13 +368,64 @@ public class MobileController {
 	@ResponseBody
 	public String findPw_toMobile(HttpServletRequest request) {
 		String id = request.getParameter("id");
-		String email = request.getParameter("email");
 
-		service.findPw(email, id);
+		service.findPw(id);
 
 		Gson gson = new Gson();
 		return gson.toJson("");
 	}
-	
-	
+
+	@RequestMapping(value="mobile/searchClub.do",produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String searchClub_toMobile(HttpServletRequest request) {
+		String conditionStr = request.getParameter("main");
+		String conditionLocal = request.getParameter("local");
+		String conditionCategoryStr = request.getParameter("category");
+		String conditionPageStr = request.getParameter("page");
+		int conditionPage = 1;
+		if(conditionPageStr!=null && !conditionPageStr.equals("")) {
+			conditionPage = Integer.parseInt(conditionPageStr);
+		}
+
+		int conditionCategory = -1;
+		if(conditionCategoryStr!=null && !conditionCategoryStr.equals("")) {
+			conditionCategory = Integer.parseInt(conditionCategoryStr);
+		}
+		System.out.println(conditionStr);
+		System.out.println(conditionLocal);
+		System.out.println(conditionCategory);
+		System.out.println(conditionPage);
+		ArrayList<Club> clubs = new ArrayList<Club>();
+		String preQuery = "SELECT DISTINCT ID,CATEGORY_ID,MEMBER_ID,IMAGE_ID,NAME,LOCAL,MAX_PEOPLE,INTRO,CREATE_DATE FROM (SELECT C.*, ROW_NUMBER() OVER(ORDER BY rownum desc) RN from club C where 1=1 ";
+		if(conditionStr!=null && !conditionStr.equals("")) {
+			preQuery += " and (C.Name like '%"+conditionStr+"%' or C.Intro like '%"+conditionStr+"%') ";
+		}
+		if(conditionLocal!=null && !conditionLocal.equals("") && !conditionLocal.equals("null")) {
+			preQuery += " and C.LOCAL like '%"+conditionLocal+"%' ";
+		}
+		if(conditionCategory!=-1) {
+			preQuery += " and C.CATEGORY_ID="+conditionCategory;
+		}
+		preQuery += ") WHERE RN<="+10*(conditionPage);
+		if(conditionPage>=2) {
+			preQuery += " AND RN>"+10*(conditionPage-1);
+		}
+		System.out.println(preQuery);
+		clubs.addAll(this.template.query(
+				preQuery,
+				new RowMapper<Club>() {
+				    public Club mapRow(ResultSet rs, int rowNum) throws SQLException {
+				    	System.out.println("여기서 오류");
+				    	Club club = new Club(rs.getLong(1), rs.getLong(2), rs.getLong(3), rs.getLong(4), 
+				    						rs.getString(5), rs.getString(6), rs.getInt(7), rs.getString(8), rs.getString(9));
+				    	System.out.println("여기서 오류 2");
+					    return club;
+				    }				
+				})
+			);
+		Gson gson = new Gson();
+		return gson.toJson(clubs);
+	}
+
+
 }

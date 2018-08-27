@@ -34,7 +34,7 @@
 	<selectKey keyProperty="id" resultType="Integer" order="BEFORE"> 
 		select member_seq.nextval from dual
 	</selectKey>	
-	insert into member values ( #{id}, #{login_id}, #{login_pw}, #{name}, #{birthday}, #{gender}, #{local}, #{email}, #{phone}, #{verify})
+	insert into member values ( #{id}, #{login_id}, #{login_pw}, #{name}, #{birthday}, #{gender}, #{local}, #{phone}, #{verify})
 </insert>
 
 	<!-- 이메일 인증 -->
@@ -60,10 +60,10 @@
 
 <!-- 정보찾기 항목 -->
 <select id="selectFindId" resultType="String">
-	select M.login_id from Member M where M.email=#{param1}
+	select M.login_id from Member M where M.login_id=#{param1}
 </select>
 <select id="selectFindPw" resultType="Integer">
-	select count(*) from Member M where M.email=#{param1} and M.login_id=#{param2}
+	select count(*) from Member M where and M.login_id=#{param2}
 </select>
 <update id="updatePw">
 	update Member set login_pw=#{param2} where login_id=#{param1}

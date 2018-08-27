@@ -30,8 +30,8 @@ public interface iDaoMobile {
     public void deleteAuth(String loginId);
     
     //정보 찾기
-    public String selectFindId(String email) ;
-    public Integer selectFindPw(String email, String loginId) ;
+    public String selectFindId(String id) ;
+    public Integer selectFindPw(String loginId) ;
     public void updatePw(String loginId, String newPw);
     
     //내 메뉴

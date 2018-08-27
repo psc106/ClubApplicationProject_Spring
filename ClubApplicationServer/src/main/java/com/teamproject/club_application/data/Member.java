@@ -8,7 +8,6 @@ public class Member {
     private String birthday;
     private int gender;
     private String local;
-    private String email;
     private String phone;
     private String verify;
     
@@ -19,7 +18,7 @@ public class Member {
     
     
 	public Member(long id, String login_id, String login_pw, String name, String birthday, int gender, String local,
-			String email, String phone, String verify) {
+			String phone, String verify) {
 		super();
 		this.id = id;
 		this.login_id = login_id;
@@ -28,7 +27,6 @@ public class Member {
 		this.birthday = birthday;
 		this.gender = gender;
 		this.local = local;
-		this.email = email;
 		this.phone = phone;
 		this.verify = verify;
 	}
@@ -79,12 +77,6 @@ public class Member {
 	}
 	public void setLocal(String local) {
 		this.local = local;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
 	}
 	public String getPhone() {
 		return phone;

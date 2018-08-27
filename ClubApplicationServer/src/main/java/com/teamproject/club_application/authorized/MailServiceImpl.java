@@ -47,7 +47,7 @@ public class MailServiceImpl implements MailService {
 					append(key).
 					append("' target='_blenk'>이메일 인증 확인</a>").toString());
 			sendMail.setFrom("clubapplicationproject@gmail.com", "동호회");
-			sendMail.setTo(member.getEmail());
+			sendMail.setTo(member.getLogin_id());
 			sendMail.send();		
 		//http://192.168.0.70:8090/club_application/authOk.do?login_id=113&key=U2I6wTocYfWaGMCrDEWr1znPjAcLdWUR2fEsJ7B6mlZSmMQIPW
 		} catch (MessagingException e) {
@@ -78,9 +78,9 @@ public class MailServiceImpl implements MailService {
 	
 	
 	@Override
-	public boolean findPw(String email, String id) {
+	public boolean findPw(String id) {
 		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
-		int userCount = dao.selectFindPw(email, id);
+		int userCount = dao.selectFindPw(id);
 		
 		//reset방식
 		if(userCount==1) {
@@ -96,7 +96,7 @@ public class MailServiceImpl implements MailService {
 						append("당신의 새 비밀번호는 다음과 같습니다.<br>").
 						append("<h1>"+pw+"</h1>").toString());
 				sendMail.setFrom("clubapplicationproject@gmail.com", "동호회");
-				sendMail.setTo(email);
+				sendMail.setTo(id);
 				sendMail.send();		
 			
 			} catch (MessagingException e) {
