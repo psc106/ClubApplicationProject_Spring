@@ -8,7 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -90,7 +89,6 @@ public class MobileController {
 		Iterator<?> iter = multiRequest.getFileNames();
 		MultipartFile file = null;
 		while(iter.hasNext()) {
-			System.out.println("1");
 			String fileName = (String)(iter.next());
 			file = multiRequest.getFile(fileName);
 			String orgFileName;
@@ -375,9 +373,41 @@ public class MobileController {
 		return gson.toJson("");
 	}
 
-	@RequestMapping(value="mobile/searchClub.do",produces = "application/json; charset=utf8")
+	@RequestMapping(value="mobile/getResultCount.do",produces = "application/json; charset=utf8")
 	@ResponseBody
-	public String searchClub_toMobile(HttpServletRequest request) {
+	public String getResultCount_toMobile(HttpServletRequest request) {
+		String conditionStr = request.getParameter("main");
+		String conditionLocal = request.getParameter("local");
+		String conditionCategoryStr = request.getParameter("category");
+		
+
+		int conditionCategory = -1;
+		if(conditionCategoryStr!=null && !conditionCategoryStr.equals("")) {
+			conditionCategory = Integer.parseInt(conditionCategoryStr);
+		}
+		
+		ArrayList<Club> clubs = new ArrayList<Club>();
+		String preQuery = "SELECT count(*) FROM club C where 1=1 ";
+		if(conditionStr!=null && !conditionStr.equals("")) {
+			preQuery += " and (C.Name like '%"+conditionStr+"%' or C.Intro like '%"+conditionStr+"%') ";
+		}
+		if(conditionLocal!=null && !conditionLocal.equals("") && !conditionLocal.equals("null")) {
+			preQuery += " and C.LOCAL like '%"+conditionLocal+"%' ";
+		}
+		if(conditionCategory!=-1) {
+			preQuery += " and C.CATEGORY_ID="+conditionCategory;
+		}
+		
+		Integer count = this.template.queryForObject(preQuery, Integer.class);
+		
+		Gson gson = new Gson();
+		System.out.println(gson.toJson(count));
+		return gson.toJson(count);
+	}
+	
+	@RequestMapping(value="mobile/selectClubInPage.do",produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String selectClubInPage_toMobile(HttpServletRequest request) {
 		String conditionStr = request.getParameter("main");
 		String conditionLocal = request.getParameter("local");
 		String conditionCategoryStr = request.getParameter("category");
@@ -391,10 +421,7 @@ public class MobileController {
 		if(conditionCategoryStr!=null && !conditionCategoryStr.equals("")) {
 			conditionCategory = Integer.parseInt(conditionCategoryStr);
 		}
-		System.out.println(conditionStr);
-		System.out.println(conditionLocal);
-		System.out.println(conditionCategory);
-		System.out.println(conditionPage);
+		
 		ArrayList<Club> clubs = new ArrayList<Club>();
 		String preQuery = "SELECT DISTINCT ID,CATEGORY_ID,MEMBER_ID,IMAGE_ID,NAME,LOCAL,MAX_PEOPLE,INTRO,CREATE_DATE FROM (SELECT C.*, ROW_NUMBER() OVER(ORDER BY rownum desc) RN from club C where 1=1 ";
 		if(conditionStr!=null && !conditionStr.equals("")) {
@@ -410,20 +437,18 @@ public class MobileController {
 		if(conditionPage>=2) {
 			preQuery += " AND RN>"+10*(conditionPage-1);
 		}
-		System.out.println(preQuery);
 		clubs.addAll(this.template.query(
 				preQuery,
 				new RowMapper<Club>() {
 				    public Club mapRow(ResultSet rs, int rowNum) throws SQLException {
-				    	System.out.println("여기서 오류");
 				    	Club club = new Club(rs.getLong(1), rs.getLong(2), rs.getLong(3), rs.getLong(4), 
 				    						rs.getString(5), rs.getString(6), rs.getInt(7), rs.getString(8), rs.getString(9));
-				    	System.out.println("여기서 오류 2");
 					    return club;
 				    }				
 				})
 			);
 		Gson gson = new Gson();
+		System.out.println(gson.toJson(clubs));
 		return gson.toJson(clubs);
 	}
 
