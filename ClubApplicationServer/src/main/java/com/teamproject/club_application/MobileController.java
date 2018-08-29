@@ -505,7 +505,6 @@ public class MobileController {
 		MultipartFile file = null;
 		Image image = null;
 		while(iter.hasNext()) {
-			System.out.println("_");
 			String fileName = (String)(iter.next());
 			file = multiRequest.getFile(fileName);
 			String orgFileName;
@@ -530,12 +529,11 @@ public class MobileController {
 			}
 		}
 
-		System.out.println(image);
 		long returnValue = 0;
 		if(image!=null) {
 			returnValue = appService.insertClub(image, new Club(0l, categoryId, userId, 0l, name, local, maxPeople, intro, ""));
 		}
-		System.out.println(returnValue);
+
 		return gson.toJson(returnValue);
 	}
 	
