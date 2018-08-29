@@ -113,6 +113,7 @@
 	</beans:bean>
 
 
+
 	<beans:bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<beans:property name="dataSource" ref="dataSourceA"></beans:property>

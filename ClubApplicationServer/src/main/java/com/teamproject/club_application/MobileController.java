@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -25,11 +26,13 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.google.gson.Gson;
 import com.teamproject.club_application.DB.iDaoMobile;
+import com.teamproject.club_application.DB.service.AppService;
 import com.teamproject.club_application.authorized.MailService;
 import com.teamproject.club_application.data.Alarm;
 import com.teamproject.club_application.data.CalendarSchedule;
 import com.teamproject.club_application.data.Club;
 import com.teamproject.club_application.data.Comment;
+import com.teamproject.club_application.data.Image;
 import com.teamproject.club_application.data.Member;
 import com.teamproject.club_application.data.Post;
 import com.teamproject.club_application.data.Schedule;
@@ -42,8 +45,12 @@ public class MobileController {
 	JdbcTemplate template;
 	
 	@Resource(name="MailAuthService")
-	MailService service;
-	 
+	MailService mailService;
+
+	@Resource(name="ApplicationService")
+	AppService appService;
+	
+	
     @Autowired
     public void setTemplate(JdbcTemplate template) {
         this.template = template;
@@ -344,7 +351,7 @@ public class MobileController {
 			return gson.toJson("fail");
 		}
 		Member member = new Member(-1, loginId, loginPw, name, birthday, gender, local, phone, "N");
-		service.authCreate(member);
+		mailService.authCreate(member);
 
 		return gson.toJson("");
 	}
@@ -367,7 +374,7 @@ public class MobileController {
 	public String findPw_toMobile(HttpServletRequest request) {
 		String id = request.getParameter("id");
 
-		service.findPw(id);
+		mailService.findPw(id);
 
 		Gson gson = new Gson();
 		return gson.toJson("");
@@ -453,4 +460,84 @@ public class MobileController {
 	}
 
 
+
+	@RequestMapping(value="mobile/insertClub.do",produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String insertClub_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		Gson gson = new Gson();
+		String rootPath = request.getSession().getServletContext().getRealPath("/");
+		String attachPath = "resources/upload/";
+		String uploadPath = rootPath+attachPath;
+
+		String categoryIdStr = request.getParameter("category");
+		String userIdStr = request.getParameter("userId");		
+		String name = request.getParameter("name");
+		String local = request.getParameter("local");
+		String maxPeopleStr = request.getParameter("maxPeople");
+		String intro = request.getParameter("intro");
+		
+		Long categoryId = null;
+		Long userId = null;
+		Integer maxPeople = null;
+
+		if(categoryIdStr!=null && !categoryIdStr.equals("")) {
+			categoryId = Long.parseLong(categoryIdStr);
+		}
+		if(userIdStr!=null && !userIdStr.equals("")) {
+			userId = Long.parseLong(userIdStr);
+		}
+		if(maxPeopleStr!=null && !maxPeopleStr.equals("")) {
+			maxPeople = Integer.parseInt(maxPeopleStr);
+		}
+		if(categoryId == null || userId==null || maxPeople==null) {
+			return gson.toJson(0);
+		}
+		
+		File dir = new File(uploadPath);
+		if (!dir.isDirectory()) {
+			dir.mkdirs();
+		}
+		
+		MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+
+		Iterator<?> iter = multiRequest.getFileNames();
+		MultipartFile file = null;
+		Image image = null;
+		while(iter.hasNext()) {
+			System.out.println("_");
+			String fileName = (String)(iter.next());
+			file = multiRequest.getFile(fileName);
+			String orgFileName;
+			orgFileName =  file.getOriginalFilename();
+
+			
+			if(orgFileName!=null && !orgFileName.equals("")) {
+				System.out.println(orgFileName);
+				String ext = orgFileName.substring(orgFileName.lastIndexOf('.'));
+				String saveFileName = Util.getRandomString()+ext;
+				File serverFile = new File(uploadPath+"/"+saveFileName);
+				try {
+					file.transferTo(serverFile);
+				} catch (IllegalStateException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				image = new Image(0l, saveFileName, orgFileName);
+			}
+		}
+
+		System.out.println(image);
+		long returnValue = 0;
+		if(image!=null) {
+			returnValue = appService.insertClub(image, new Club(0l, categoryId, userId, 0l, name, local, maxPeople, intro, ""));
+		}
+		System.out.println(returnValue);
+		return gson.toJson(returnValue);
+	}
+	
+	
 }

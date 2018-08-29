@@ -15,6 +15,15 @@
 </select>
 <!-- 테스트 항목 끝 -->
 
+<!-- 공통 항목 -->
+<insert id="insertImage" parameterType="com.teamproject.club_application.data.Image"> 
+	<selectKey keyProperty="id" resultType="Integer" order="BEFORE"> 
+		select Image_seq.nextval from dual
+	</selectKey>	
+	insert into image values ( #{id}, #{img_db_name}, #{img_ori_name})
+</insert>
+<!-- 로그인 항목 끝 -->
+
 
 <!-- 로그인 항목 -->
 <select id="selectLoginUser" resultType="com.teamproject.club_application.data.Member">
@@ -98,6 +107,22 @@
 		and S.id=SM.schedule_id and SM.member_id=#{param1}
 </select>
 <!-- 메뉴 항목 끝 -->
+
+
+<!-- 클럽 항목 -->
+<insert id="insertClub" parameterType="com.teamproject.club_application.data.Club"> 
+	<selectKey keyProperty="id" resultType="Integer" order="BEFORE"> 
+		select club_seq.nextval from dual
+	</selectKey>	
+	insert into club values ( #{id}, #{category_id}, #{member_id}, #{image_id}, #{name}, #{local}, #{max_people}, #{intro}, sysdate)
+</insert>
+
+
+<insert id="joinClub"> 
+	insert into club_member values(club_member_seq.nextval, #{param1}, #{param2}, #{param3})
+	
+</insert>
+<!-- 클럽 항목 끝 -->
 
 <!-- oracle 쿼리문 작성 끝-->
 </mapper>

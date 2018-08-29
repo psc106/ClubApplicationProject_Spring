@@ -6,6 +6,7 @@ import com.teamproject.club_application.data.Alarm;
 import com.teamproject.club_application.data.CalendarSchedule;
 import com.teamproject.club_application.data.Club;
 import com.teamproject.club_application.data.Comment;
+import com.teamproject.club_application.data.Image;
 import com.teamproject.club_application.data.Member;
 import com.teamproject.club_application.data.Post;
 import com.teamproject.club_application.data.Schedule;
@@ -15,7 +16,10 @@ import com.teamproject.club_application.data.TestData;
 
 public interface iDaoMobile {
 	public ArrayList<TestData> getTestData(); 
-	
+
+	//공통
+    public void insertImage(Image image);
+    
 	//로그인
     public Member selectLoginUser(String id, String pw);
     public Member refreshLoginUser(Long id);
@@ -41,5 +45,9 @@ public interface iDaoMobile {
     public ArrayList<Club> selectMyClub(Long userId);   
     public ArrayList<Schedule> selectMySchedule(Long userId);
     public ArrayList<Schedule> selectMyDaySchedule(Long userId, String dateFormat);//yyyymmdd
+    
+    //클럽
+    public void insertClub(Club club);
+    public void joinClub(Long club_id, Long member_id, String verify);
     
 }

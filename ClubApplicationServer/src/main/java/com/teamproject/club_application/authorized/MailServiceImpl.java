@@ -76,7 +76,7 @@ public class MailServiceImpl implements MailService {
 		}
 	}
 	
-	
+	@Transactional
 	@Override
 	public boolean findPw(String id) {
 		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
