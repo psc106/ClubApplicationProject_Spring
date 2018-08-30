@@ -528,11 +528,12 @@ public class MobileController {
 				image = new Image(0l, saveFileName, orgFileName);
 			}
 		}
+		System.out.println(uploadPath);
 
 		long returnValue = 0;
-		if(image!=null) {
-			returnValue = appService.insertClub(image, new Club(0l, categoryId, userId, 0l, name, local, maxPeople, intro, ""));
-		}
+		
+		returnValue = appService.insertClub(image, new Club(0l, categoryId, userId, 0l, name, local, maxPeople, intro, ""));
+		
 
 		return gson.toJson(returnValue);
 	}

@@ -23,7 +23,12 @@ public class AppServiceImpl implements AppService {
 	@Override
 	public Long insertClub(Image image, Club club) {
 		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
-		dao.insertImage(image);
+		if(image != null) {
+			dao.insertImage(image);
+			club.setImage_id(image.getId());
+		} else {
+			club.setImage_id(-1);		
+		}
 		dao.insertClub(club);
 		dao.joinClub(club.getId(), club.getMember_id(), "A");
 		return club.getId();
