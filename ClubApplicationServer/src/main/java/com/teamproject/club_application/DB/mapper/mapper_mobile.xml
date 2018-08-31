@@ -4,7 +4,20 @@
 
 <mapper namespace="com.teamproject.club_application.DB.iDaoMobile">
 <!-- 맵핑 데이터 -->
-
+<!-- 
+<resultMap type="com.teamproject.club_application.data.ClubMemberClass" id="ClubMemberClass">
+	<result property="club.id" column="id"/>
+	<result property="club.category_id" column="category_id"/>
+	<result property="club.member_id" column="member_id"/>
+	<result property="club.image_id" column="image_id"/>
+	<result property="club.name" column="name"/>
+	<result property="club.local" column="local"/>
+	<result property="club.max_people" column="max_people"/>
+	<result property="club.intro" column="intro"/>
+	<result property="club.create_date" column="create_date"/>
+	<result property="memberClass" column="class"/>
+</resultMap>
+ -->
 <!-- 맵핑 데이터 끝-->
 
 <!-- oracle 쿼리문 작성 시작-->
@@ -72,11 +85,26 @@
 	select M.login_id from Member M where M.login_id=#{param1}
 </select>
 <select id="selectFindPw" resultType="Integer">
-	select count(*) from Member M where and M.login_id=#{param2}
+	select count(*) from Member M where M.login_id=#{param1}
 </select>
 <update id="updatePw">
 	update Member set login_pw=#{param2} where login_id=#{param1}
 </update>
+	<!-- 임시 비밀번호 항목 -->
+	
+	<insert id="createTmpPw">
+		insert into tmp_pw values ( #{param1}, #{param2})
+	</insert>	
+	
+	<select id="checkTmpPw" resultType="Integer">
+		select count(*) from tmp_pw A where A.login_id=#{param1} and A.pw=#{param2}
+	</select>
+	
+	<delete id="deleteTmpPw">
+		delete from tmp_pw where login_id=#{param1}
+	</delete>
+	
+	<!-- 임시 비밀번호 항목 끝 -->
 <!-- 정보찾기 항목 끝 -->
 
 <!-- 메뉴 항목 -->
@@ -117,6 +145,17 @@
 	insert into club values ( #{id}, #{category_id}, #{member_id}, #{image_id}, #{name}, #{local}, #{max_people}, #{intro}, sysdate)
 </insert>
 
+<select id="selectClub" resultType="com.teamproject.club_application.data.Club">
+	select C.*
+	from Club C
+	where C.id = #{param1}
+</select>
+
+<select id="selectClubMemberClass" resultType="String">
+	select CM.class
+	from Club_Member CM
+	where CM.club_id = #{param1} and CM.member_id = #{param2} 
+</select>
 
 <insert id="joinClub"> 
 	insert into club_member values(club_member_seq.nextval, #{param1}, #{param2}, #{param3})

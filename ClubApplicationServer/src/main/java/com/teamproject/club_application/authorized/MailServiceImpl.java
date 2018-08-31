@@ -85,8 +85,8 @@ public class MailServiceImpl implements MailService {
 		//reset방식
 		if(userCount==1) {
 			String pw = new TempKey().getKey(10, false);
-			dao.updatePw(id, pw);
-
+			dao.createTmpPw(id, pw);
+			
 			MailHandler sendMail;
 			try {
 				sendMail = new MailHandler(mailSender);
@@ -94,7 +94,13 @@ public class MailServiceImpl implements MailService {
 				sendMail.setText(
 						new StringBuffer().append("<h1>새 정보 수정</h1>").
 						append("당신의 새 비밀번호는 다음과 같습니다.<br>").
-						append("<h1>"+pw+"</h1>").toString());
+						append("<h1>"+pw+"</h1>").
+						append("아래의 링크를 누르면 비밀번호가 변경됩니다.<br>").
+						append("<a href='http://192.168.0.70:8090/club_application/updatePw.do?login_id=").
+						append(id).
+						append("&pw=").
+						append(pw).
+						append("' target='_blenk'>비밀번호 변경</a>").toString());
 				sendMail.setFrom("clubapplicationproject@gmail.com", "동호회");
 				sendMail.setTo(id);
 				sendMail.send();		
@@ -113,4 +119,23 @@ public class MailServiceImpl implements MailService {
 		}
 	}
 
+
+	@Transactional
+	@Override
+	public boolean tmpPwUpdate(String loginId, String pw) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		System.out.println(loginId+"\t"+pw);
+		
+		//1, 0
+		int userCount = dao.checkTmpPw(loginId, pw);
+		System.out.println(userCount);
+		
+		if(userCount==1) {
+			dao.updatePw(loginId, pw);
+			dao.deleteTmpPw(loginId);
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

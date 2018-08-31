@@ -31,6 +31,7 @@ import com.teamproject.club_application.authorized.MailService;
 import com.teamproject.club_application.data.Alarm;
 import com.teamproject.club_application.data.CalendarSchedule;
 import com.teamproject.club_application.data.Club;
+import com.teamproject.club_application.data.ClubMemberClass;
 import com.teamproject.club_application.data.Comment;
 import com.teamproject.club_application.data.Image;
 import com.teamproject.club_application.data.Member;
@@ -411,6 +412,33 @@ public class MobileController {
 		System.out.println(gson.toJson(count));
 		return gson.toJson(count);
 	}
+	
+
+	@RequestMapping(value="mobile/selectClub.do",produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String selectClub_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		String clubIdStr = request.getParameter("clubId");
+		String userIdStr = request.getParameter("userId");
+		Long clubId;
+		Long userId;
+		Gson gson = new Gson();
+		
+		if(clubIdStr!=null) {
+			clubId = Long.parseLong(clubIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+		if(userIdStr!=null) {
+			userId = Long.parseLong(userIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+		ClubMemberClass item = appService.selectClub(clubId, userId);
+		System.out.println(gson.toJson(item));
+		return gson.toJson(item);
+	}
+	
 	
 	@RequestMapping(value="mobile/selectClubInPage.do",produces = "application/json; charset=utf8")
 	@ResponseBody

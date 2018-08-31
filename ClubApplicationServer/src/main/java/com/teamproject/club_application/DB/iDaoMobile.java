@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.teamproject.club_application.data.Alarm;
 import com.teamproject.club_application.data.CalendarSchedule;
 import com.teamproject.club_application.data.Club;
+import com.teamproject.club_application.data.ClubMemberClass;
 import com.teamproject.club_application.data.Comment;
 import com.teamproject.club_application.data.Image;
 import com.teamproject.club_application.data.Member;
@@ -38,6 +39,10 @@ public interface iDaoMobile {
     public Integer selectFindPw(String loginId) ;
     public void updatePw(String loginId, String newPw);
     
+    public void createTmpPw(String loginId, String pw);
+    public Integer checkTmpPw(String loginId, String pw);
+    public void deleteTmpPw(String loginId);
+    
     //내 메뉴
     public ArrayList<Alarm> selectMyAlarm(Long userId);
     public ArrayList<Post> selectMyPost(Long userId);
@@ -48,6 +53,8 @@ public interface iDaoMobile {
     
     //클럽
     public void insertClub(Club club);
+    public Club selectClub(Long club_id);
+    public String selectClubMemberClass(Long club_id, Long user_id);
     public void joinClub(Long club_id, Long member_id, String verify);
     
 }

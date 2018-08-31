@@ -52,4 +52,21 @@ public class HomeController{
 			return "fail";
 		}
 	}
+	
+
+	@RequestMapping(value="/updatePw.do", method=RequestMethod.GET)
+	public String updatePw(HttpServletRequest request) {
+		String id = request.getParameter("login_id");
+		String pw = request.getParameter("pw");
+		System.out.println(id+"\t"+pw);
+		boolean isSuccess = service.tmpPwUpdate(id, pw);
+		
+		if(isSuccess) {	
+			//인증 성공
+			return "tmpPwSuccess";
+		} else {
+			//인증 실패
+			return "tmpPwFail";
+		}
+	}
 }

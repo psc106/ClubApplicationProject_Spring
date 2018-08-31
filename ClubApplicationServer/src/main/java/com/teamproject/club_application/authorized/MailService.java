@@ -6,4 +6,5 @@ public interface MailService {
 	public void authCreate(Member member);
 	public boolean authUpdate(String id, String key);	
 	public boolean findPw(String id);	
+	public boolean tmpPwUpdate(String loginId, String pw);
 }
