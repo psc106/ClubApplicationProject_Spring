@@ -35,6 +35,7 @@ import com.teamproject.club_application.data.ClubMemberClass;
 import com.teamproject.club_application.data.Comment;
 import com.teamproject.club_application.data.Image;
 import com.teamproject.club_application.data.Member;
+import com.teamproject.club_application.data.Notice;
 import com.teamproject.club_application.data.Post;
 import com.teamproject.club_application.data.Schedule;
 import com.teamproject.club_application.data.TestData;
@@ -143,6 +144,57 @@ public class MobileController {
 				
 		return gson.toJson(list);
 	}
+	
+	
+
+	//여기서 이미지 저용량으로 처리해야함
+	@RequestMapping(value="mobile/selectClubNotice.do",produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String selectClubNotice_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		String clubIdStr = request.getParameter("clubId");
+		String pageStr = request.getParameter("page");
+		Long clubId;
+		Integer page;
+		Gson gson = new Gson();
+		
+		if(clubIdStr!=null) {
+			clubId = Long.parseLong(clubIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+
+		if(pageStr!=null) {
+			page = Integer.parseInt(pageStr);
+		} else {
+			return gson.toJson(null);
+		}
+		
+		ArrayList<Notice> items = dao.selectClubNotice(clubId, page);
+		
+		return gson.toJson(items);
+	}
+	@RequestMapping(value="mobile/selectClubProfileImg.do",produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String selectClubProfileImg_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		String attachPath = "resources/upload/";		
+		String clubIdStr = request.getParameter("clubId");
+		Long clubId;
+		Gson gson = new Gson();
+		
+		if(clubIdStr!=null) {
+			clubId = Long.parseLong(clubIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+				
+		Image item = dao.selectClubProfileImg(clubId);
+		
+		return gson.toJson(attachPath+item.getImg_db_name());
+	}
+	
+
 	
 	@RequestMapping(value="mobile/selectLoginUser.do",produces = "application/json; charset=utf8")
 	@ResponseBody

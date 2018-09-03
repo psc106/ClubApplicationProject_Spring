@@ -42,7 +42,7 @@
 <select id="selectLoginUser" resultType="com.teamproject.club_application.data.Member">
 	select * from Member where login_id=#{param1} and login_pw=#{param2}
 </select>
-<select id="refreshMemberInfo" resultType="com.teamproject.club_application.data.Member">
+<select id="refreshLoginUser" resultType="com.teamproject.club_application.data.Member">
 	select * from Member where id=#{param1}
 </select>
 <!-- 로그인 항목 끝 -->
@@ -161,6 +161,23 @@
 	insert into club_member values(club_member_seq.nextval, #{param1}, #{param2}, #{param3})
 	
 </insert>
+
+<select id="selectClubProfileImg" resultType="com.teamproject.club_application.data.Image">
+	select *
+	from image I, club C
+	where C.image_id = I.id and C.id = #{param1}
+</select>
+
+
+<select id="selectClubNotice" resultType="com.teamproject.club_application.data.Notice">
+	<![CDATA[
+	SELECT id, club_id, content, create_date 
+	FROM (	SELECT N.*, ROW_NUMBER() OVER(ORDER BY rownum desc) RN 
+			from notice N 
+			where N.club_id=#{param1})	
+	where RN <= #{param2}*10 and RN > (#{param2}-1)*10
+	]]>
+</select>
 <!-- 클럽 항목 끝 -->
 
 <!-- oracle 쿼리문 작성 끝-->

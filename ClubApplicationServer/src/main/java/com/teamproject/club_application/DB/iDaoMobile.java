@@ -2,16 +2,7 @@ package com.teamproject.club_application.DB;
 
 import java.util.ArrayList;
 
-import com.teamproject.club_application.data.Alarm;
-import com.teamproject.club_application.data.CalendarSchedule;
-import com.teamproject.club_application.data.Club;
-import com.teamproject.club_application.data.ClubMemberClass;
-import com.teamproject.club_application.data.Comment;
-import com.teamproject.club_application.data.Image;
-import com.teamproject.club_application.data.Member;
-import com.teamproject.club_application.data.Post;
-import com.teamproject.club_application.data.Schedule;
-import com.teamproject.club_application.data.TestData;
+import com.teamproject.club_application.data.*;
 
 //mapper.xml에 작성된 쿼리문과 연결된 메소드들.
 
@@ -56,5 +47,7 @@ public interface iDaoMobile {
     public Club selectClub(Long club_id);
     public String selectClubMemberClass(Long club_id, Long user_id);
     public void joinClub(Long club_id, Long member_id, String verify);
+    public Image selectClubProfileImg(Long club_id);
+    public ArrayList<Notice> selectClubNotice(Long club_id, Integer page);
     
 }
