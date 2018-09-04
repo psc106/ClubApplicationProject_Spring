@@ -36,7 +36,7 @@ public interface iDaoMobile {
     
     //³» ¸Þ´º
     public ArrayList<Alarm> selectMyAlarm(Long userId);
-    public ArrayList<Post> selectMyPost(Long userId);
+    public ArrayList<PostView> selectMyPost(Long userId);
     public ArrayList<Comment> selectMyComment(Long userId);
     public ArrayList<Club> selectMyClub(Long userId);   
     public ArrayList<Schedule> selectMySchedule(Long userId);
@@ -47,7 +47,12 @@ public interface iDaoMobile {
     public Club selectClub(Long club_id);
     public String selectClubMemberClass(Long club_id, Long user_id);
     public void joinClub(Long club_id, Long member_id, String verify);
+	public void makeClubProfile(Long club_id, Long user_id);
     public Image selectClubProfileImg(Long club_id);
+    
     public ArrayList<Notice> selectClubNotice(Long club_id, Integer page);
+    public ArrayList<PostView> selectClubPost(Long club_id, Integer page);
+    public ArrayList<AlbumView> selectClubAlbum(Long club_id, Integer page);
+    
     
 }

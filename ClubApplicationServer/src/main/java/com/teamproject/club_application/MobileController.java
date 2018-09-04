@@ -37,6 +37,7 @@ import com.teamproject.club_application.data.Image;
 import com.teamproject.club_application.data.Member;
 import com.teamproject.club_application.data.Notice;
 import com.teamproject.club_application.data.Post;
+import com.teamproject.club_application.data.PostView;
 import com.teamproject.club_application.data.Schedule;
 import com.teamproject.club_application.data.TestData;
 import com.teamproject.club_application.util.Util;
@@ -267,7 +268,7 @@ public class MobileController {
 			return gson.toJson(null);
 		}
 				
-		ArrayList<Post> items = dao.selectMyPost(userId);
+		ArrayList<PostView> items = dao.selectMyPost(userId);
 		
 		return gson.toJson(items);
 	}
@@ -486,6 +487,8 @@ public class MobileController {
 		} else {
 			return gson.toJson(null);
 		}
+		System.out.println(clubId);
+		System.out.println(userId);
 		ClubMemberClass item = appService.selectClub(clubId, userId);
 		System.out.println(gson.toJson(item));
 		return gson.toJson(item);

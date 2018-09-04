@@ -144,6 +144,9 @@
 	</selectKey>	
 	insert into club values ( #{id}, #{category_id}, #{member_id}, #{image_id}, #{name}, #{local}, #{max_people}, #{intro}, sysdate)
 </insert>
+<insert id="makeClubProfile">
+	insert into profile(id, club_id, member_id, nickname) values (profile_seq.nextval, #{param1}, #{param2}, (select name from member where #{param1})))
+</insert>
 
 <select id="selectClub" resultType="com.teamproject.club_application.data.Club">
 	select C.*

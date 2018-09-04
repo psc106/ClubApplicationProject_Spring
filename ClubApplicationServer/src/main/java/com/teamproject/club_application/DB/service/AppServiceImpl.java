@@ -32,6 +32,7 @@ public class AppServiceImpl implements AppService {
 		}
 		dao.insertClub(club);
 		dao.joinClub(club.getId(), club.getMember_id(), "Y");
+		dao.makeClubProfile(club.getId(), club.getMember_id());
 		return club.getId();
 	}
 
@@ -45,17 +46,20 @@ public class AppServiceImpl implements AppService {
 		ClubMemberClass clubMemberClass;
 		Club club = dao.selectClub(club_id);
 		String memberClass = dao.selectClubMemberClass(club_id, user_id);
-		if(memberClass.equals("Y")) {			
-			if(club.getMember_id() == user_id) {
-				memberClass = "A";
-			} 
-		} else {
+		if(memberClass==null) {
 			if(user_id==-1L) {
 				memberClass = "O";
 			} else {
 				memberClass = "N";
 			}
+		} else if(memberClass.equals("Y")) {			
+			if(club.getMember_id() == user_id) {
+				memberClass = "A";
+			}
+		} else {
+			memberClass = "O";
 		}
+		
 		clubMemberClass = new ClubMemberClass(club, memberClass);
 
 		return clubMemberClass;
