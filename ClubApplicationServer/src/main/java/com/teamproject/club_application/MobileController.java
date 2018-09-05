@@ -210,6 +210,55 @@ public class MobileController {
 		return gson.toJson(item);
 	}
 
+
+	
+	@RequestMapping(value="mobile/joinClub.do",produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String joinClub_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		String clubIdStr = request.getParameter("clubId");
+		String userIdStr = request.getParameter("userId");		
+		Long clubId, userId;
+		Gson gson = new Gson();
+
+		if(clubIdStr!=null) {
+			clubId = Long.parseLong(clubIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+
+		if(userIdStr!=null) {
+			userId = Long.parseLong(userIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+
+		appService.joinClub(clubId, userId);
+		
+		return gson.toJson("");
+	}
+	
+
+	@RequestMapping(value="mobile/selectJoinMember.do",produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String selectJoinMember_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		String clubIdStr = request.getParameter("clubId");
+		Long clubId, userId;
+		Gson gson = new Gson();
+
+		if(clubIdStr!=null) {
+			clubId = Long.parseLong(clubIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+
+		ArrayList<Member> = 
+		
+		return gson.toJson("");
+	}
+
+	
 	@RequestMapping(value="mobile/refreshMemberInfo.do",produces = "application/json; charset=utf8")
 	@ResponseBody
 	public String refreshMemberInfo_toMobile(HttpServletRequest request) {

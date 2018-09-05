@@ -66,4 +66,12 @@ public class AppServiceImpl implements AppService {
 	}
 
 
+	@Override
+	public void joinClub(Long club_id, Long user_id) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		dao.joinClub(club_id, user_id, "N");
+		dao.makeClubProfile(club_id, user_id);		
+	}
+
+
 }

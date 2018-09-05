@@ -7,5 +7,7 @@ import com.teamproject.club_application.data.Image;
 public interface AppService {
 	public Long insertClub(Image image, Club club);
 	public ClubMemberClass selectClub(Long club_id, Long user_id);
+	
+	public void joinClub(Long club_id, Long user_id); 
 
 }
