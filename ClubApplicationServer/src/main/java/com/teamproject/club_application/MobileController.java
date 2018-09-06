@@ -35,6 +35,7 @@ import com.teamproject.club_application.data.ClubMemberClass;
 import com.teamproject.club_application.data.Comment;
 import com.teamproject.club_application.data.Image;
 import com.teamproject.club_application.data.Member;
+import com.teamproject.club_application.data.MemberView;
 import com.teamproject.club_application.data.Notice;
 import com.teamproject.club_application.data.Post;
 import com.teamproject.club_application.data.PostView;
@@ -189,10 +190,15 @@ public class MobileController {
 		} else {
 			return gson.toJson(null);
 		}
+		System.out.println(clubIdStr);
 				
-		Image item = dao.selectClubProfileImg(clubId);
-		
-		return gson.toJson(attachPath+item.getImg_db_name());
+		if(dao.checkClubProfileImg(clubId)>0) {
+			Image item = dao.selectClubProfileImg(clubId);
+			System.out.println(item);
+			return gson.toJson(attachPath+item.getImg_db_name());
+		} else {
+			return gson.toJson(null);
+		}
 	}
 	
 
@@ -244,7 +250,7 @@ public class MobileController {
 	public String selectJoinMember_toMobile(HttpServletRequest request) {
 		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
 		String clubIdStr = request.getParameter("clubId");
-		Long clubId, userId;
+		Long clubId;
 		Gson gson = new Gson();
 
 		if(clubIdStr!=null) {
@@ -253,11 +259,29 @@ public class MobileController {
 			return gson.toJson(null);
 		}
 
-		ArrayList<Member> = 
+		ArrayList<MemberView> items = dao.selectJoinMember(clubId);
 		
-		return gson.toJson("");
+		return gson.toJson(items);
 	}
 
+	@RequestMapping(value="mobile/selectWaitingMember.do",produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String selectWaitingMember_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		String clubIdStr = request.getParameter("clubId");
+		Long clubId;
+		Gson gson = new Gson();
+
+		if(clubIdStr!=null) {
+			clubId = Long.parseLong(clubIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+
+		ArrayList<MemberView> items = dao.selectWaitingMember(clubId);
+		
+		return gson.toJson(items);
+	}
 	
 	@RequestMapping(value="mobile/refreshMemberInfo.do",produces = "application/json; charset=utf8")
 	@ResponseBody
@@ -399,6 +423,7 @@ public class MobileController {
 		
 		int week = cal.get(Calendar.DAY_OF_WEEK);
 		int maxDay = cal.getActualMaximum(Calendar.DATE);
+		
 		ArrayList<CalendarSchedule> realItems = new ArrayList<CalendarSchedule>();
 		
 		for(int i = 1; i < week; ++i) {
@@ -613,16 +638,24 @@ public class MobileController {
 		Long userId = null;
 		Integer maxPeople = null;
 
+		System.out.println("?");
 		if(categoryIdStr!=null && !categoryIdStr.equals("")) {
+			System.out.println("1");
 			categoryId = Long.parseLong(categoryIdStr);
 		}
 		if(userIdStr!=null && !userIdStr.equals("")) {
+			System.out.println("2");
 			userId = Long.parseLong(userIdStr);
 		}
 		if(maxPeopleStr!=null && !maxPeopleStr.equals("")) {
+			System.out.println("3");
 			maxPeople = Integer.parseInt(maxPeopleStr);
 		}
 		if(categoryId == null || userId==null || maxPeople==null) {
+			System.out.println("4");
+			System.out.println(categoryId);
+			System.out.println(userId);
+			System.out.println(maxPeople);
 			return gson.toJson(0);
 		}
 		
@@ -636,6 +669,7 @@ public class MobileController {
 		Iterator<?> iter = multiRequest.getFileNames();
 		MultipartFile file = null;
 		Image image = null;
+		System.out.println("start");
 		while(iter.hasNext()) {
 			String fileName = (String)(iter.next());
 			file = multiRequest.getFile(fileName);

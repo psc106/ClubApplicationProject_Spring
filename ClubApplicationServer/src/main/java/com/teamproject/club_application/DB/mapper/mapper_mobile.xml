@@ -5,19 +5,18 @@
 <mapper namespace="com.teamproject.club_application.DB.iDaoMobile">
 <!-- 맵핑 데이터 -->
 <!-- 
-<resultMap type="com.teamproject.club_application.data.ClubMemberClass" id="ClubMemberClass">
-	<result property="club.id" column="id"/>
-	<result property="club.category_id" column="category_id"/>
-	<result property="club.member_id" column="member_id"/>
-	<result property="club.image_id" column="image_id"/>
-	<result property="club.name" column="name"/>
-	<result property="club.local" column="local"/>
-	<result property="club.max_people" column="max_people"/>
-	<result property="club.intro" column="intro"/>
-	<result property="club.create_date" column="create_date"/>
-	<result property="memberClass" column="class"/>
-</resultMap>
  -->
+ <resultMap type="com.teamproject.club_application.data.MemberView" id="memberView">
+ 	<result property="memberId" column="id"/>
+ 	<result property="loginId" column="login_id"/>
+ 	<result property="name" column="name"/>
+ 	<result property="birthday" column="birthday"/>
+ 	<result property="gender" column="gender"/>
+ 	<result property="local" column="local"/>
+ 	<result property="phone" column="phone"/>
+ 	<result property="nickname" column="nickname"/>
+ 	<result property="imgUrl" column="img_db_name"/>
+ </resultMap>
 <!-- 맵핑 데이터 끝-->
 
 <!-- oracle 쿼리문 작성 시작-->
@@ -145,7 +144,10 @@
 	insert into club values ( #{id}, #{category_id}, #{member_id}, #{image_id}, #{name}, #{local}, #{max_people}, #{intro}, sysdate)
 </insert>
 <insert id="makeClubProfile">
-	insert into profile(id, club_id, member_id, nickname) values (profile_seq.nextval, #{param1}, #{param2}, (select name from member where #{param1})))
+	insert into profile(id, club_id, member_id, image_id, nickname) 
+		select profile_seq.nextval, #{param1}, #{param2}, -1, M.name 
+		from member M
+		where M.id=#{param2}
 </insert>
 
 <select id="selectClub" resultType="com.teamproject.club_application.data.Club">
@@ -165,8 +167,14 @@
 	
 </insert>
 
+<select id="checkClubProfileImg" resultType="Long">
+	select C.image_id
+	from club C
+	where C.id = #{param1}
+</select>
+
 <select id="selectClubProfileImg" resultType="com.teamproject.club_application.data.Image">
-	select *
+	select I.*
 	from image I, club C
 	where C.image_id = I.id and C.id = #{param1}
 </select>
@@ -180,6 +188,32 @@
 			where N.club_id=#{param1})	
 	where RN <= #{param2}*10 and RN > (#{param2}-1)*10
 	]]>
+</select>
+
+
+<select id="selectWaitingMember" resultMap="memberView">
+	select SUB.id, sub.login_id, sub.name, sub.birthday, sub.gender, sub.local, sub.phone, sub.nickname, CASE
+                                                                                                        WHEN sub.image_id=-1 THEN 'null'
+                                                                                                        when sub.image_id>0 then i.img_db_name
+                                                                                                    end as img_db_name
+from (select SUB.id, sub.login_id, sub.name, sub.birthday, sub.gender, sub.local, sub.phone, P.nickname, P.image_id
+        from (	select M.*
+                from member M, club_member CM
+                where CM.club_id=#{param1} and CM.member_id=M.id and CM.class like 'N') SUB, profile P
+        where P.club_id=#{param1} and P.member_id=SUB.id) 
+        SUB, image I
+</select>
+<select id="selectJoinMember" resultMap="memberView">
+	select SUB.id, sub.login_id, sub.name, sub.birthday, sub.gender, sub.local, sub.phone, sub.nickname, CASE
+                                                                                                        WHEN sub.image_id=-1 THEN 'null'
+                                                                                                        when sub.image_id>0 then i.img_db_name
+                                                                                                    end as img_db_name
+from (select SUB.id, sub.login_id, sub.name, sub.birthday, sub.gender, sub.local, sub.phone, P.nickname, P.image_id
+        from (	select M.*
+                from member M, club_member CM
+                where CM.club_id=#{param1} and CM.member_id=M.id and CM.class like 'Y') SUB, profile P
+        where P.club_id=#{param1} and P.member_id=SUB.id) 
+        SUB, image I
 </select>
 <!-- 클럽 항목 끝 -->
 

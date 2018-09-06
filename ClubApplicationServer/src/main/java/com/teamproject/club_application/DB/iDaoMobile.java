@@ -48,11 +48,16 @@ public interface iDaoMobile {
     public String selectClubMemberClass(Long club_id, Long user_id);
     public void joinClub(Long club_id, Long member_id, String verify);
 	public void makeClubProfile(Long club_id, Long user_id);
+    public Long checkClubProfileImg(Long clubId);
     public Image selectClubProfileImg(Long club_id);
     
     public ArrayList<Notice> selectClubNotice(Long club_id, Integer page);
     public ArrayList<PostView> selectClubPost(Long club_id, Integer page);
     public ArrayList<AlbumView> selectClubAlbum(Long club_id, Integer page);
+    
+    public ArrayList<MemberView> selectJoinMember(Long clubId);
+    public ArrayList<MemberView> selectWaitingMember(Long clubId);
+    
     
     
 }
