@@ -281,7 +281,7 @@ public class HomeController{
 		iDao iDAO = sqlSession.getMapper(iDao.class);
 		//iDAO.insertMember(login_mail, pw, name, birthday, i_gender, local, phone);
 		
-		Member member = new Member(-1, login_mail, pw, name, birthday, i_gender, local, login_mail, phone, "N");
+		Member member = new Member(-1, login_mail, pw, name, birthday, i_gender, local, phone, "N");
 		service.authCreate(member);
 		
 		return "redirect:login.do";

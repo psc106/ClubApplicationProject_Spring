@@ -1,20 +1,15 @@
 package com.teamproject.club_application.util;
 
-<<<<<<< HEAD
 import java.awt.image.BufferedImage;
 import java.io.File;
-=======
 import java.io.PrintWriter;
->>>>>>> refs/remotes/origin/abcd
 import java.util.ArrayList;
 import java.util.UUID;
 
-<<<<<<< HEAD
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
 import org.imgscalr.Scalr;
-=======
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -25,7 +20,7 @@ import org.springframework.ui.Model;
 import com.teamproject.club_application.DB.iDao;
 import com.teamproject.club_application.data.ClubMember;
 import com.teamproject.club_application.data.Member;
->>>>>>> refs/remotes/origin/abcd
+
 
 public class Util {
 	
