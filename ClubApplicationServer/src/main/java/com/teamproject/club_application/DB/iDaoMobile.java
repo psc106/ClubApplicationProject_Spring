@@ -50,7 +50,8 @@ public interface iDaoMobile {
 	public void makeClubProfile(Long club_id, Long user_id);
     public Long checkClubProfileImg(Long clubId);
     public Image selectClubProfileImg(Long club_id);
-    
+
+    public int getNoticeCount(Long club_id);
     public ArrayList<Notice> selectClubNotice(Long club_id, Integer page);
     public ArrayList<PostView> selectClubPost(Long club_id, Integer page);
     public ArrayList<AlbumView> selectClubAlbum(Long club_id, Integer page);

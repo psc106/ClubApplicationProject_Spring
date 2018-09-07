@@ -147,7 +147,30 @@ public class MobileController {
 		return gson.toJson(list);
 	}
 	
-	
+
+
+	//여기서 이미지 저용량으로 처리해야함
+	@RequestMapping(value="mobile/getNoticeCount.do",produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String getNoticeCount_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		String clubIdStr = request.getParameter("clubId");
+		Long clubId;
+		Integer page;
+		Gson gson = new Gson();
+		
+		if(clubIdStr!=null) {
+			clubId = Long.parseLong(clubIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+
+		
+		
+		int item = dao.getNoticeCount(clubId);
+		
+		return gson.toJson(item);
+	}
 
 	//여기서 이미지 저용량으로 처리해야함
 	@RequestMapping(value="mobile/selectClubNotice.do",produces = "application/json; charset=utf8")
@@ -564,6 +587,34 @@ public class MobileController {
 		System.out.println(clubId);
 		System.out.println(userId);
 		ClubMemberClass item = appService.selectClub(clubId, userId);
+		System.out.println(gson.toJson(item));
+		return gson.toJson(item);
+	}
+	
+
+	@RequestMapping(value="mobile/refreshMemberClass.do",produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String refreshMemberClass_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		String clubIdStr = request.getParameter("clubId");
+		String userIdStr = request.getParameter("userId");
+		Long clubId;
+		Long userId;
+		Gson gson = new Gson();
+		
+		if(clubIdStr!=null) {
+			clubId = Long.parseLong(clubIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+		if(userIdStr!=null) {
+			userId = Long.parseLong(userIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+		System.out.println(clubId);
+		System.out.println(userId);
+		String item = dao.selectClubMemberClass(clubId, userId);
 		System.out.println(gson.toJson(item));
 		return gson.toJson(item);
 	}

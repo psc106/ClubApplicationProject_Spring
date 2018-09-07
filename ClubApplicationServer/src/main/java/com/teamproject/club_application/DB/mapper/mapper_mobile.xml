@@ -54,7 +54,7 @@
 <insert id="insertMember" parameterType="com.teamproject.club_application.data.Member"> 
 	<selectKey keyProperty="id" resultType="Integer" order="BEFORE"> 
 		select member_seq.nextval from dual
-	</selectKey>	
+	</selectKey>
 	insert into member values ( #{id}, #{login_id}, #{login_pw}, #{name}, #{birthday}, #{gender}, #{local}, #{phone}, #{verify})
 </insert>
 
@@ -124,7 +124,7 @@
 </select>
 
 <select id="selectMyClub" resultType="com.teamproject.club_application.data.Club">
-	select * from Club where member_id=#{param1}
+	select c.* from Club_member cm, Club c where cm.member_id=#{param1} and cm.club_id=c.id
 </select>
 
 <select id="selectMyDaySchedule" resultType="com.teamproject.club_application.data.Schedule">
@@ -157,7 +157,7 @@
 </select>
 
 <select id="selectClubMemberClass" resultType="String">
-	select CM.class
+	select CM.verify
 	from Club_Member CM
 	where CM.club_id = #{param1} and CM.member_id = #{param2} 
 </select>
@@ -180,6 +180,13 @@
 </select>
 
 
+
+<select id="getNoticeCount" resultType="Integer">
+	SELECT count(*)
+	from notice N 
+	where N.club_id=#{param1}
+</select>
+
 <select id="selectClubNotice" resultType="com.teamproject.club_application.data.Notice">
 	<![CDATA[
 	SELECT id, club_id, content, create_date 
@@ -199,7 +206,7 @@
 from (select SUB.id, sub.login_id, sub.name, sub.birthday, sub.gender, sub.local, sub.phone, P.nickname, P.image_id
         from (	select M.*
                 from member M, club_member CM
-                where CM.club_id=#{param1} and CM.member_id=M.id and CM.class like 'N') SUB, profile P
+                where CM.club_id=#{param1} and CM.member_id=M.id and CM.verify like 'N') SUB, profile P
         where P.club_id=#{param1} and P.member_id=SUB.id) 
         SUB, image I
 </select>
@@ -211,7 +218,7 @@ from (select SUB.id, sub.login_id, sub.name, sub.birthday, sub.gender, sub.local
 from (select SUB.id, sub.login_id, sub.name, sub.birthday, sub.gender, sub.local, sub.phone, P.nickname, P.image_id
         from (	select M.*
                 from member M, club_member CM
-                where CM.club_id=#{param1} and CM.member_id=M.id and CM.class like 'Y') SUB, profile P
+                where CM.club_id=#{param1} and CM.member_id=M.id and CM.verify like 'Y') SUB, profile P
         where P.club_id=#{param1} and P.member_id=SUB.id) 
         SUB, image I
 </select>

@@ -37,8 +37,8 @@ public class AppServiceImpl implements AppService {
 	}
 
 
-	//	비로그인 	비회원 	회원 		관리자
-	//	'O'ut	'N'o	'Y'es	'A'dmin
+	//	비로그인	비회원 	대기		회원 		관리자
+	//	'O'ut	'N'o	'W'ait	'Y'es	'A'dmin
 	@Transactional
 	@Override
 	public ClubMemberClass selectClub(Long club_id, Long user_id) {
@@ -57,7 +57,7 @@ public class AppServiceImpl implements AppService {
 				memberClass = "A";
 			}
 		} else {
-			memberClass = "O";
+			memberClass = "W";
 		}
 		
 		clubMemberClass = new ClubMemberClass(club, memberClass);
