@@ -68,8 +68,8 @@
 		select count(*) from Auth A, Member m where A.login_id=#{param1} and A.key=#{param2} and m.verify='N'
 	</select>
 	
-	<update id="updateAuth">
-		update Member set VERIFY='Y' where login_id=#{param1}
+	<update id="updateAuth" parameterType="String">
+		update Member set VERIFY='Y' where login_id=#{loginId}
 	</update>	
 	
 	<delete id="deleteAuth">

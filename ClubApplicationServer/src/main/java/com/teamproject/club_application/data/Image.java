@@ -1,9 +1,9 @@
 package com.teamproject.club_application.data;
 
 public class Image {
-	long id;
-	String img_db_name;
-	String img_ori_name;
+	private long id;
+	private String img_db_name;
+	private String img_ori_name;
 	
 	public Image() {
 		// TODO Auto-generated constructor stub
@@ -15,6 +15,7 @@ public class Image {
 		this.img_db_name = img_db_name;
 		this.img_ori_name = img_ori_name;
 	}
+
 
 	public long getId() {
 		return id;
@@ -40,6 +41,4 @@ public class Image {
 		this.img_ori_name = img_ori_name;
 	}
 	
-	
-
 }

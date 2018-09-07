@@ -41,7 +41,7 @@ public class MailServiceImpl implements MailService {
 			sendMail.setSubject("[\"동호회\" 이메일 인증해주세요]");
 			sendMail.setText(
 					new StringBuffer().append("<h1>메일인증</h1>").
-					append("<a href='http://192.168.0.70:8090/club_application/authOk.do?login_id=").
+					append("<a href='http://localhost:8090/club_application/authOk.do?login_id=").
 					append(member.getLogin_id()).
 					append("&key=").
 					append(key).
@@ -64,8 +64,11 @@ public class MailServiceImpl implements MailService {
 	public boolean authUpdate(String loginId, String key) {
 		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
 		
+		System.out.println(loginId+"_"+key);
+		
 		//1, 0
 		int userCount = dao.checkAuth(loginId, key);
+		System.out.println(userCount);
 		
 		if(userCount==1) {
 			dao.updateAuth(loginId);
