@@ -3,17 +3,91 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.teamproject.club_application.DB.iDao">
+<resultMap type="com.teamproject.club_application.data.Post" id="PostProfile">
+	<result property="post.id" column="id"/>
+	<result property="post.club_id" column="club_id"/>
+	<result property="post.member_id" column="member_id"/>
+	<result property="post.content" column="content"/>
+	<result property="post.create_date" column="create_date"/>
+	<result property="profile.id" column="id"/>
+	<result property="profile.club_id" column="club_id"/>
+	<result property="profile.member_id" column="member_id"/>
+	<result property="profile.image_id" column="image_id"/>
+	<result property="profile.nickname" column="nickname"/>
+</resultMap>
+
+
 <!-- oracle 쿼리문 작성 시작-->
 <select id="getTestData" resultType="com.teamproject.club_application.data.TestData">
 select * from TestData
 </select>
 
+
+<!-- 공통 항목 -->
+<insert id="insertImage" parameterType="com.teamproject.club_application.data.Image"> 	
+	insert into image values (Image_seq.nextval, #{img_db_name}, #{img_ori_name})
+	<selectKey keyProperty="id" resultType="long" order="AFTER"> 
+		select Image_seq.currval from dual
+	</selectKey>
+</insert>
+
+
 <!-- 회원가입 관련 -->
 <select id="mailCheck" resultType="Integer">
-select count(*) from member where email=#{param1}
+select count(*) from member where login_id=#{param1}
 </select>
-<select id="insertMember" >
-Insert into member values (member_seq.nextval, '123', #{param1}, #{param2}, #{param3}, #{param4}, #{param5}, #{param6}, #{param7}, 'n')
+<insert id="insertMember" >
+Insert into member values (member_seq.nextval, #{param1}, #{param2}, #{param3}, #{param4}, #{param5}, #{param6}, '123mail' ,#{param7}, 'N')
+</insert>
+
+
+<!-- 로그인 관련 -->
+<select id="loginCheck" resultType="Integer">
+select count(*) from member where login_id=#{param1} and login_pw=#{param2} and verify='Y'
+</select>
+<select id="getMemberInfo" resultType="com.teamproject.club_application.data.Member">
+select * from member where login_id=#{param1}
+</select>
+<select id="getMyclub" resultType="com.teamproject.club_application.data.Club">
+select C.* from club_member CM, club C, member M where M.login_id like #{param1} and M.id=CM.member_id and CM.club_id=C.id
+</select>
+
+
+<!-- 동호회 관련 -->
+<select id="getCategoryList" resultType="com.teamproject.club_application.data.Category">
+select * from category
+</select>
+<insert id="insertClub" parameterType="com.teamproject.club_application.data.Club">
+insert into club values (club_seq.nextval, #{category_id}, #{member_id}, #{image_id}, #{name}, #{local}, #{max_people}, #{intro}, sysdate)
+<selectKey keyProperty="id" resultType="long" order="AFTER"> 
+		select club_seq.currval from dual
+</selectKey>
+</insert>
+<insert id="insertClubMember">
+insert into club_member values(club_member_seq.nextval, #{param1}, #{param2}, 'N')
+</insert>
+<insert id="insertProfile">
+insert into profile values(profile_seq.nextval, #{param1}, #{param2}, #{param3}, 'd닉네임')
+</insert>
+<select id="getClubInfo" resultType="com.teamproject.club_application.data.Club">
+select * from club where id=#{param1}
+</select>
+<select id="countClubMember" resultType="Integer">
+select count(*) from club_member where club_id=#{param1}
+</select>
+<select id="getClubMaster" resultType="String">
+select name from member where id=#{param1}
+</select>
+<select id="getClubMemberList" resultType="com.teamproject.club_application.data.ClubMember">
+select * from club_member
+</select>
+<select id="getClubMember" resultType="Integer">
+select count(*) from club_member where member_id=#{param1} and club_id=#{param2} and verify='Y'
+</select>
+
+<!-- 동호회 관련 -->
+<select id="getPostProfile" resultMap="PostProfile">
+select * from Post A, Profile B where A.club_id = B.club_id and A.member_id = B.member_id  Order by A.id desc
 </select>
 
 

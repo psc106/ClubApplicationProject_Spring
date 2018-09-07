@@ -1,5 +1,9 @@
+<%@page import="com.teamproject.club_application.data.Club"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%
+Club club_info = (Club)request.getAttribute("club_info");
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -29,13 +33,13 @@
 
 <script>
 function btn_club_board() {
-	document.location.href="myclub_board.do";
+	document.location.href="myclub_board.do?id=" + "<%=club_info.getId()%>";
 }
 function btn_club_album() {
-	document.location.href="myclub_album.do";
+	document.location.href="myclub_album.do?id=" + "<%=club_info.getId()%>";
 }
 function btn_club_calendar() {
-	document.location.href="myclub_calendar.do";
+	document.location.href="myclub_calendar.do?id=" + "<%=club_info.getId()%>";
 }
 </script>
 </head>
@@ -45,7 +49,7 @@ function btn_club_calendar() {
 <tr>
 	<td id="tab1"><button onclick="btn_club_board();">게시판</button></td>
 	<td id="tab2"><button onclick="btn_club_album();">앨범</button></td>
-	<td id="tab3"><button onclick="btn_club_calendar();">일정@</button></td>
+	<td id="tab3"><button onclick="btn_club_calendar();">일정</button></td>
 </tr>
 </table>
 </div>

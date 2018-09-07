@@ -1,5 +1,9 @@
+<%@page import="com.teamproject.club_application.data.Club"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%
+Club club_info = (Club)request.getAttribute("club_info");
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,6 +19,9 @@
 </style>
 
 <script>
+function myclub_setting() {
+	document.location.href = "myclub_setting.do?id=" + "<%=club_info.getId()%>";
+}
 </script>
 </head>
 <body>
@@ -22,6 +29,6 @@
 공지사항
 </div>
 
-<a href="myclub_setting.do"><img width="20px" height="20px" src="resources/setting_icon.png"/>동호회 설정</a>
+<a onclick="myclub_setting();" style="cursor:pointer"><img width="20px" height="20px" src="resources/setting_icon.png"/>동호회 설정</a>
 </body>
 </html>

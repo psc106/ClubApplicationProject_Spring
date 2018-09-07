@@ -104,6 +104,7 @@ function login_ok() {
 <div id="wrap">
 <div id="login_logo" name="login_logo"><img width="400px" height="250px" src="resources/main_logo.png" /></div><br>
 <form action="login_ok.do" id="login_form" method="post">
+
 	<table id="table_login">
 	<tr>
 		<td><input type="text" tabindex="1" placeholder="이메일" name="login_mail" id="login_mail" /></td>

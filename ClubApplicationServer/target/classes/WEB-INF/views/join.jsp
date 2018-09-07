@@ -148,7 +148,7 @@
 	<div id="wrap">
 		<h3>회원가입</h3>
 
-		<form action="join_ok.do" id="join_form">
+		<form action="join_ok.do" id="join_form" method="post">
 			<input type="hidden" name="check_mail" id="check_mail" value="0" />
 
 			<input type="text" name="login_mail" id="login_mail"
