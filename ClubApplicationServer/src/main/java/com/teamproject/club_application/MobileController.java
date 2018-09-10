@@ -26,10 +26,12 @@ import com.teamproject.club_application.DB.iDaoMobile;
 import com.teamproject.club_application.DB.service.AppService;
 import com.teamproject.club_application.authorized.MailService;
 import com.teamproject.club_application.data.Alarm;
+import com.teamproject.club_application.data.AlbumView;
 import com.teamproject.club_application.data.CalendarSchedule;
 import com.teamproject.club_application.data.Club;
 import com.teamproject.club_application.data.ClubMemberClass;
 import com.teamproject.club_application.data.Comment;
+import com.teamproject.club_application.data.CommentView;
 import com.teamproject.club_application.data.Image;
 import com.teamproject.club_application.data.Member;
 import com.teamproject.club_application.data.MemberView;
@@ -141,7 +143,6 @@ public class MobileController {
 		return gson.toJson(list);
 	}
 
-	// 여기서 이미지 저용량으로 처리해야함
 	@RequestMapping(value = "mobile/getNoticeCount.do", produces = "application/json; charset=utf8")
 	@ResponseBody
 	public String getNoticeCount_toMobile(HttpServletRequest request) {
@@ -213,7 +214,188 @@ public class MobileController {
 			return gson.toJson(null);
 		}
 	}
+	
 
+
+	@RequestMapping(value = "mobile/getPostCount.do", produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String getPostCount_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		String clubIdStr = request.getParameter("clubId");
+		Long clubId;
+		Integer page;
+		Gson gson = new Gson();
+
+		if (clubIdStr != null) {
+			clubId = Long.parseLong(clubIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+
+		int item = dao.getPostCount(clubId);
+
+		return gson.toJson(item);
+	}
+	
+	@RequestMapping(value = "mobile/selectClubPost.do", produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String selectClubPost_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		String clubIdStr = request.getParameter("clubId");
+		String pageStr = request.getParameter("page");
+		Long clubId;
+		Integer page;
+		Gson gson = new Gson();
+
+		if (clubIdStr != null) {
+			clubId = Long.parseLong(clubIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+		if (pageStr != null) {
+			page = Integer.parseInt(pageStr);
+		} else {
+			return gson.toJson(null);
+		}
+
+		ArrayList<PostView> items = dao.selectClubPost(clubId, page);
+
+		return gson.toJson(items);
+	}
+
+
+	@RequestMapping(value = "mobile/getAlbumCount.do", produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String getAlbumCount_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		String clubIdStr = request.getParameter("clubId");
+		Long clubId;
+		Integer page;
+		Gson gson = new Gson();
+
+		if (clubIdStr != null) {
+			clubId = Long.parseLong(clubIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+
+		int item = dao.getAlbumCount(clubId);
+
+		return gson.toJson(item);
+	}
+	
+	@RequestMapping(value = "mobile/selectClubAlbum.do", produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String selectClubAlbum_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		String clubIdStr = request.getParameter("clubId");
+		String pageStr = request.getParameter("page");
+		Long clubId;
+		Integer page;
+		Gson gson = new Gson();
+
+		if (clubIdStr != null) {
+			clubId = Long.parseLong(clubIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+		if (pageStr != null) {
+			page = Integer.parseInt(pageStr);
+		} else {
+			return gson.toJson(null);
+		}
+
+		ArrayList<AlbumView> items = dao.selectClubAlbum(clubId, page);
+
+		return gson.toJson(items);
+	}
+	
+
+
+	@RequestMapping(value = "mobile/getCommentCount.do", produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String getCommentCount_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		String postIdStr = request.getParameter("postId");
+		Long postId;
+		Integer page;
+		Gson gson = new Gson();
+
+		if (postIdStr != null) {
+			postId = Long.parseLong(postIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+
+		int item = dao.getCommentCount(postId);
+
+		return gson.toJson(item);
+	}
+
+	@RequestMapping(value = "mobile/selectPostComment.do", produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String selectPostComment_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		String postIdStr = request.getParameter("postId");
+		String pageStr = request.getParameter("page");
+		Long postId;
+		Integer page;
+		Gson gson = new Gson();
+
+		if (postIdStr != null) {
+			postId = Long.parseLong(postIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+		if (pageStr != null) {
+			page = Integer.parseInt(pageStr);
+		} else {
+			return gson.toJson(null);
+		}
+
+		ArrayList<CommentView> items = dao.selectPostComment(postId, page);
+
+		return gson.toJson(items);
+	}
+
+	@RequestMapping(value = "mobile/selectCurrPost.do", produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String selectCurrPost_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		String postIdStr = request.getParameter("postId");
+		Long postId;
+		Gson gson = new Gson();
+
+		if (postIdStr != null) {
+			postId = Long.parseLong(postIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+
+		PostView items = dao.selectCurrPost(postId);
+
+		return gson.toJson(items);
+	}
+	
+	@RequestMapping(value = "mobile/selectPostImg.do", produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String selectPostImg_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		String postIdStr = request.getParameter("postId");
+		Long postId;
+		Gson gson = new Gson();
+
+		if (postIdStr != null) {
+			postId = Long.parseLong(postIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+
+		ArrayList<String> items = dao.selectPostImg(postId);
+
+		return gson.toJson(items);
+	}
+	
 	@RequestMapping(value = "mobile/selectLoginUser.do", produces = "application/json; charset=utf8")
 	@ResponseBody
 	public String selectLoginUser_toMobile(HttpServletRequest request) {
@@ -557,6 +739,9 @@ public class MobileController {
 		return gson.toJson(item);
 	}
 
+	
+	
+	
 	@RequestMapping(value = "mobile/refreshMemberClass.do", produces = "application/json; charset=utf8")
 	@ResponseBody
 	public String refreshMemberClass_toMobile(HttpServletRequest request) {

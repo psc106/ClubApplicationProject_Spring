@@ -198,16 +198,89 @@
 </select>
 
 
+<select id="getPostCount" resultType="Integer">
+	SELECT count(*)
+	from post p 
+	where p.club_id=#{param1}
+</select>
+
+<select id="selectClubPost" resultType="com.teamproject.club_application.data.PostView">
+	<![CDATA[
+	SELECT SUB.id, SUB.member_id, pf.nickname, SUB.content, SUB.create_date, 
+                                                                    LAG(SUB.id, 1, -1) OVER(ORDER BY SUB.id desc) AS nextId, 
+                                                                    LEAD(SUB.id, 1, -1) OVER(ORDER BY SUB.id desc) AS previusId
+            FROM (	SELECT P.*, ROW_NUMBER() OVER(ORDER BY rownum desc) RN 
+                    from post P
+                    where P.club_id=#{param1}) SUB, profile pf
+            where SUB.RN <= #{param2}*10 and SUB.RN > (#{param2}-1)*10 		and 
+            		pf.member_id=SUB.member_id and SUB.club_id=pf.club_id
+	]]>
+</select>
+
+<select id="getAlbum" resultType="Integer">
+	SELECT count(*)
+	from album a 
+	where a.club_id=#{param1}
+</select>
+
+<select id="selectClubAlbum" resultType="com.teamproject.club_application.data.AlbumView">
+	<![CDATA[
+	            SELECT sub.id, i.img_db_name as url, pf.nickname, i.img_ori_name as realName, sub.create_date, 0 as img_size 
+            FROM (	SELECT A.*, ROW_NUMBER() OVER(ORDER BY rownum desc) RN 
+                    from album A
+                    where A.club_id=#{param1}) sub, profile pf, image i
+            where sub.RN <= #{param2}*10 and sub.RN > (#{param2}-1)*10 		and
+            		 pf.member_id=SUB.member_id and SUB.club_id=pf.club_id 	and 
+            		 i.id=sub.image_id  
+	]]>
+</select>
+
+
+<select id="selectCurrPost" resultType="com.teamproject.club_application.data.PostView">
+	<![CDATA[
+			SELECT p.id, p.member_id, pf.nickname, p.content, p.create_date, 
+                                                                    LAG(p.id, 1, -1) OVER(ORDER BY p.id desc) AS nextId, 
+                                                                    LEAD(p.id, 1, -1) OVER(ORDER BY p.id desc) AS previusId
+            FROM post p, profile pf
+            where pf.member_id=p.member_id and p.club_id=pf.club_id and p.id=#{param1}
+	]]>
+</select>
+
+
+<select id="selectPostImg" resultType="String">
+	SELECT i.img_db_name
+	FROM post_image pi, post p, image i 
+	where p.id=#{param1} and pi.post_id=p.id and pi.image_id=i.id 
+</select>
+
+<select id="getCommentCount" resultType="Integer">
+	SELECT count(*)
+	from comment c 
+	where c.id=#{param1}
+</select>
+
+<select id="selectPostComment" resultType="com.teamproject.club_application.data.CommentView">
+	<![CDATA[
+			SELECT SUB.id, pf.nickname, SUB.content, SUB.create_date
+            FROM (	SELECT c.*, ROW_NUMBER() OVER(ORDER BY rownum desc) RN 
+                    from comments c
+                    where c.post_id=#{param1}) SUB, profile pf, post p
+            where SUB.RN <= #{param2}*10 and SUB.RN > (#{param2}-1)*10 		and 
+            		pf.member_id=SUB.member_id and SUB.post_id=p.id and p.club_id = pf.club_id
+	]]>
+</select>
+
+
 <select id="selectWaitingMember" resultMap="memberView">
 	select SUB.id, sub.login_id, sub.name, sub.birthday, sub.gender, sub.local, sub.phone, sub.nickname, CASE
                                                                                                         WHEN sub.image_id=-1 THEN 'null'
                                                                                                         when sub.image_id>0 then i.img_db_name
                                                                                                     end as img_db_name
-from (select SUB.id, sub.login_id, sub.name, sub.birthday, sub.gender, sub.local, sub.phone, P.nickname, P.image_id
-        from (	select M.*
-                from member M, club_member CM
-                where CM.club_id=#{param1} and CM.member_id=M.id and CM.verify like 'N') SUB, profile P
-        where P.club_id=#{param1} and P.member_id=SUB.id) 
+	from (	select SUB.id, sub.login_id, sub.name, sub.birthday, sub.gender, sub.local, sub.phone, P.nickname, P.image_id
+        	from (	select M.*
+               	 	from member M, club_member CM
+                	where CM.club_id=#{param1} and CM.member_id=M.id and CM.verify like 'N') SUB, profile P
+        	where P.club_id=#{param1} and P.member_id=SUB.id) 
         SUB, image I
 </select>
 <select id="selectJoinMember" resultMap="memberView">
@@ -215,11 +288,11 @@ from (select SUB.id, sub.login_id, sub.name, sub.birthday, sub.gender, sub.local
                                                                                                         WHEN sub.image_id=-1 THEN 'null'
                                                                                                         when sub.image_id>0 then i.img_db_name
                                                                                                     end as img_db_name
-from (select SUB.id, sub.login_id, sub.name, sub.birthday, sub.gender, sub.local, sub.phone, P.nickname, P.image_id
-        from (	select M.*
-                from member M, club_member CM
-                where CM.club_id=#{param1} and CM.member_id=M.id and CM.verify like 'Y') SUB, profile P
-        where P.club_id=#{param1} and P.member_id=SUB.id) 
+	from (	select SUB.id, sub.login_id, sub.name, sub.birthday, sub.gender, sub.local, sub.phone, P.nickname, P.image_id
+        	from (	select M.*
+                	from member M, club_member CM
+                	where CM.club_id=#{param1} and CM.member_id=M.id and CM.verify like 'Y') SUB, profile P
+        	where P.club_id=#{param1} and P.member_id=SUB.id) 
         SUB, image I
 </select>
 <!-- 클럽 항목 끝 -->

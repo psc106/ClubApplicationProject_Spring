@@ -2,7 +2,7 @@ package com.teamproject.club_application.data;
 
 public class Comment {
     private  Long id;
-    private  Long club_id;
+    private  Long post_id;
     private  Long member_id;
     private   String content;
     private  String create_date;
@@ -14,7 +14,7 @@ public class Comment {
 	public Comment(Long id, Long club_id, Long member_id, String content, String create_date) {
 		super();
 		this.id = id;
-		this.club_id = club_id;
+		this.post_id = club_id;
 		this.member_id = member_id;
 		this.content = content;
 		this.create_date = create_date;
@@ -26,10 +26,10 @@ public class Comment {
 		this.id = id;
 	}
 	public Long getClub_id() {
-		return club_id;
+		return post_id;
 	}
 	public void setClub_id(Long club_id) {
-		this.club_id = club_id;
+		this.post_id = club_id;
 	}
 	public Long getMember_id() {
 		return member_id;

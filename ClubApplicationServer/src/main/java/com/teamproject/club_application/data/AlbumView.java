@@ -2,7 +2,6 @@ package com.teamproject.club_application.data;
 
 public class AlbumView {
     Long id;
-    Long tag_id;
     String url;
     String nickname;
     String realName;
@@ -14,12 +13,6 @@ public class AlbumView {
 	}
 	public void setId(Long id) {
 		this.id = id;
-	}
-	public Long getTag_id() {
-		return tag_id;
-	}
-	public void setTag_id(Long tag_id) {
-		this.tag_id = tag_id;
 	}
 	public String getUrl() {
 		return url;
@@ -52,11 +45,10 @@ public class AlbumView {
 		this.img_size = img_size;
 	}
 	
-    public AlbumView(Long id, Long tag_id, String url, String nickname, String realName, String create_date,
+    public AlbumView(Long id, String url, String nickname, String realName, String create_date,
 			String img_size) {
 		super();
 		this.id = id;
-		this.tag_id = tag_id;
 		this.url = url;
 		this.nickname = nickname;
 		this.realName = realName;
