@@ -208,7 +208,7 @@ public class MobileController {
 
 		if (dao.checkClubProfileImg(clubId) > 0) {
 			Image item = dao.selectClubProfileImg(clubId);
-			System.out.println(item);
+			System.out.println(attachPath + item.getImg_db_name());
 			return gson.toJson(attachPath + item.getImg_db_name());
 		} else {
 			return gson.toJson(null);
