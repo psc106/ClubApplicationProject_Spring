@@ -30,6 +30,7 @@ import com.teamproject.club_application.data.AlbumView;
 import com.teamproject.club_application.data.CalendarSchedule;
 import com.teamproject.club_application.data.Club;
 import com.teamproject.club_application.data.ClubMemberClass;
+import com.teamproject.club_application.data.ClubView;
 import com.teamproject.club_application.data.Comment;
 import com.teamproject.club_application.data.CommentView;
 import com.teamproject.club_application.data.Image;
@@ -634,7 +635,8 @@ public class MobileController {
 			return gson.toJson(null);
 		}
 
-		ArrayList<Club> items = dao.selectMyClub(userId);
+		ArrayList<ClubView> items = dao.selectMyClub(userId);
+		System.out.println(userId);
 
 		return gson.toJson(items);
 	}
@@ -732,10 +734,10 @@ public class MobileController {
 		} else {
 			return gson.toJson(null);
 		}
-		System.out.println(clubId);
-		System.out.println(userId);
+		System.out.println("a "+clubId);
+		System.out.println("a "+userId);
 		ClubMemberClass item = appService.selectClub(clubId, userId);
-		System.out.println(gson.toJson(item));
+		System.out.println("a "+gson.toJson(item));
 		return gson.toJson(item);
 	}
 
@@ -762,11 +764,12 @@ public class MobileController {
 		} else {
 			return gson.toJson(null);
 		}
-		System.out.println(clubId);
-		System.out.println(userId);
-		String item = dao.selectClubMemberClass(clubId, userId);
-		System.out.println(gson.toJson(item));
-		return gson.toJson(item);
+		
+		
+
+		ClubMemberClass item = appService.selectClub(clubId, userId);
+		
+		return gson.toJson(item.getMemberClass());
 	}
 
 	@RequestMapping(value = "mobile/selectClubInPage.do", produces = "application/json; charset=utf8")
