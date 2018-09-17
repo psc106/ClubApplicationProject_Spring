@@ -636,9 +636,14 @@ public class MobileController {
 		}
 
 		ArrayList<ClubView> items = dao.selectMyClub(userId);
-		System.out.println(userId);
+		System.out.println(gson.toJson(items));
+		for(int i = 0 ; i < items.size(); ++i) {
+			int cur_member = dao.getCurrentMemberCount(items.get(i).getId());
+			items.get(i).setCur_people(cur_member);
+		}
 
 		return gson.toJson(items);
+		
 	}
 
 	@RequestMapping(value = "mobile/insertMember.do", produces = "application/json; charset=utf8")
@@ -652,6 +657,7 @@ public class MobileController {
 		String local = request.getParameter("local");
 		String phone = request.getParameter("phone");
 		int gender;
+		
 		Gson gson = new Gson();
 		if (genderStr != null) {
 			gender = Integer.parseInt(genderStr);
@@ -690,10 +696,14 @@ public class MobileController {
 		String conditionLocal = request.getParameter("local");
 		String conditionCategoryStr = request.getParameter("category");
 
-		int conditionCategory = -1;
+		int conditionCategory = 0;
 		if (conditionCategoryStr != null && !conditionCategoryStr.equals("")) {
 			conditionCategory = Integer.parseInt(conditionCategoryStr);
 		}
+		System.out.println(conditionStr);
+		System.out.println(conditionLocal);
+		System.out.println(conditionCategoryStr);
+		
 
 		ArrayList<Club> clubs = new ArrayList<Club>();
 		String preQuery = "SELECT count(*) FROM club C where 1=1 ";
@@ -703,12 +713,14 @@ public class MobileController {
 		if (conditionLocal != null && !conditionLocal.equals("") && !conditionLocal.equals("null")) {
 			preQuery += " and C.LOCAL like '%" + conditionLocal + "%' ";
 		}
-		if (conditionCategory != -1) {
+		if (conditionCategory > 0) {
 			preQuery += " and C.CATEGORY_ID=" + conditionCategory;
 		}
 
 		Integer count = this.template.queryForObject(preQuery, Integer.class);
 
+		System.out.println(preQuery);
+		
 		Gson gson = new Gson();
 		System.out.println(gson.toJson(count));
 		return gson.toJson(count);
@@ -775,6 +787,7 @@ public class MobileController {
 	@RequestMapping(value = "mobile/selectClubInPage.do", produces = "application/json; charset=utf8")
 	@ResponseBody
 	public String selectClubInPage_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
 		String conditionStr = request.getParameter("main");
 		String conditionLocal = request.getParameter("local");
 		String conditionCategoryStr = request.getParameter("category");
@@ -783,34 +796,45 @@ public class MobileController {
 		if (conditionPageStr != null && !conditionPageStr.equals("")) {
 			conditionPage = Integer.parseInt(conditionPageStr);
 		}
-		int conditionCategory = -1;
+		int conditionCategory = 0;
 		if (conditionCategoryStr != null && !conditionCategoryStr.equals("")) {
 			conditionCategory = Integer.parseInt(conditionCategoryStr);
 		}
+		System.out.println(conditionStr);
+		System.out.println(conditionLocal);
+		System.out.println(conditionCategoryStr);
+		System.out.println(conditionPageStr);
 
-		ArrayList<Club> clubs = new ArrayList<Club>();
-		String preQuery = "SELECT DISTINCT ID,CATEGORY_ID,MEMBER_ID,IMAGE_ID,NAME,LOCAL,MAX_PEOPLE,INTRO,CREATE_DATE FROM (SELECT C.*, ROW_NUMBER() OVER(ORDER BY rownum desc) RN from club C where 1=1 ";
+		ArrayList<ClubView> clubs = new ArrayList<ClubView>();
+		String preQuery = 	"SELECT DISTINCT sub.ID,sub.CATEGORY_ID,sub.member_id,p.nickname,i.img_db_name as imgUrl,sub.NAME,sub.LOCAL,sub.MAX_PEOPLE, 0 as cur_people,sub.INTRO,sub.CREATE_DATE " +
+							"FROM (SELECT C.*, ROW_NUMBER() OVER(ORDER BY rownum desc) RN from club C where 1=1 ";
 		if (conditionStr != null && !conditionStr.equals("")) {
 			preQuery += " and (C.Name like '%" + conditionStr + "%' or C.Intro like '%" + conditionStr + "%') ";
 		}
 		if (conditionLocal != null && !conditionLocal.equals("") && !conditionLocal.equals("null")) {
 			preQuery += " and C.LOCAL like '%" + conditionLocal + "%' ";
 		}
-		if (conditionCategory != -1) {
+		if (conditionCategory > 0) {
 			preQuery += " and C.CATEGORY_ID=" + conditionCategory;
 		}
-		preQuery += ") WHERE RN<=" + 10 * (conditionPage);
+		preQuery += ") sub, profile p, image i WHERE RN<=" + 10 * (conditionPage);
 		if (conditionPage >= 2) {
 			preQuery += " AND RN>" + 10 * (conditionPage - 1);
 		}
-		clubs.addAll(this.template.query(preQuery, new RowMapper<Club>() {
-			public Club mapRow(ResultSet rs, int rowNum) throws SQLException {
-				Club club = new Club(rs.getLong(1), rs.getLong(2), rs.getLong(3), rs.getLong(4), rs.getString(5),
-						rs.getString(6), rs.getInt(7), rs.getString(8), rs.getString(9));
+		preQuery += " and sub.image_id=i.id and sub.member_id=p.member_id and sub.id=p.club_id";
+		clubs.addAll(this.template.query(preQuery, new RowMapper<ClubView>() {
+			public ClubView mapRow(ResultSet rs, int rowNum) throws SQLException {
+				ClubView club = new ClubView(rs.getLong(1), rs.getLong(2), rs.getLong(3), rs.getString(4), rs.getString(5), rs.getString(6),
+						rs.getString(7), rs.getInt(8), rs.getInt(9), rs.getString(10), rs.getString(11));
 				return club;
 			}
 		}));
+		for(int i = 0 ; i < clubs.size(); ++i) {
+			int cur_member = dao.getCurrentMemberCount(clubs.get(i).getId());
+			clubs.get(i).setCur_people(cur_member);
+		}
 		Gson gson = new Gson();
+		System.out.println(preQuery);
 		System.out.println(gson.toJson(clubs));
 		return gson.toJson(clubs);
 	}

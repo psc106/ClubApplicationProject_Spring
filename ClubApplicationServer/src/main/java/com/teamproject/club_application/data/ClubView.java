@@ -4,6 +4,7 @@ public class ClubView {
 
     private long id;
     private long category_id;
+    private long member_id;
     private String nickname;
     private String imgUrl;
     private String name;
@@ -23,6 +24,11 @@ public class ClubView {
 	}
 	public void setCategory_id(long category_id) {
 		this.category_id = category_id;
+	}
+	public long getMember_id() {
+		return member_id;
+	}public void setMember_id(long member_id) {
+		this.member_id = member_id;
 	}
 	public String getNickname() {
 		return nickname;
@@ -72,11 +78,14 @@ public class ClubView {
 	public void setCreate_date(String create_date) {
 		this.create_date = create_date;
 	}
-	public ClubView(long id, long category_id, String nickname, String imgUrl, String name, String local,
-			int max_people, int cur_people, String intro, String create_date) {
+
+    
+    public ClubView(long id, long category_id, long member_id, String nickname, String imgUrl, String name,
+			String local, int max_people, int cur_people, String intro, String create_date) {
 		super();
 		this.id = id;
 		this.category_id = category_id;
+		this.member_id = member_id;
 		this.nickname = nickname;
 		this.imgUrl = imgUrl;
 		this.name = name;
@@ -86,8 +95,7 @@ public class ClubView {
 		this.intro = intro;
 		this.create_date = create_date;
 	}
-    
-    public ClubView() {
+	public ClubView() {
 		// TODO Auto-generated constructor stub
 	}
 }

@@ -44,7 +44,8 @@ public interface iDaoMobile {
     
     //Å¬·´
     public void insertClub(Club club);
-    public Club selectClub(Long club_id);
+    public ClubView selectClub(Long club_id);
+    public Integer getCurrentMemberCount(Long club_id);
     public String selectClubMemberClass(Long club_id, Long user_id);
     public void joinClub(Long club_id, Long member_id, String verify);
 	public void makeClubProfile(Long club_id, Long user_id);

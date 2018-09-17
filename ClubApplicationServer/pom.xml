@@ -154,7 +154,7 @@
 			<artifactId>json-simple</artifactId>
 			<version>1.1</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-dbcp2</artifactId>
@@ -162,9 +162,9 @@
 		</dependency>
 
 		<dependency>
-		    <groupId>org.imgscalr</groupId>
-		    <artifactId>imgscalr-lib</artifactId>
-		    <version>4.2</version>
+			<groupId>org.imgscalr</groupId>
+			<artifactId>imgscalr-lib</artifactId>
+			<version>4.2</version>
 		</dependency>
 
 
@@ -179,6 +179,11 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
 			<version>${org.springframework-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.lazyluke</groupId>
+			<artifactId>log4jdbc-remix</artifactId>
+			<version>0.2.7</version>
 		</dependency>
 
 		<!-- Test -->

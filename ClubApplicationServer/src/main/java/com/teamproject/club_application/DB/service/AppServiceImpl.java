@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.teamproject.club_application.DB.iDaoMobile;
 import com.teamproject.club_application.data.Club;
 import com.teamproject.club_application.data.ClubMemberClass;
+import com.teamproject.club_application.data.ClubView;
 import com.teamproject.club_application.data.Image;
 
 @Service("ApplicationService")
@@ -44,7 +45,7 @@ public class AppServiceImpl implements AppService {
 	public ClubMemberClass selectClub(Long club_id, Long user_id) {
 		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
 		ClubMemberClass clubMemberClass;
-		Club club = dao.selectClub(club_id);
+		ClubView club = dao.selectClub(club_id);
 		String memberClass = dao.selectClubMemberClass(club_id, user_id);
 		if(memberClass==null) {
 			if(user_id==-1L) {
