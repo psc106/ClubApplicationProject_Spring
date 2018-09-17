@@ -23,12 +23,13 @@
 </div>
 
 <div id="club_content">
-관리자 페이지
+닉네임 설정</br>
+동호회 관리</br>
+멤버 관리</br>
+동호회 삭제</br>
 </div>
 
-<div id="right_nav">
-<jsp:include page="club_right_nav.jsp"></jsp:include>
-</div>
+
 
 </div>
 

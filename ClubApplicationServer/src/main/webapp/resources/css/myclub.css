@@ -17,18 +17,11 @@
 }
 
 #club_content {
-    width: 56%;
+    width: 75%;
     height:1100px;
-    float:left;
+    float:right;
     border: 1px solid #828282;
 	display: inline;
 	border: 1px solid black;
 }
 
-#right_nav {
-	margin-left: 30px;
-    width: 19%;
-    height:1100px;
-    float: right;
-    border: 1px solid #828282;
-}

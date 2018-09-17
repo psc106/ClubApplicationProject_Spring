@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -31,13 +32,18 @@ import com.teamproject.club_application.authorized.MailService;
 import com.teamproject.club_application.data.Category;
 import com.teamproject.club_application.data.Club;
 import com.teamproject.club_application.data.ClubMember;
+import com.teamproject.club_application.data.ClubView;
+import com.teamproject.club_application.data.Comment;
+import com.teamproject.club_application.data.CommentView;
 import com.teamproject.club_application.data.Image;
 import com.teamproject.club_application.data.Member;
+import com.teamproject.club_application.data.Post;
 import com.teamproject.club_application.data.PostProfile;
 import com.teamproject.club_application.util.Util;
 
 /*
 if(!Util.isLogin(request)) { // 로그인여부검사
+	referer = request.getHeader("referer");
 	return "redirect:check_login.do";
 }
 */
@@ -76,7 +82,6 @@ public class HomeController{
 	//로그인////////////////////////////////////////////////////////////////////////////////
 	@RequestMapping("login.do")
 	public String login(HttpServletRequest request) {
-		//<input type="hidden" name="url" value="<%=request.getHeader("referer") %>" />
 		
 		
 		
@@ -99,16 +104,18 @@ public class HomeController{
 			httpSession.setAttribute("login_member", login_member);
 			httpSession.setAttribute("myclub", myclub);
 			
-			
-			if(referer == null) {
-				return "redirect:home.do";
-			} else {
+			if(referer != null ) {
+				System.out.println("로그인referer : " + referer);
 				String[] splitUrl = referer.split("/");
 				for(int i=0; i<splitUrl.length; i++) {
-					System.out.print(splitUrl[i]+", ");
+					System.out.print(splitUrl[i]+",, ");
 				}
 				return "redirect:"+splitUrl[splitUrl.length-1]; // 마지막으로 들어온 페이지의 url 값에서 .do 부분 저장
+			} else {
+				System.out.println("로그인referer가 null임");
+				return "redirect:home.do"; // 돌아온 referer가 없어 home으로
 			}
+			
 		}else {
 			return "redirect:login.do"; // 로그인 실패
 		}
@@ -136,7 +143,15 @@ public class HomeController{
 	
 	//로그인 끝////////////////////////////////////////////////////////////////////////////////
 	@RequestMapping("search.do")
-	public String search() {		
+	public String search(HttpServletRequest request) {		
+		iDao iDAO = sqlSession.getMapper(iDao.class);
+		ArrayList<ClubView> getClubList = iDAO.getClubList();
+		ArrayList<Integer> getClubMemberCount = iDAO.getClubMemberCount();
+		
+		
+		request.setAttribute("getClubList", getClubList);
+		request.setAttribute("getClubMemberCount", getClubMemberCount);
+		
 		return "search";
 	}
 	
@@ -146,39 +161,154 @@ public class HomeController{
 	}
 	
 	@RequestMapping("my_schedule.do")
-	public String mySchedule() {		
+	public String mySchedule(HttpServletRequest request) {
+		if(!Util.isLogin(request)) { // 로그인여부검사
+			referer = request.getHeader("referer");
+			System.out.println(referer);
+			return "redirect:check_login.do";
+		}
+		
 		return "my_schedule";
 	}
 	
 	@RequestMapping("my_write.do")
-	public String myWrite() {		
+	public String myWrite(HttpServletRequest request) {		
+		if(!Util.isLogin(request)) { // 로그인여부검사
+			referer = request.getHeader("referer");
+			System.out.println(referer);
+			return "redirect:check_login.do";
+		}
+		
 		return "my_write";
 	}
 	
 	@RequestMapping("my_club.do")
-	public String myClub() {		
+	public String myClub(HttpServletRequest request) {
+		iDao iDAO = sqlSession.getMapper(iDao.class);
+		HttpSession httpSession = request.getSession();
+		if(!Util.isLogin(request)) { // 로그인여부검사
+			referer = request.getHeader("referer");
+			System.out.println(referer);
+			return "redirect:check_login.do";
+		}
+		
+		Member login_member = (Member)httpSession.getAttribute("login_member");
+		ArrayList<String> getMyclubList = iDAO.getMyclubList(login_member.getId());
+		
+		request.setAttribute("getMyclubList", getMyclubList);
+		
 		return "my_club";
 	}
 	
 	@RequestMapping("my_info.do")
-	public String myInfo() {		
+	public String myInfo(HttpServletRequest request) {		
+		HttpSession httpSession = request.getSession();
+		if(!Util.isLogin(request)) { // 로그인여부검사
+			referer = request.getHeader("referer");
+			System.out.println(referer);
+			return "redirect:check_login.do";
+		}
+		
+		Member login_member = (Member)httpSession.getAttribute("login_member");
+		httpSession.setAttribute("login_member", login_member);
+		
 		return "my_info";
 	}
 	
+	
+	@RequestMapping("my_info_update.do")
+	public String my_info_update(HttpServletRequest request) {		
+		
+		String pw = request.getParameter("login_pw");
+		String name = request.getParameter("name");
+		String birthday = request.getParameter("birthday");
+		String gender = request.getParameter("gender");
+		Integer i_gender = Integer.parseInt(gender);
+		String local = request.getParameter("local");
+		String phone = request.getParameter("phone");
+		System.out.println("마이인포 수정 : "+pw+name+birthday+i_gender+local+ phone);
+		iDao iDAO = sqlSession.getMapper(iDao.class);
+		HttpSession httpSession = request.getSession();
+		
+		Member login_member = (Member)httpSession.getAttribute("login_member");
+		
+		iDAO.updateMyInfo(pw, name, birthday, i_gender, local, phone, login_member.getId());
+		
+		Member new_login_member = iDAO.getMemberInfo(login_member.getLogin_id()); 
+		httpSession.setAttribute("login_member", new_login_member);
+		
+		return "my_info";
+	}	
+		
 	// 동호회 페이지 시작///////////////////////////////////////////////////////////////
 	@RequestMapping("myclub_board.do")
 	public String myclub_board(HttpServletRequest request, Model model) {
 		getClubInfo(request, model);
 		
 		iDao iDAO = sqlSession.getMapper(iDao.class);
-		ArrayList<PostProfile> PostProfile = iDAO.getPostProfile();
-		request.setAttribute("PostProfile", PostProfile);
+		String myclub_id = request.getParameter("id");
+		long l_myclub_id = Long.parseLong(myclub_id);
+		ArrayList<PostProfile> postProfile = iDAO.getPostProfile(l_myclub_id);
+		request.setAttribute("postProfile", postProfile);
 		
 				
 		
 		
 		return "myclub_board";
 	}
+	
+	@RequestMapping("myclub_detail.do")
+	public String myclub_detail(HttpServletRequest request, Model model) {
+		getClubInfo(request, model);
+		HttpSession httpSession = request.getSession();
+		
+		iDao iDAO = sqlSession.getMapper(iDao.class);
+		String myclub_id = request.getParameter("id");
+		long l_myclub_id = Long.parseLong(myclub_id);
+		String post_id = request.getParameter("post_id");
+		long l_post_id = Long.parseLong(post_id);		
+		
+		PostProfile postProfileDetail = iDAO.postProfileDetail(l_myclub_id, l_post_id);
+		String getProfileImage = iDAO.getProfileImage(postProfileDetail.getProfile().getImage_id());
+		ArrayList<String> getPostImage = iDAO.getPostImage(l_post_id);
+		
+		ArrayList<CommentView> getCommentList = iDAO.getCommentList(l_post_id); // 댓글 표시
+		
+		// 만약 로그인 세션이 있다면(로그인시 댓글기능 가능 여부 때문에 필요)
+		Member login_member = (Member)httpSession.getAttribute("login_member");
+		if(login_member != null) {
+			String getMyProfileImage = iDAO.getMyProfileImage(l_myclub_id, login_member.getId());
+			String getMynickname = iDAO.getMynickname(l_myclub_id, login_member.getId());
+			request.setAttribute("getMyProfileImage", getMyProfileImage);
+			request.setAttribute("getMynickname", getMynickname);
+		}
+		
+		request.setAttribute("postProfileDetail", postProfileDetail);
+		request.setAttribute("getProfileImage", getProfileImage);
+		request.setAttribute("getPostImage", getPostImage);
+		request.setAttribute("getCommentList", getCommentList);		
+		
+		return "myclub_detail";
+	}
+	
+	@RequestMapping("insert_comment.do")
+	public String insert_comment(HttpServletRequest request, Model model) {
+		HttpSession httpSession = request.getSession();
+		iDao iDAO = sqlSession.getMapper(iDao.class);
+		
+		
+		String myclub_id = request.getParameter("id");
+		long l_myclub_id = Long.parseLong(myclub_id);
+		String post_id = request.getParameter("post_id");
+		long l_post_id = Long.parseLong(post_id);
+		Member login_member = (Member)httpSession.getAttribute("login_member");
+		String comment_content = request.getParameter("comment_content");
+		
+		iDAO.insertComment(l_post_id, login_member.getId(), comment_content);
+		
+		return "redirect:myclub_detail.do?id="+l_myclub_id+"&post_id="+l_post_id;
+	}
+	
 	
 	@RequestMapping("myclub_write.do")
 	public String myclub_write(HttpServletRequest request, Model model) {
@@ -195,6 +325,59 @@ public class HomeController{
 		
 		
 		return "myclub_write";
+	}
+	
+	@RequestMapping("write_ok.do")
+	public String write_ok(HttpServletRequest request, MultipartHttpServletRequest mtfRequest) {
+		iDao iDAO = sqlSession.getMapper(iDao.class);
+		HttpSession httpSession = request.getSession();
+		
+		Member login_member = (Member)httpSession.getAttribute("login_member");
+		String content = request.getParameter("content");
+		Long writer_id = login_member.getId();
+		String myclub_id = request.getParameter("id");
+		long l_myclub_id = Long.parseLong(myclub_id);
+		
+		Post post = new Post(0L , l_myclub_id, writer_id, content, "create_date");
+		iDAO.writePost(post);
+		
+		Image image=null;
+		
+		List<MultipartFile> fileList = mtfRequest.getFiles("board_image");
+        
+        String root_path = request.getSession().getServletContext().getRealPath("/");
+		String attach_path = "resources/upload/";
+		String path = root_path + attach_path;
+        
+		for (MultipartFile mf : fileList) {
+			String origName = mf.getOriginalFilename();
+			
+			if (origName != null && !origName.equals("")) {
+				String ext = origName.substring(origName.lastIndexOf('.')); // 확장자
+				String saveFileName = Util.getRandomString() + ext;
+	
+	            File serverFile = new File(path + "/" + saveFileName);
+	            try {
+	                mf.transferTo(serverFile);
+	            } catch (IllegalStateException e) {
+	                // TODO Auto-generated catch block
+	                e.printStackTrace();
+	            } catch (IOException e) {
+	                // TODO Auto-generated catch block
+	                e.printStackTrace();
+	            }
+	            
+	            image = new Image(0l, saveFileName, origName);
+				if(image!=null) { // 이미지 있을 때
+					iDAO.insertImage(image);
+					iDAO.insertPostImage(post.getId(), login_member.getId(), image.getId());
+				}
+			}
+		}
+		
+		
+		
+		return "redirect:myclub_board.do?id=" + l_myclub_id;
 	}
 	
 	@RequestMapping("myclub_sel.do")
@@ -224,6 +407,7 @@ public class HomeController{
 	@RequestMapping("myclub_setting.do")
 	public String myclub_setting(HttpServletRequest request, Model model) {
 		getClubInfo(request, model);
+		// 로그인+회원 검사, 추가로 멤버관리는 회장만
 		
 		return "myclub_setting";
 	}
@@ -235,7 +419,7 @@ public class HomeController{
 	
 	@RequestMapping("check_login.do")
 	public String check_login(HttpServletRequest request, Model model) { // 로그인 체크메시지 페이지
-		referer = request.getHeader("referer");
+		System.out.println("referer! : " + referer);
 		
 		System.out.println("체크로그인 실행");
 		model.addAttribute("msgCheck", 1); 
@@ -247,7 +431,7 @@ public class HomeController{
 	
 	@RequestMapping("check_member.do")
 	public String check_member(HttpServletRequest request, Model model) { // 로그인 체크메시지 페이지
-		referer = request.getHeader("referer");
+		System.out.println("referer : " + referer);
 		
 		String myclub_id = request.getParameter("id");
 		long l_myclub_id = Long.parseLong(myclub_id);
@@ -338,6 +522,7 @@ public class HomeController{
 	@RequestMapping("create_club_ok.do")
 	public String create_club_ok(HttpServletRequest request, Model model) {
 		iDao iDAO = sqlSession.getMapper(iDao.class);
+		HttpSession httpSession = request.getSession();
 		
 		String root_path = request.getSession().getServletContext().getRealPath("/");
 		String attach_path = "resources/upload/";
@@ -352,7 +537,6 @@ public class HomeController{
 		String local = mhsr.getParameter("local");
 		String intro = mhsr.getParameter("intro");
 		
-		HttpSession httpSession = request.getSession();
 		Member login_member = (Member)httpSession.getAttribute("login_member");
 		
 		
@@ -398,7 +582,7 @@ public class HomeController{
 			club = new Club(0l, l_category, login_member.getId(), image.getId(), club_name, local, i_max_people, intro, "");
 			iDAO.insertClub(club);
 		}
-		iDAO.insertClubMember(club.getId(), login_member.getId());
+		iDAO.insertClubMember(club.getId(), login_member.getId(), "Y");
 		iDAO.insertProfile(club.getId(), login_member.getId(), -2);
 		//프로파일insert
 		
@@ -426,6 +610,7 @@ public class HomeController{
 		HttpSession httpSession = request.getSession();
 		
 		if(!Util.isLogin(request)) { // 로그인여부검사
+			referer = request.getHeader("referer");
 			return "redirect:check_login.do";
 		}
 		
@@ -435,7 +620,7 @@ public class HomeController{
 		long l_myclub_id = Long.parseLong(myclub_id);
 		Member login_member = (Member)httpSession.getAttribute("login_member");
 		
-		iDAO.insertClubMember(l_myclub_id, login_member.getId());
+		iDAO.insertClubMember(l_myclub_id, login_member.getId(), "N");
 		iDAO.insertProfile(l_myclub_id, login_member.getId(), -2);
 		
 		return "club_join_confirm";
@@ -476,6 +661,7 @@ public class HomeController{
 			return "tmpPwFail";
 		}
 	}
+	
 	public void getClubInfo(HttpServletRequest request, Model model) {
 		iDao iDAO = sqlSession.getMapper(iDao.class);
 		String myclub_id = request.getParameter("id");
@@ -485,9 +671,14 @@ public class HomeController{
 		
 		Integer countClubMember = iDAO.countClubMember(club_info.getId());
 		String getClubMaster = iDAO.getClubMaster(club_info.getMember_id());
+		Long getClubImageId = iDAO.getClubImageId(l_myclub_id);
+		String getClubImage = iDAO.getClubImage(getClubImageId);
 		
 		model.addAttribute("club_info", club_info);
 		model.addAttribute("countClubMember", countClubMember);
+		model.addAttribute("getClubMaster", getClubMaster);
+		model.addAttribute("getClubImage", getClubImage);
+		
 	}
 	
 	public String loginMemberCheck(HttpServletRequest request) {
@@ -498,6 +689,7 @@ public class HomeController{
 		long l_myclub_id = Long.parseLong(myclub_id);
 		
 		if(!Util.isLogin(request)) { // 로그인여부검사
+			referer = request.getHeader("referer");
 			return "redirect:check_login.do";
 		}else {
 			Member login_member = (Member)httpSession.getAttribute("login_member");

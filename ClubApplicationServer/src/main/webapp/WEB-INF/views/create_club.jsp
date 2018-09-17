@@ -104,7 +104,7 @@ function create_club() {
 	if(filetype!="" && !(filetype=='jpg' || filetype=='gif' || filetype=='png' || filetype=='jpeg' || filetype=='bmp')) {	
 		alert("프로필은 이미지만 가능합니다.");
 		return;
-	} 
+	}
 	
 	if (club_name.value != "" && category.options[category.selectedIndex].value != "" && 
 			max_people.value != "" && local.options[local.selectedIndex].value != "" && intro.value != "") {

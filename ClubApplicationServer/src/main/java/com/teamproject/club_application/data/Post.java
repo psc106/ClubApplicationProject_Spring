@@ -43,12 +43,16 @@ public class Post {
 	public void setContent(String content) {
 		this.content = content;
 	}
+
 	public String getCreate_date() {
 		return create_date;
 	}
+
 	public void setCreate_date(String create_date) {
 		this.create_date = create_date;
 	}
+
+	
 
     
 }

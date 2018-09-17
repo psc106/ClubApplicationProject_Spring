@@ -185,9 +185,6 @@
 				type="radio" name="gender" value="1" />여</br>
 			<div id="err_gender" class="err_msg"></div>
 
-			전화번호 <input type="text" name="phone" id="phone" placeholder="전화번호" /></br>
-			<div id="err_phone" class="err_msg"></div>
-
 			지역 <select id="local" name="local">
 				<option value="" selected="selected">선택</option>
 				<option value="서울">서울</option>
@@ -197,7 +194,9 @@
 			</select></br>
 			<div id="err_local" class="err_msg"></div>
 
-			</br>
+			전화번호 <input type="text" name="phone" id="phone" placeholder="전화번호" /></br>
+			<div id="err_phone" class="err_msg"></div></br>
+			
 			<button type="button" onclick="checkInfo();">가입</button>
 		</form>
 

@@ -4,7 +4,7 @@ public class Comment {
     private  Long id;
     private  Long club_id;
     private  Long member_id;
-    private   String content;
+    private  String content;
     private  String create_date;
     
     public Comment() {
@@ -43,12 +43,17 @@ public class Comment {
 	public void setContent(String content) {
 		this.content = content;
 	}
+
 	public String getCreate_date() {
 		return create_date;
 	}
+
 	public void setCreate_date(String create_date) {
 		this.create_date = create_date;
 	}
+
+	
+	
     
     
 }

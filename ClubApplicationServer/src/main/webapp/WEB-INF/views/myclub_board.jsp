@@ -11,32 +11,43 @@
 	//ArrayList<ClubMember> club_member = (ArrayList<ClubMember>) request.getAttribute("club_member");
 	//Member login_member = (Member)session.getAttribute("login_member");
 
+	ArrayList<PostProfile> postProfile = (ArrayList<PostProfile>) request.getAttribute("postProfile");
 	
-	ArrayList<PostProfile> PostProfile = (ArrayList<PostProfile>) request.getAttribute("PostProfile");
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+	
+	System.out.println("postProfile : " + postProfile.size());
 %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title><%=club_info.getName() %></title>
-<link rel="stylesheet" href="resources/css/myclub.css" type="text/css">
+<link rel="stylesheet" href="resources/css/myclub.css?ver=1" type="text/css">
 <style>
 #board_content {
-	margin-top:40px;
 	border:1px solid black;
 }
 #board {
 	width:100%;
 }
 #board_1 {
-	width:60px;
+	width:100px;
 }
 #board_2 {
-	width:300px;
+	width:500px;
 }
 #board_3 {
-	
+	width:150px;
+}
+#board_4 {
+	width:150px;
+}
+#boardContent {
+ 	display: block; 
+	overflow: hidden; 
+	text-overflow: ellipsis;
+	white-space: nowrap; 
+	width: 150px;
+	height: 30px;
 }
 </style>
 
@@ -45,11 +56,6 @@
 function write_board() {	
 	document.location.href = "myclub_write.do?id=" + "<%=club_info.getId()%>";
 }
-
-
-
-
-
 
 
 </script>
@@ -68,6 +74,8 @@ function write_board() {
 		<jsp:include page="club_tab_menu.jsp"></jsp:include>
 		
 		<div id="board_content">
+		<h3>게시판</h3>
+		
 		<table id="board" border="1">
 		<tr>
 			<th id="board_1">번호</th>
@@ -76,13 +84,16 @@ function write_board() {
 			<th id="board_4">글쓴이</th>
 		</tr>
 		<%
-			for (int i = 0; i < PostProfile.size(); i++) {
+			for (int i = 0; i < postProfile.size(); i++) {
 		%>
 		<tr>
-			<td class="number"><%=PostProfile.get(i).getPost().getId()%></td>
-			<td><a href="detail.do?id=<%=PostProfile.get(i).getPost().getId()%>"><font id="boardContent" name="boardContent"><%=PostProfile.get(i).getPost().getContent()%></font></a></td>
-			<td class="date"><%=sdf.format(PostProfile.get(i).getPost().getCreate_date())%></td>
-			<td><%=PostProfile.get(i).getProfile().getNickname()%></td>
+			<td class="number"><%=postProfile.get(i).getPost().getId()%></td>
+			<td><a href="myclub_detail.do?id=<%=club_info.getId()%>&post_id=<%=postProfile.get(i).getPost().getId()%>">
+				<font id="boardContent" name="boardContent">
+					<%=postProfile.get(i).getPost().getContent()%>
+				</font></a></td>
+			<td class="date"><%=postProfile.get(i).getPost().getCreate_date()%></td>
+			<td><%=postProfile.get(i).getProfile().getNickname()%></td>
 		</tr>
 		<%
 			}
@@ -107,14 +118,6 @@ function write_board() {
 
 
 	
-
-
-	
-
-
-	<div id="right_nav">
-		<jsp:include page="club_right_nav.jsp"></jsp:include>
-	</div>
 
 </div>
 

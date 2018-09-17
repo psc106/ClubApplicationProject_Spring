@@ -28,9 +28,7 @@
 클럽 일정
 </div>
 
-<div id="right_nav">
-<jsp:include page="club_right_nav.jsp"></jsp:include>
-</div>
+
 
 </div>
 

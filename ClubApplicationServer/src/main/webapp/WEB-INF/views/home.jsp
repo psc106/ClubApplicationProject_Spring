@@ -1,49 +1,113 @@
+<%@page import="com.teamproject.club_application.data.Club"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="com.teamproject.club_application.data.Member"%>
 <%@ page language="java" contentType="text/html; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
+<%
+Member login_member = (Member)session.getAttribute("login_member");
+ArrayList<Club> myclub = (ArrayList<Club>)session.getAttribute("myclub");
+%>
 <html>
 <head>
 	<title>Home</title>
 </head>
 <link rel="stylesheet" href="resources/css/home.css" type="text/css">
 <style>
+#wrap {
+	width:400px;
+	height:auto;
+	margin:0px auto;
+	margin-top:150px;
+	border:1px solid black;
+}
 
-#top_content {
-	border: 1px solid black;
-	height: 400px;
+#login {
+	width:100%;
 }
-#main_logo {
-	text-align: center;
+
+#home {
+	width:400px;
+	height:150px;
+	border:1px solid #e2c3c3;
+	padding:10px;
 }
-.home_search {
-	text-align: center;
+
+.btn {
+	width:120px;
+	height:40px;
+	border:0;
+	background:#fc9255;
+	color:#ffffff;
+	text-shadow:0 1px rgba(0,0,0,.2);
+	font-size:18px;
+	cursor:pointer;
 }
+
+#setting_icon {
+	vertical-align: bottom;
+	style=cursor:pointer;
+}
+
+#header_login_btn {
+	
+}
+
 </style>
 
 <script>
+function login() {
+	document.location.href = "login.do";
+}
+
+function logout() {
+	document.location.href = "logout_ok.do";
+}
+
+function my_setting() {
+	document.location.href = "my_schedule.do";
+}
+
+function change_myclub(club_value) {
+	alert(club_value + "!");
+	
+	var form = document.getElementById("myclub_sel");
+	form.submit();
+}
+
+function go_search() {
+	document.location.href = "search.do";
+}
 </script>
 <body>
-<div id="header">
-<jsp:include page="header.jsp"></jsp:include>
-</div>
 
 <div id="wrap">
-<div id="top_content">
-<div id="main_logo" name="main_logo"><img width="500px" height="300px" src="resources/main_logo.png" /></div><br>
-<div class="home_search">
-<input type="text" id="home_search" name="home_search" />
-<input type="button" id="home_search_btn" name="home_search_btn" value="검색" />
-</div>
-</div>
+<div id="login_logo" name="login_logo"><img width="400px" height="250px" src="resources/main_logo.png" /></div><br>
 
-<div id="bot_content">
-<ul>
-	<li>a</li>
-	<li>b</li>
-	<li>c</li>
-</ul>
-</div>
+	<div id="home">
+	<%
+	Member login = login_member;
+	if(login == null) { // 비로그인 %>
+		<center><button style="margin-top:50px;" id="header_login_btn" class="btn" id="header_login_btn" onclick="login();">로그인</button></center>	
+	<%} else { // 로그인 %>
+	<p><%=login_member.getName() %>님 환영합니다.
+	<img width="30px" height="30px" id="setting_icon" onclick="my_setting();" src="resources/setting_icon.png" />
+	<button onclick="logout();">로그아웃</button></p>
+	<form id="myclub_sel" action="myclub_sel.do" method="get" >
+	<select id="myclub" name="myclub" onchange="change_myclub(this.value)">
+    <option value="">내 동호회</option>
+	<%for(int i=0; i<myclub.size(); i++){%>
+		<option value="<%=myclub.get(i).getId() %>"><%=myclub.get(i).getName() %></option>
+	<%} %>
+	</select>
+	</form>
+	
+	<button onclick="go_search();">검색</button>
+	
+	<%} %>
+	
+
+	</div>
 
 </div>
-
 </body>
 </html>

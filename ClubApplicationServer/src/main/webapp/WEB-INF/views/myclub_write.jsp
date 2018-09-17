@@ -12,9 +12,96 @@
 <title>글쓰기 : 밴드제목</title>
 <link rel="stylesheet" href="resources/css/myclub.css" type="text/css">
 <style>
+.imgs_wrap {
+	width: 600px;
+	margin-top: 50px;
+}
+
+.imgs_wrap img {
+	max-width: 200px;
+}
+
 </style>
 
+<script src="resources/js/jquery-3.3.1.min.js"></script>
 <script>
+function writeBoard() {
+	
+	if( $("#board_image").val() != "" ){
+		var ext = $('#board_image').val().split('.').pop().toLowerCase();
+		if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
+			alert('gif,png,jpg,jpeg 파일만 업로드 할수 있습니다.');
+			return;
+		}
+	}
+
+	var content = document.getElementById("content");
+	if (content.value == "") {
+		window.alert("내용을 입력하세요.");
+		content.focus();
+		return;
+	}
+	
+	var form = document.getElementById("write_form");
+	window.alert("작성 완료");
+	form.submit();
+}
+
+
+
+var sel_files = [];
+
+$(document).ready(function() {
+	$("#board_image").on("change", handleImgsFilesSelect);
+});
+
+function handleImgsFilesSelect(e) {
+	sel_files = [];
+	$(".imgs_wrap").empty();
+	var files = e.target.files;
+	var filesArr = Array.prototype.slice.call(files);
+	
+	var index = 0;
+	filesArr.forEach(function(f) {
+		if(!f.type.match("image.*")) {
+			alert("확장자는 이미지 확장자만 가능합니다.");
+			return;
+		}
+		
+		sel_files.push(f);
+		
+		var reader = new FileReader();
+		reader.onload = function(e) {
+			var html = "<a href=\"javascript:void(0);\" onclick=\"deleteImageAction("+index+")\" id=\"img_id_"+index+"\"><img src=\"" + e.target.result +"\" data-file='"+f.name+"' class='selProductFile' title='Click to remove' width=200px height=200px></a>";
+		    /* var img_html = "<img src=\"" + e.target.result + "\" width=200px height=200px />";
+		    $(".imgs_wrap").append(img_html); */
+		    $(".imgs_wrap").append(html);
+		    index++;
+		}
+		
+		
+		
+		reader.readAsDataURL(f);
+		/*reader.onload = function(e) {
+			var img_html = "<img src=\"" + e.target.result + "\" />";
+			$(".imgs_wrap").append(img_html);
+		}*/		
+	});
+}
+
+function deleteImageAction(index){
+	  console.log("index : "+index);
+	  sel_files.splice(index, 1);
+	  if(sel_files.length === 0){
+	   $('.imgs_wrap').empty();
+	  }
+	  var img_id = "#img_id_" + index;
+	  $(img_id).remove();
+	  
+	  console.log(sel_files);
+	 }
+
+
 </script>
 </head>
 <body>
@@ -30,8 +117,8 @@
 <div id="club_content">
 <jsp:include page="club_tab_menu.jsp"></jsp:include>
 
-<form id="write_form" action="write_ok.do" method="post">
-	<table>
+<form id="write_form" action="write_ok.do?id=<%=club_info.getId() %>" method="post" enctype="multipart/form-data">
+	<table border="1">
 	<tr>
 		<td colspan="2">내용</td>
 	</tr>
@@ -40,7 +127,10 @@
 	</tr>
 	<tr>
 		<td>첨부파일 : </td>
-		<td><input type="file" /></td>
+		<td><input type="file" id="board_image" name="board_image" multiple="multiple" accept="image/*" /></td>
+	</tr>
+	<tr>
+		<td><div class="imgs_wrap"></div></td>
 	</tr>
 	</table>
 
@@ -51,9 +141,7 @@
 
 </div>
 
-<div id="right_nav">
-<jsp:include page="club_right_nav.jsp"></jsp:include>
-</div>
+
 
 </div>
 

@@ -5,7 +5,10 @@
 Club club_info = (Club)request.getAttribute("club_info");
 Integer countClubMember = (Integer)request.getAttribute("countClubMember");
 String getClubMaster = (String)request.getAttribute("getClubMaster");
+String getClubImage = (String)request.getAttribute("getClubImage");
 
+String url = request.getRequestURL().toString().replace(request.getRequestURI(),"") + request.getContextPath();
+String attach_path = "resources/upload/";
 %>
 <!DOCTYPE html>
 <html>
@@ -24,14 +27,20 @@ String getClubMaster = (String)request.getAttribute("getClubMaster");
 function club_join(id) {
 	document.location.href = "club_join_confirm.do?id="+id;
 }
+
+function myclub_setting() {
+	document.location.href = "myclub_setting.do?id=" + "<%=club_info.getId()%>";
+}
 </script>
 </head>
 <body>
-<img id="club_profile" width="150px" height="150px" src="resources/club_profile.png" />
+<a href="myclub_board.do?id=<%=club_info.getId()%>"><img id="club_profile" width="150px" height="150px" src="<%=url+"/"+attach_path+getClubImage %>" /></a>
 <h5>리더 : <%=getClubMaster %></h5>
 <h5>멤버 : <%=countClubMember %>명</h5>
 <h6>소개 : <%=club_info.getIntro() %></h6>
 <button onclick="club_join(<%=club_info.getId() %>);">가입</button>
+</br></br>
+<a onclick="myclub_setting();" style="cursor:pointer"><img width="20px" height="20px" src="resources/setting_icon.png"/>동호회 설정</a>
 
 </body>
 </html>

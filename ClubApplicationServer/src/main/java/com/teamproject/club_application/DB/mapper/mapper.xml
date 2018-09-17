@@ -3,7 +3,7 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.teamproject.club_application.DB.iDao">
-<resultMap type="com.teamproject.club_application.data.Post" id="PostProfile">
+<resultMap type="com.teamproject.club_application.data.PostProfile" id="PostProfile">
 	<result property="post.id" column="id"/>
 	<result property="post.club_id" column="club_id"/>
 	<result property="post.member_id" column="member_id"/>
@@ -37,7 +37,7 @@ select * from TestData
 select count(*) from member where login_id=#{param1}
 </select>
 <insert id="insertMember" >
-Insert into member values (member_seq.nextval, #{param1}, #{param2}, #{param3}, #{param4}, #{param5}, #{param6}, '123mail' ,#{param7}, 'N')
+Insert into member values (member_seq.nextval, #{param1}, #{param2}, #{param3}, #{param4}, #{param5}, #{param6}, #{param7}, 'N')
 </insert>
 
 
@@ -53,7 +53,26 @@ select C.* from club_member CM, club C, member M where M.login_id like #{param1}
 </select>
 
 
+
+<!-- 마이페이지(설정) 관련 -->
+<select id="getMyclubList" resultType="String">
+select name from club where id in
+(select club_id from club_member where member_id = #{param1})
+</select>
+<update id="updateMyInfo">
+update member set login_pw=#{param1}, name=#{param2}, birthday=#{param3}, gender=#{param4}, local=#{param5}, phone=#{param6} where id=#{param7} 
+</update>
+
 <!-- 동호회 관련 -->
+<select id="getClubList" resultType="com.teamproject.club_application.data.ClubView">
+select c.id, i.img_db_name, c.name, pf.nickname, c.intro
+from image i, club c, profile pf, club_member cm
+where i.id=c.image_id and c.member_id=pf.member_id and c.id=pf.club_id and cm.club_id=c.id and cm.member_id=pf.member_id order by c.id asc
+</select>
+<select id="getClubMemberCount" resultType="Integer">
+SELECT COUNT(*) FROM club_member GROUP BY club_id order by club_id asc
+</select>
+
 <select id="getCategoryList" resultType="com.teamproject.club_application.data.Category">
 select * from category
 </select>
@@ -64,7 +83,7 @@ insert into club values (club_seq.nextval, #{category_id}, #{member_id}, #{image
 </selectKey>
 </insert>
 <insert id="insertClubMember">
-insert into club_member values(club_member_seq.nextval, #{param1}, #{param2}, 'N')
+insert into club_member values(club_member_seq.nextval, #{param1}, #{param2}, #{param3})
 </insert>
 <insert id="insertProfile">
 insert into profile values(profile_seq.nextval, #{param1}, #{param2}, #{param3}, 'd닉네임')
@@ -84,11 +103,56 @@ select * from club_member
 <select id="getClubMember" resultType="Integer">
 select count(*) from club_member where member_id=#{param1} and club_id=#{param2} and verify='Y'
 </select>
-
-<!-- 동호회 관련 -->
-<select id="getPostProfile" resultMap="PostProfile">
-select * from Post A, Profile B where A.club_id = B.club_id and A.member_id = B.member_id  Order by A.id desc
+<select id="getClubImageId" resultType="Long">
+select image_id from club where id=#{param1}
 </select>
+<select id="getClubImage" resultType="String">
+select img_db_name from image where id=#{param1}
+</select>
+<select id="getMyProfileImage" resultType="String">
+select img_db_name from image
+where id in (select image_id from profile where club_id = #{param1} and member_id = #{param2})
+</select>
+<select id="getMynickname" resultType="String">
+select nickname from profile where club_id = #{param1} and member_id = #{param2}
+</select>
+
+
+
+<!-- 동호회 게시판 관련 -->
+<select id="getPostProfile" resultMap="PostProfile">
+select * from Post A, Profile B where A.club_id = #{param1} and B.club_id = #{param1} Order by A.id desc
+</select>
+<select id="postProfileDetail" resultMap="PostProfile">
+select * from Post A, Profile B where A.club_id = #{param1} and B.club_id = #{param1} and A.id = #{param2}
+</select>
+<insert id="writePost" parameterType="com.teamproject.club_application.data.Post">
+insert into post values(post_seq.nextval, #{club_id}, #{member_id}, #{content}, sysdate)
+<selectKey keyProperty="id" resultType="long" order="AFTER"> 
+		select post_seq.currval from dual
+</selectKey>
+</insert>
+<insert id="insertPostImage">
+insert into post_image values(post_image_seq.nextval, #{param1}, #{param2}, #{param3})
+</insert>
+<select id="getProfileImage" resultType="String">
+select img_db_name from image where id=#{param1}
+</select>
+<select id="getPostImage" resultType="String">
+select img_db_name from image where id in (select image_id from post_image where post_id=#{param1})
+</select>
+
+<!-- 댓글 관련 -->
+<insert id="insertComment">
+insert into comments values(comments_seq.nextval, #{param1}, #{param2}, #{param3}, sysdate)
+</insert>
+<select id="getCommentList" resultType="com.teamproject.club_application.data.CommentView">
+select comments.id, pf.nickname, comments.content, comments.create_date, i.img_db_name from (select * from comments where post_id=#{param1}) 
+                comments, post p, profile pf, image i
+where comments.member_id=pf.member_id and comments.post_id=p.id and
+        p.club_id=pf.club_id and pf.image_id=i.id order by id desc
+</select>
+
 
 
 <!-- oracle 쿼리문 작성 끝-->
