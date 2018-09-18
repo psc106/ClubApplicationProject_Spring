@@ -1,17 +1,17 @@
 package com.teamproject.club_application.data;
 
 public class AlbumView {
-    Long id;
+	long id;
     String url;
     String nickname;
     String realName;
     String create_date;
     String img_size;
     
-	public Long getId() {
+	public long getId() {
 		return id;
 	}
-	public void setId(Long id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 	public String getUrl() {
@@ -45,7 +45,7 @@ public class AlbumView {
 		this.img_size = img_size;
 	}
 	
-    public AlbumView(Long id, String url, String nickname, String realName, String create_date,
+    public AlbumView(long id, String url, String nickname, String realName, String create_date,
 			String img_size) {
 		super();
 		this.id = id;

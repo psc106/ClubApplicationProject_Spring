@@ -203,12 +203,12 @@
 		resultType="com.teamproject.club_application.data.ClubView">
 	<![CDATA[
 		select C.id, C.category_id, C.member_id, p.nickname, CASE
-										WHEN C.image_id=-1 THEN 'null'
-										when C.image_id>0 then i.img_db_name
+										WHEN c.image_id=-1 THEN null
+										when c.image_id>0 then (select i.img_db_name from image i where c.image_id=i.id)
 										end as imgUrl, C.name, C.local, C.max_people, 
 										0 as cur_people, C.intro, C.create_date
-		from Club C, profile p, image i
-		where C.id = #{param1} and c.member_id = p.member_id and c.id = p.club_id and c.image_id = i.id
+		from Club C, profile p
+		where C.id = #{param1} and c.member_id = p.member_id and p.club_id=c.id
 	]]>
 	</select>
 
@@ -276,18 +276,26 @@
 	<select id="selectClubPost"
 		resultType="com.teamproject.club_application.data.PostView">
 	<![CDATA[
-	SELECT SUB.id, SUB.member_id, pf.nickname, SUB.content, SUB.create_date, 
-                                                                    LAG(SUB.id, 1, -1) OVER(ORDER BY SUB.id desc) AS nextId, 
-                                                                    LEAD(SUB.id, 1, -1) OVER(ORDER BY SUB.id desc) AS previusId
+	SELECT SUB.id, SUB.member_id, pf.nickname, SUB.content, SUB.create_date, 0 as imgUrl,
+						                    LAG(SUB.id, 1, -1) OVER(ORDER BY SUB.id desc) AS nextId, 
+						                    LEAD(SUB.id, 1, -1) OVER(ORDER BY SUB.id desc) AS previusId
             FROM (	SELECT P.*, ROW_NUMBER() OVER(ORDER BY rownum desc) RN 
                     from post P
                     where P.club_id=#{param1}) SUB, profile pf
-            where SUB.RN <= #{param2}*10 and SUB.RN > (#{param2}-1)*10 		and 
+            where SUB.RN <= #{param2}*4 and SUB.RN > (#{param2}-1)*4 		and 
             		pf.member_id=SUB.member_id and SUB.club_id=pf.club_id
 	]]>
+	
+	
+	
+	</select>
+	<select id="selectUserProfileImg" resultType="String">
+		select i.img_db_name
+		from image i, profile pf
+		where pf.member_id=#{param2} and pf.club_id=#{param1} and pf.image_id>0 and pf.image_id=i.id
 	</select>
 
-	<select id="getAlbum" resultType="Integer">
+	<select id="getAlbumCount" resultType="Integer">
 		SELECT count(*)
 		from album a
 		where a.club_id=#{param1}
@@ -337,11 +345,11 @@
 	<select id="selectPostComment"
 		resultType="com.teamproject.club_application.data.CommentView">
 	<![CDATA[
-			SELECT SUB.id, pf.nickname, SUB.content, SUB.create_date
+			SELECT SUB.id, sub.member_id, pf.nickname, SUB.content, SUB.create_date, 0 as imgUrl
             FROM (	SELECT c.*, ROW_NUMBER() OVER(ORDER BY rownum desc) RN 
                     from comments c
                     where c.post_id=#{param1}) SUB, profile pf, post p
-            where SUB.RN <= #{param2}*10 and SUB.RN > (#{param2}-1)*10 		and 
+            where SUB.RN <= #{param2}*3 and SUB.RN > (#{param2}-1)*3 		and 
             		pf.member_id=SUB.member_id and SUB.post_id=p.id and p.club_id = pf.club_id
 	]]>
 	</select>
@@ -391,6 +399,51 @@
 		where P.club_id=#{param1} and P.member_id=SUB.id)
 		SUB, image I
 	</select>
+	
+	
+	<insert id="insertComment">
+		insert into comments values (comments_seq.nextval, #{param1}, #{param2}, #{param3}, sysdate)
+	</insert>	
+	
+	<insert id="insertPost"
+		parameterType="com.teamproject.club_application.data.Post">
+		<selectKey keyProperty="id" resultType="Integer"
+			order="BEFORE">
+			select post_seq.nextval from dual
+		</selectKey>
+		insert into post values ( #{id}, #{club_id}, #{member_id}, #{content}, sysdate)
+	</insert>
+	
+	<insert id="insertAlbum"
+		parameterType="com.teamproject.club_application.data.Album">
+		<selectKey keyProperty="id" resultType="Integer"
+			order="BEFORE">
+			select album_seq.nextval from dual
+		</selectKey>
+		insert into Album values ( #{id}, #{club_id}, #{member_id}, #{image_id}, sysdate)
+	</insert>
+	
+	<insert id="insertTag"
+		parameterType="com.teamproject.club_application.data.Tag">
+		<selectKey keyProperty="id" resultType="Integer"
+			order="BEFORE">
+			select Tag_seq.nextval from dual
+		</selectKey>
+		insert into tag values ( #{id}, #{club_id}, #{name})
+	</insert>
+		
+	<insert id="relationPostImage">
+		insert into Post_Image values (Post_image_seq.nextval, #{param1}, #{param2})
+	</insert>
+	
+	<insert id="relationTag">
+		insert into Tag_reference values (tag_reference_seq.nextval, #{param1}, #{param1}, #{param3})
+	</insert>
+	
+	<select id="selectTag" resultType="com.teamproject.club_application.data.Tag">
+		select * from Tag t where t.name like #{param1}
+	</select>
+	
 	<!-- 클럽 항목 끝 -->
 
 	<!-- oracle 쿼리문 작성 끝 -->

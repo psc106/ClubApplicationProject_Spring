@@ -1,27 +1,28 @@
 package com.teamproject.club_application.data;
 
 public class PostView {
-    private Long id;
-    private Long member_id;
+    private long id;
+    private long member_id;
     private String nickname;
     private String content;
     private String create_date;
-    private Long nextId;
-    private Long previousId;
+    private String imgUrl;
+    private long nextId;
+    private long previousId;
 
-	public Long getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
-	public Long getMember_id() {
+	public long getMember_id() {
 		return member_id;
 	}
 
-	public void setMember_id(Long member_id) {
+	public void setMember_id(long member_id) {
 		this.member_id = member_id;
 	}
 
@@ -48,33 +49,38 @@ public class PostView {
 	public void setCreate_date(String create_date) {
 		this.create_date = create_date;
 	}
+	public String getImgUrl() {
+		return imgUrl;
+	}
+	public void setImgUrl(String imgUrl) {
+		this.imgUrl = imgUrl;
+	}
 
-	public Long getNextId() {
+	public long getNextId() {
 		return nextId;
 	}
 
-	public void setNextId(Long nextId) {
+	public void setNextId(long nextId) {
 		this.nextId = nextId;
 	}
 
-	public Long getPreviousId() {
+	public long getPreviousId() {
 		return previousId;
 	}
 
-	public void setPreviousId(Long previousId) {
+	public void setPreviousId(long previousId) {
 		this.previousId = previousId;
 	}
 
-	
-	
-	public PostView(Long id, Long member_id, String nickname, String content, String create_date, Long nextId,
-			Long previousId) {
+	public PostView(long id, long member_id, String nickname, String content, String create_date, String imgUrl,
+			long nextId, long previousId) {
 		super();
 		this.id = id;
 		this.member_id = member_id;
 		this.nickname = nickname;
 		this.content = content;
 		this.create_date = create_date;
+		this.imgUrl = imgUrl;
 		this.nextId = nextId;
 		this.previousId = previousId;
 	}

@@ -2,7 +2,7 @@ package com.teamproject.club_application.data;
 
 public class MemberView {
 
-	Long memberId;
+	long memberId;
 	String loginId;
 	String name;
 	String birthday;
@@ -12,10 +12,10 @@ public class MemberView {
 	String nickname;
 	String imgUrl;
 	
-	public Long getMemberId() {
+	public long getMemberId() {
 		return memberId;
 	}
-	public void setMemberId(Long memberId) {
+	public void setMemberId(long memberId) {
 		this.memberId = memberId;
 	}
 	public String getLoginId() {
@@ -66,7 +66,7 @@ public class MemberView {
 	public void setImgUrl(String imgUrl) {
 		this.imgUrl = imgUrl;
 	}
-	public MemberView(Long memberId, String loginId, String name, String birthday, Integer gender, String local,
+	public MemberView(long memberId, String loginId, String name, String birthday, Integer gender, String local,
 			String phone, String nickname, String imgUrl) {
 		super();
 		this.memberId = memberId;

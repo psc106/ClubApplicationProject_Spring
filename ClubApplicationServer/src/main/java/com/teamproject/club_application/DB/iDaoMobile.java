@@ -52,20 +52,31 @@ public interface iDaoMobile {
     public Long checkClubProfileImg(Long clubId);
     public Image selectClubProfileImg(Long club_id);
 
-    public int getNoticeCount(Long club_id);
+    public Integer getNoticeCount(Long club_id);
     public ArrayList<Notice> selectClubNotice(Long club_id, Integer page);
-    public int getPostCount(Long club_id);
+    public Integer getPostCount(Long club_id);
     public ArrayList<PostView> selectClubPost(Long club_id, Integer page);
-    public int getAlbumCount(Long club_id);
+    public Integer getAlbumCount(Long club_id);
     public ArrayList<AlbumView> selectClubAlbum(Long club_id, Integer page);
 
     public PostView selectCurrPost(Long post_id);
     public ArrayList<String> selectPostImg(Long post_id);
-    public int getCommentCount(Long post_id);
+    public Integer getCommentCount(Long post_id);
     public ArrayList<CommentView> selectPostComment(Long post_id, Integer page);
     
     public ArrayList<MemberView> selectJoinMember(Long clubId);
     public ArrayList<MemberView> selectWaitingMember(Long clubId);
+    public String selectUserProfileImg(Long clubId, Long memberID);
+    public void insertComment(Long postId, Long memberId, String content);
+    
+    public void insertPost(Post post);
+    public void insertAlbum(Album album);
+    public void relationPostImage(Long postId, Long imageId);
+    
+    public void insertTag(Tag tag);   
+    public Tag selectTag(String tagName);
+    //	0 Æ÷½ºÆ®/ 1 ¾Ù¹ü
+    public void relationTag(Long TagId, Long referenceId, Integer type);
     
     
 }

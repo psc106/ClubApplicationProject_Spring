@@ -1,9 +1,9 @@
 package com.teamproject.club_application.data;
 
 public class Comment {
-    private  Long id;
-    private  Long post_id;
-    private  Long member_id;
+    private  long id;
+    private  long post_id;
+    private  long member_id;
     private   String content;
     private  String create_date;
     
@@ -11,7 +11,7 @@ public class Comment {
 		// TODO Auto-generated constructor stub
 	}
     
-	public Comment(Long id, Long club_id, Long member_id, String content, String create_date) {
+	public Comment(long id, long club_id, long member_id, String content, String create_date) {
 		super();
 		this.id = id;
 		this.post_id = club_id;
@@ -19,22 +19,22 @@ public class Comment {
 		this.content = content;
 		this.create_date = create_date;
 	}
-	public Long getId() {
+	public long getId() {
 		return id;
 	}
-	public void setId(Long id) {
+	public void setId(long id) {
 		this.id = id;
 	}
-	public Long getClub_id() {
+	public long getClub_id() {
 		return post_id;
 	}
-	public void setClub_id(Long club_id) {
+	public void setClub_id(long club_id) {
 		this.post_id = club_id;
 	}
-	public Long getMember_id() {
+	public long getMember_id() {
 		return member_id;
 	}
-	public void setMember_id(Long member_id) {
+	public void setMember_id(long member_id) {
 		this.member_id = member_id;
 	}
 	public String getContent() {

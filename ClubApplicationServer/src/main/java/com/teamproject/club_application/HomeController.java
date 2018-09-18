@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.google.gson.Gson;
 import com.teamproject.club_application.DB.iDao;
 import com.teamproject.club_application.DB.iDaoMobile;
 import com.teamproject.club_application.authorized.MailService;
@@ -70,7 +71,7 @@ public class HomeController{
 	 */
 		
 	@RequestMapping("home.do")
-	public String home() {		
+	public String home() {	
 		return "home";
 	}	
 	//·Î±×ÀÎ////////////////////////////////////////////////////////////////////////////////

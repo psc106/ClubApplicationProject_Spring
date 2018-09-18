@@ -38,6 +38,7 @@ import com.teamproject.club_application.data.Member;
 import com.teamproject.club_application.data.MemberView;
 import com.teamproject.club_application.data.Notice;
 import com.teamproject.club_application.data.Post;
+import com.teamproject.club_application.data.PostFrame;
 import com.teamproject.club_application.data.PostView;
 import com.teamproject.club_application.data.Schedule;
 import com.teamproject.club_application.data.TestData;
@@ -83,9 +84,6 @@ public class MobileController {
 		String rootPath = request.getSession().getServletContext().getRealPath("/");
 		String attachPath = "resources/upload/";
 		String uploadPath = rootPath + attachPath;
-		System.out.println(rootPath);
-		System.out.println(attachPath);
-		System.out.println(uploadPath);
 
 		File dir = new File(uploadPath);
 		if (!dir.isDirectory()) {
@@ -94,7 +92,6 @@ public class MobileController {
 
 		MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
 		String str = request.getParameter("description");
-		System.out.println(str);
 		Iterator<?> iter = multiRequest.getFileNames();
 		MultipartFile file = null;
 		while (iter.hasNext()) {
@@ -195,7 +192,6 @@ public class MobileController {
 	@ResponseBody
 	public String selectClubProfileImg_toMobile(HttpServletRequest request) {
 		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
-		String attachPath = "resources/upload/";
 		String clubIdStr = request.getParameter("clubId");
 		Long clubId;
 		Gson gson = new Gson();
@@ -205,12 +201,10 @@ public class MobileController {
 		} else {
 			return gson.toJson(null);
 		}
-		System.out.println(clubIdStr);
 
 		if (dao.checkClubProfileImg(clubId) > 0) {
 			Image item = dao.selectClubProfileImg(clubId);
-			System.out.println(attachPath + item.getImg_db_name());
-			return gson.toJson(attachPath + item.getImg_db_name());
+			return gson.toJson(item.getImg_db_name());
 		} else {
 			return gson.toJson(null);
 		}
@@ -241,7 +235,6 @@ public class MobileController {
 	@RequestMapping(value = "mobile/selectClubPost.do", produces = "application/json; charset=utf8")
 	@ResponseBody
 	public String selectClubPost_toMobile(HttpServletRequest request) {
-		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
 		String clubIdStr = request.getParameter("clubId");
 		String pageStr = request.getParameter("page");
 		Long clubId;
@@ -257,13 +250,120 @@ public class MobileController {
 			page = Integer.parseInt(pageStr);
 		} else {
 			return gson.toJson(null);
+			
 		}
 
-		ArrayList<PostView> items = dao.selectClubPost(clubId, page);
+		ArrayList<PostFrame> items = appService.selectBoardView(clubId, page);
 
 		return gson.toJson(items);
 	}
 
+	@RequestMapping(value = "mobile/insertComment.do", produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String insertComment_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		String postIdStr = request.getParameter("postId");
+		String memberIdStr = request.getParameter("memberId");
+		String content = request.getParameter("content");
+		Long postId;
+		Long memberId;
+		Gson gson = new Gson();
+
+		if (postIdStr != null) {
+			postId = Long.parseLong(postIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+		if (memberIdStr != null) {
+			memberId = Long.parseLong(memberIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+		
+		dao.insertComment(postId, memberId, content);
+
+		
+		
+		return gson.toJson("");
+	}
+	
+
+	@RequestMapping(value = "mobile/insertPost.do", produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String insertPost_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		
+		String rootPath = request.getSession().getServletContext().getRealPath("/");
+		String attachPath = "resources/upload/";
+		String uploadPath = rootPath + attachPath;
+
+		File dir = new File(uploadPath);
+		if (!dir.isDirectory()) {
+			dir.mkdirs();
+		}
+
+		Gson gson = new Gson();
+		MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+		String content = request.getParameter("content");
+		String tags = request.getParameter("tag");
+		String clubIdStr = request.getParameter("clubId");
+		String memberIdStr = request.getParameter("memberId");
+		String checkStr = request.getParameter("check");
+		
+			
+		Long clubId;
+		Long memberId;
+		Boolean check;
+
+		if (clubIdStr != null) {
+			clubId = Long.parseLong(clubIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+		if (memberIdStr != null) {
+			memberId = Long.parseLong(memberIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+		if (checkStr != null) {
+			check = Boolean.parseBoolean(checkStr);
+		} else {
+			return gson.toJson(null);
+		}
+		
+		
+		Iterator<?> iter = multiRequest.getFileNames();
+		MultipartFile file = null;
+		ArrayList<Image> images = new ArrayList<Image>();
+		while (iter.hasNext()) {
+			String fileName = (String) (iter.next());
+			file = multiRequest.getFile(fileName);
+			String orgFileName;
+			orgFileName = file.getOriginalFilename();
+
+			if (orgFileName != null && !orgFileName.equals("")) {
+				String ext = orgFileName.substring(orgFileName.lastIndexOf('.'));
+				String saveFileName = Util.getRandomString() + ext;
+				File serverFile = new File(uploadPath + "/" + saveFileName);
+				try {
+					file.transferTo(serverFile);
+				} catch (IllegalStateException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				images.add(new Image(0l, saveFileName, orgFileName));
+			}
+		}
+		Post post = new Post(0L, clubId, memberId, content, "");
+
+		appService.insertPost(images, post, tags, check);
+		return gson.toJson("");
+	}
+	
+	
 
 	@RequestMapping(value = "mobile/getAlbumCount.do", produces = "application/json; charset=utf8")
 	@ResponseBody
@@ -307,6 +407,25 @@ public class MobileController {
 		}
 
 		ArrayList<AlbumView> items = dao.selectClubAlbum(clubId, page);
+
+		return gson.toJson(items);
+	}
+
+	@RequestMapping(value = "mobile/refreshPostComment.do", produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String refreshPostComment_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		String postIdStr = request.getParameter("postId");
+		Long postId;
+		Gson gson = new Gson();
+
+		if (postIdStr != null) {
+			postId = Long.parseLong(postIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+
+		ArrayList<CommentView> items = dao.selectPostComment(postId, 1);
 
 		return gson.toJson(items);
 	}
@@ -636,7 +755,6 @@ public class MobileController {
 		}
 
 		ArrayList<ClubView> items = dao.selectMyClub(userId);
-		System.out.println(gson.toJson(items));
 		for(int i = 0 ; i < items.size(); ++i) {
 			int cur_member = dao.getCurrentMemberCount(items.get(i).getId());
 			items.get(i).setCur_people(cur_member);
@@ -700,9 +818,6 @@ public class MobileController {
 		if (conditionCategoryStr != null && !conditionCategoryStr.equals("")) {
 			conditionCategory = Integer.parseInt(conditionCategoryStr);
 		}
-		System.out.println(conditionStr);
-		System.out.println(conditionLocal);
-		System.out.println(conditionCategoryStr);
 		
 
 		ArrayList<Club> clubs = new ArrayList<Club>();
@@ -719,9 +834,9 @@ public class MobileController {
 
 		Integer count = this.template.queryForObject(preQuery, Integer.class);
 
-		System.out.println(preQuery);
 		
 		Gson gson = new Gson();
+		System.out.println(preQuery);
 		System.out.println(gson.toJson(count));
 		return gson.toJson(count);
 	}
@@ -746,10 +861,7 @@ public class MobileController {
 		} else {
 			return gson.toJson(null);
 		}
-		System.out.println("a "+clubId);
-		System.out.println("a "+userId);
 		ClubMemberClass item = appService.selectClub(clubId, userId);
-		System.out.println("a "+gson.toJson(item));
 		return gson.toJson(item);
 	}
 
@@ -792,6 +904,11 @@ public class MobileController {
 		String conditionLocal = request.getParameter("local");
 		String conditionCategoryStr = request.getParameter("category");
 		String conditionPageStr = request.getParameter("page");
+		System.out.println(conditionStr);
+		System.out.println(conditionLocal);
+		System.out.println(conditionCategoryStr);
+		System.out.println(conditionPageStr);
+		
 		int conditionPage = 1;
 		if (conditionPageStr != null && !conditionPageStr.equals("")) {
 			conditionPage = Integer.parseInt(conditionPageStr);
@@ -800,13 +917,9 @@ public class MobileController {
 		if (conditionCategoryStr != null && !conditionCategoryStr.equals("")) {
 			conditionCategory = Integer.parseInt(conditionCategoryStr);
 		}
-		System.out.println(conditionStr);
-		System.out.println(conditionLocal);
-		System.out.println(conditionCategoryStr);
-		System.out.println(conditionPageStr);
 
 		ArrayList<ClubView> clubs = new ArrayList<ClubView>();
-		String preQuery = 	"SELECT DISTINCT sub.ID,sub.CATEGORY_ID,sub.member_id,p.nickname,i.img_db_name as imgUrl,sub.NAME,sub.LOCAL,sub.MAX_PEOPLE, 0 as cur_people,sub.INTRO,sub.CREATE_DATE " +
+		String preQuery = 	"SELECT DISTINCT sub.ID, sub.CATEGORY_ID, sub.member_id, p.nickname, CASE WHEN SUB.image_id=-1 THEN null when SUB.image_id>0 then (select i.img_db_name from image i where SUB.image_id=i.id) end as imgUrl, sub.NAME, sub.LOCAL, sub.MAX_PEOPLE, 0 as cur_people, sub.INTRO, sub.CREATE_DATE " +
 							"FROM (SELECT C.*, ROW_NUMBER() OVER(ORDER BY rownum desc) RN from club C where 1=1 ";
 		if (conditionStr != null && !conditionStr.equals("")) {
 			preQuery += " and (C.Name like '%" + conditionStr + "%' or C.Intro like '%" + conditionStr + "%') ";
@@ -821,7 +934,7 @@ public class MobileController {
 		if (conditionPage >= 2) {
 			preQuery += " AND RN>" + 10 * (conditionPage - 1);
 		}
-		preQuery += " and sub.image_id=i.id and sub.member_id=p.member_id and sub.id=p.club_id";
+		preQuery += " and sub.member_id=p.member_id and sub.id=p.club_id";
 		clubs.addAll(this.template.query(preQuery, new RowMapper<ClubView>() {
 			public ClubView mapRow(ResultSet rs, int rowNum) throws SQLException {
 				ClubView club = new ClubView(rs.getLong(1), rs.getLong(2), rs.getLong(3), rs.getString(4), rs.getString(5), rs.getString(6),
@@ -857,24 +970,16 @@ public class MobileController {
 		Long categoryId = null;
 		Long userId = null;
 		Integer maxPeople = null;
-		System.out.println("?");
 		if (categoryIdStr != null && !categoryIdStr.equals("")) {
-			System.out.println("1");
 			categoryId = Long.parseLong(categoryIdStr);
 		}
 		if (userIdStr != null && !userIdStr.equals("")) {
-			System.out.println("2");
 			userId = Long.parseLong(userIdStr);
 		}
 		if (maxPeopleStr != null && !maxPeopleStr.equals("")) {
-			System.out.println("3");
 			maxPeople = Integer.parseInt(maxPeopleStr);
 		}
 		if (categoryId == null || userId == null || maxPeople == null) {
-			System.out.println("4");
-			System.out.println(categoryId);
-			System.out.println(userId);
-			System.out.println(maxPeople);
 			return gson.toJson(0);
 		}
 
@@ -887,7 +992,6 @@ public class MobileController {
 		Iterator<?> iter = multiRequest.getFileNames();
 		MultipartFile file = null;
 		Image image = null;
-		System.out.println("start");
 		while (iter.hasNext()) {
 			String fileName = (String) (iter.next());
 			file = multiRequest.getFile(fileName);
@@ -895,7 +999,6 @@ public class MobileController {
 			orgFileName = file.getOriginalFilename();
 
 			if (orgFileName != null && !orgFileName.equals("")) {
-				System.out.println(orgFileName);
 				String ext = orgFileName.substring(orgFileName.lastIndexOf('.'));
 				String saveFileName = Util.getRandomString() + ext;
 				File serverFile = new File(uploadPath + "/" + saveFileName);
@@ -911,7 +1014,6 @@ public class MobileController {
 				image = new Image(0l, saveFileName, orgFileName);
 			}
 		}
-		System.out.println(uploadPath);
 		long returnValue = 0;
 		returnValue = appService.insertClub(image,
 				new Club(0l, categoryId, userId, 0l, name, local, maxPeople, intro, ""));
