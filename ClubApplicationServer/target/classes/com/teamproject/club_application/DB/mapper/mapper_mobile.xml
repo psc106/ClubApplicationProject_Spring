@@ -405,6 +405,17 @@
 		insert into comments values (comments_seq.nextval, #{param1}, #{param2}, #{param3}, sysdate)
 	</insert>	
 	
+	
+	<update id="updateComment">
+		update comments set
+		CONTENT=#{param3} where id=#{param1} and member_id=#{param2}
+	</update>	
+	
+	<delete id="deleteComment">	
+		delete from comments where id=#{param1} and member_id=#{param2}
+	</delete>
+	
+	
 	<insert id="insertPost"
 		parameterType="com.teamproject.club_application.data.Post">
 		<selectKey keyProperty="id" resultType="Integer"

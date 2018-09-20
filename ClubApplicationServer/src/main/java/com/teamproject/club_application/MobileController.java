@@ -288,6 +288,60 @@ public class MobileController {
 	}
 	
 
+	@RequestMapping(value = "mobile/updateComment.do", produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String updateComment_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		String commentIdStr = request.getParameter("commentId");
+		String memberIdStr = request.getParameter("memberId");
+		String content = request.getParameter("content");
+		Long commentId;
+		Long memberId;
+		Gson gson = new Gson();
+
+		if (commentIdStr != null) {
+			commentId = Long.parseLong(commentIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+		if (memberIdStr != null) {
+			memberId = Long.parseLong(memberIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+
+		dao.updateComment(commentId, memberId, content);
+		return gson.toJson(true);
+	}
+	
+
+
+	@RequestMapping(value = "mobile/deleteComment.do", produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String deleteComment_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		String commentIdStr = request.getParameter("commentId");
+		String memberIdStr = request.getParameter("memberId");
+		Long commentId;
+		Long memberId;
+		Gson gson = new Gson();
+
+		if (commentIdStr != null) {
+			commentId = Long.parseLong(commentIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+		if (memberIdStr != null) {
+			memberId = Long.parseLong(memberIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+		
+		dao.deleteComment(commentId, memberId);
+		
+		return gson.toJson(true);
+	}
+	
 	@RequestMapping(value = "mobile/insertPost.do", produces = "application/json; charset=utf8")
 	@ResponseBody
 	public String insertPost_toMobile(HttpServletRequest request) {

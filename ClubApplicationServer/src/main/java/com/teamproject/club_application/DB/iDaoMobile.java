@@ -67,7 +67,10 @@ public interface iDaoMobile {
     public ArrayList<MemberView> selectJoinMember(Long clubId);
     public ArrayList<MemberView> selectWaitingMember(Long clubId);
     public String selectUserProfileImg(Long clubId, Long memberID);
+    
     public void insertComment(Long postId, Long memberId, String content);
+    public void updateComment(Long commentId, Long memberId, String content);
+    public void deleteComment(Long commentId, Long memberId);
     
     public void insertPost(Post post);
     public void insertAlbum(Album album);
