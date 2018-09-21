@@ -6,12 +6,19 @@ public class MemberView {
 	String loginId;
 	String name;
 	String birthday;
-	Integer gender;
+	int gender;
 	String local;
 	String phone;
 	String nickname;
 	String imgUrl;
 	
+	
+	@Override
+	public String toString() {
+		return "MemberView [memberId=" + memberId + ", loginId=" + loginId + ", name=" + name + ", birthday=" + birthday
+				+ ", gender=" + gender + ", local=" + local + ", phone=" + phone + ", nickname=" + nickname
+				+ ", imgUrl=" + imgUrl + "]";
+	}
 	public long getMemberId() {
 		return memberId;
 	}

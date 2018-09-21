@@ -278,7 +278,7 @@
 	<![CDATA[
 	SELECT SUB.id, SUB.member_id, pf.nickname, SUB.content, SUB.create_date, 0 as imgUrl,
 						                    LAG(SUB.id, 1, -1) OVER(ORDER BY SUB.id desc) AS nextId, 
-						                    LEAD(SUB.id, 1, -1) OVER(ORDER BY SUB.id desc) AS previusId
+						                    LEAD(SUB.id, 1, -1) OVER(ORDER BY SUB.id desc) AS previousId
             FROM (	SELECT P.*, ROW_NUMBER() OVER(ORDER BY rownum desc) RN 
                     from post P
                     where P.club_id=#{param1}) SUB, profile pf
@@ -318,13 +318,16 @@
 	<select id="selectCurrPost"
 		resultType="com.teamproject.club_application.data.PostView">
 	<![CDATA[
-			SELECT p.id, p.member_id, pf.nickname, p.content, p.create_date, 
-                                                                    LAG(p.id, 1, -1) OVER(ORDER BY p.id desc) AS nextId, 
-                                                                    LEAD(p.id, 1, -1) OVER(ORDER BY p.id desc) AS previusId
-            FROM post p, profile pf
-            where pf.member_id=p.member_id and p.club_id=pf.club_id and p.id=#{param1}
+			SELECT p.id, p.member_id, pf.nickname, p.content, p.create_date, sub.nextId, sub.previousId
+            FROM post p, profile pf, (  select  p.id, LAG(p.id, 1, -1) OVER(ORDER BY p.id desc) AS nextId, 
+                                                LEAD(p.id, 1, -1) OVER(ORDER BY p.id desc) AS previousId
+                                        from    post p, (select club_id from post where id=#{parma1}) sub
+                                        where   p.club_id=sub.club_id) sub
+            where pf.member_id=p.member_id and p.club_id=pf.club_id and sub.id=#{parma1} and p.id=#{parma1}
 	]]>
 	</select>
+
+
 
 
 	<select id="selectPostImg" resultType="String">
@@ -338,7 +341,7 @@
 	<select id="getCommentCount" resultType="Integer">
 		SELECT count(*)
 		from
-		comment c
+		comments c
 		where c.id=#{param1}
 	</select>
 
@@ -363,7 +366,7 @@
 		sub.phone, sub.nickname, CASE
 		WHEN sub.image_id=-1 THEN 'null'
 		when
-		sub.image_id>0 then i.img_db_name
+		sub.image_id>0 then (select i.img_db_name from image i where i.id=sub.image_id)
 		end as imgUrl
 		from ( select SUB.id,
 		sub.login_id, sub.name, sub.birthday, sub.gender,
@@ -375,7 +378,7 @@
 		'N')
 		SUB, profile P
 		where P.club_id=#{param1} and P.member_id=SUB.id)
-		SUB, image I
+		SUB
 		
 	]]>
 	</select>
@@ -385,7 +388,7 @@
 		sub.phone, sub.nickname, CASE
 		WHEN sub.image_id=-1 THEN 'null'
 		when
-		sub.image_id>0 then i.img_db_name
+		sub.image_id>0 then (select i.img_db_name from image i where i.id=sub.image_id)
 		end as imgUrl
 		from ( select SUB.id,
 		sub.login_id, sub.name, sub.birthday, sub.gender,
@@ -397,7 +400,7 @@
 		'Y')
 		SUB, profile P
 		where P.club_id=#{param1} and P.member_id=SUB.id)
-		SUB, image I
+		SUB
 	</select>
 	
 	
@@ -415,6 +418,21 @@
 		delete from comments where id=#{param1} and member_id=#{param2}
 	</delete>
 	
+	<delete id="deletePost">	
+		delete from post where id=#{param1} and member_id=#{param2}
+	</delete>
+	
+	<delete id="deletePostComment">	
+		delete from comments where post_id=#{param1}
+	</delete>
+	
+	<delete id="deletePostImage">
+		delete from image I, post_image pi where pi.post_id=#{param1} and pi.image_id=i.id
+	</delete>
+	
+	<delete id="deletePostImageRelation">
+		delete from post_image where pi.post_id=#{param1}
+	</delete>
 	
 	<insert id="insertPost"
 		parameterType="com.teamproject.club_application.data.Post">
@@ -423,6 +441,11 @@
 			select post_seq.nextval from dual
 		</selectKey>
 		insert into post values ( #{id}, #{club_id}, #{member_id}, #{content}, sysdate)
+	</insert>
+	
+	<insert id="updatePost">
+		update post set
+			content=#{param2} where id=#{param1}
 	</insert>
 	
 	<insert id="insertAlbum"

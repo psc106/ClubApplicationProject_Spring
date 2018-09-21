@@ -619,6 +619,9 @@ public class MobileController {
 			return gson.toJson(null);
 		}
 		ArrayList<MemberView> items = dao.selectJoinMember(clubId);
+		for(int i = 0 ; i < items.size(); ++i) {
+			System.out.println(items.get(i).toString());
+		}
 
 		return gson.toJson(items);
 	}
@@ -637,6 +640,9 @@ public class MobileController {
 		}
 		ArrayList<MemberView> items = dao.selectWaitingMember(clubId);
 
+		for(int i = 0 ; i < items.size(); ++i) {
+			System.out.println(items.get(i).toString());
+		}
 		return gson.toJson(items);
 	}
 

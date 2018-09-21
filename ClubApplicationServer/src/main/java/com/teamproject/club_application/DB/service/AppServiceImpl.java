@@ -1,6 +1,8 @@
 package com.teamproject.club_application.DB.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,16 +85,16 @@ public class AppServiceImpl implements AppService {
 	@Transactional
 	@Override
 	public ArrayList<PostFrame> selectBoardView(Long club_id, int page) {
-		System.out.println("start");
+		System.out.println("start "+club_id);
 		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
 		ArrayList<PostFrame> items = new ArrayList<PostFrame>();
 		ArrayList<PostView> post = dao.selectClubPost(club_id, page);
+		
 		for (int i = 0; i < post.size(); ++i) {
-
+			System.out.println(post.get(i).toString());
 			String imgUrl = dao.selectUserProfileImg(club_id, post.get(i).getMember_id());
 			if (imgUrl == null) {
 				imgUrl = "";
-				System.out.println("not found[post]");
 			}
 			post.get(i).setImgUrl(imgUrl);
 
@@ -102,7 +104,6 @@ public class AppServiceImpl implements AppService {
 					String imgUrlComment = dao.selectUserProfileImg(club_id, comments.get(j).getMember_id());
 					if (imgUrl == null) {
 						imgUrlComment = "";
-						System.out.println("not found[comment]");
 					}
 					comments.get(j).setImgUrl(imgUrlComment);
 				}
