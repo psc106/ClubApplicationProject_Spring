@@ -3,8 +3,9 @@
     pageEncoding="UTF-8"%>
 <%
 Club club_info = (Club)request.getAttribute("club_info");
-String getMyProfileImage = (String)request.getAttribute("getMyProfileImage");
-String getMynickname = (String)request.getAttribute("getMynickname");
+
+String getClubImage = (String)request.getAttribute("getClubImage");
+Integer countClubMember = (Integer)request.getAttribute("countClubMember");
 
 String url = request.getRequestURL().toString().replace(request.getRequestURI(),"") + request.getContextPath();
 String attach_path = "resources/upload/";
@@ -16,15 +17,22 @@ String attach_path = "resources/upload/";
 <title>동호회 설정 : <%=club_info.getName() %></title>
 <link rel="stylesheet" href="resources/css/myclub.css" type="text/css">
 <style>
+
 </style>
 
 <script>
-function update_club_profile() {
+function update_club() {
 	var input = document.getElementById("att_image");
-	var nickname = document.getElementById("nickname");
+	var intro = document.getElementById("intro");
+	var club_max_people = document.getElementById("club_max_people");
 	
-	if (nickname.value == "") {
-		alert("닉네임을 입력하세요.");
+	if(<%=countClubMember%> > club_max_people.value) {
+		alert("현재 인원보다 커야 합니다.");
+		return;
+	}
+	
+	if (club_max_people.value == "") {
+		alert("최대인원 을입력하세요.");
 		return;
 	}
 	
@@ -37,12 +45,11 @@ function update_club_profile() {
 		return;
 	}
 	
-	if (nickname.value != "") {
-		var form = document.getElementById("update_profile_form");
+	if (club_max_people.value != "") {
+		var form = document.getElementById("update_club_info_form");
 		form.submit();
 		alert("수정  완료.");
 	}
-	
 }
 
 function fileCheck(input) {
@@ -79,21 +86,26 @@ function fileCheck(input) {
 <div id="club_content">
 <jsp:include page="myclub_setting_menu.jsp"></jsp:include>
 
-<h3>내 정보 수정</h3>
+<h3>동호회 정보 수정</h3>
 
-<form id="update_profile_form" action="update_profile.do?id=<%=club_info.getId() %>" method="post" enctype="multipart/form-data">
+<form id="update_club_info_form" action="update_club_info.do?id=<%=club_info.getId() %>" method="post" enctype="multipart/form-data">
 <div>
-<img id="pre_img" src="<%=url+"/"+attach_path+getMyProfileImage %>" alt="pre_img" width="80px" height="80px" /></br>
+<img id="pre_img" src="<%=url+"/"+attach_path+getClubImage %>" alt="pre_img" width="80px" height="80px" /></br>
 <input type="file" id="att_image" name="image" onchange="fileCheck(this)" accept="image/gif,image/jpeg,image/png" />
 </div>
 <br>
 
-<p>닉네임 : <input type="text" name="nickname" id="nickname" value="<%=getMynickname %>" placeholder="닉네임" /></p> 
+<p>동호회 소개<br></p>
+<textarea id="intro" name="intro" cols="30" rows="3" placeholder="소개글"><%=club_info.getIntro() %></textarea>
 
-<button type="button" onclick="update_club_profile();">변경</button>
+<p>동호회 최대 인원 : <input type="text" name="club_max_people" id="club_max_people" value="<%=club_info.getMax_people()%>"/>명</p>
+
+<button type="button" onclick="update_club();">변경</button>
 </form>
 
 </div>
+
+
 
 </div>
 

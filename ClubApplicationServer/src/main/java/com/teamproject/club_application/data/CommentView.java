@@ -2,6 +2,7 @@ package com.teamproject.club_application.data;
 
 public class CommentView {
 	private long id;
+	private long member_id;
 	private String nickname;
 	private String content;
 	private String create_date;
@@ -13,11 +14,10 @@ public class CommentView {
 		super();
 	}
 
-
-
-	public CommentView(long id, String nickname, String content, String create_date, String img_db_name) {
+	public CommentView(long id, long member_id, String nickname, String content, String create_date, String img_db_name) {
 		super();
 		this.id = id;
+		this.member_id = member_id;
 		this.nickname = nickname;
 		this.content = content;
 		this.create_date = create_date;
@@ -37,6 +37,14 @@ public class CommentView {
 	}
 
 
+
+	public long getMember_id() {
+		return member_id;
+	}
+
+	public void setMember_id(long member_id) {
+		this.member_id = member_id;
+	}
 
 	public String getNickname() {
 		return nickname;

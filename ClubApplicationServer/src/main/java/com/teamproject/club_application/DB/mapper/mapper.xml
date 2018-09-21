@@ -55,8 +55,8 @@ select C.* from club_member CM, club C, member M where M.login_id like #{param1}
 
 
 <!-- 마이페이지(설정) 관련 -->
-<select id="getMyclubList" resultType="String">
-select name from club where id in
+<select id="getMyclubList" resultType="com.teamproject.club_application.data.Club">
+select * from club where id in
 (select club_id from club_member where member_id = #{param1})
 </select>
 <update id="updateMyInfo">
@@ -65,14 +65,34 @@ update member set login_pw=#{param1}, name=#{param2}, birthday=#{param3}, gender
 
 <!-- 동호회 관련 -->
 <select id="getClubList" resultType="com.teamproject.club_application.data.ClubView">
+<![CDATA[
+SELECT * FROM (
+SELECT A.*, 
+ROWNUM AS RNUM,
+COUNT(*) OVER() AS TOTCNT FROM (
 select c.id, i.img_db_name, c.name, pf.nickname, c.intro
 from image i, club c, profile pf, club_member cm
-where i.id=c.image_id and c.member_id=pf.member_id and c.id=pf.club_id and cm.club_id=c.id and cm.member_id=pf.member_id order by c.id asc
+where i.id=c.image_id and c.member_id=pf.member_id and c.id=pf.club_id and cm.club_id=c.id and cm.member_id=pf.member_id and c.name like '%'||#{param3}||'%'  order by c.id asc
+) A
+) WHERE RNUM > #{param1} AND RNUM <= #{param2}
+]]>
 </select>
 <select id="getClubMemberCount" resultType="Integer">
-SELECT COUNT(*) FROM club_member GROUP BY club_id order by club_id asc
-</select>
+<![CDATA[
+SELECT * FROM (
+SELECT A.*, 
+ROWNUM AS RNUM,
+COUNT(*) OVER() AS TOTCNT FROM (
 
+SELECT COUNT(*) FROM club_member cm, club c
+where cm.club_id=c.id and c.name like '%'||#{param3}||'%'  GROUP BY cm.club_id order by cm.club_id asc
+) A
+) WHERE RNUM > #{param1} AND RNUM <= #{param2}
+]]>
+</select>
+<select id="getClubMemberCount2" resultType="Integer">
+select count(*) from club_member where club_id= #{param1}
+</select>
 <select id="getCategoryList" resultType="com.teamproject.club_application.data.Category">
 select * from category
 </select>
@@ -97,8 +117,15 @@ select count(*) from club_member where club_id=#{param1}
 <select id="getClubMaster" resultType="String">
 select name from member where id=#{param1}
 </select>
-<select id="getClubMemberList" resultType="com.teamproject.club_application.data.ClubMember">
-select * from club_member
+<select id="getClubApplyList" resultType="com.teamproject.club_application.data.ClubMemberView">
+select i.img_db_name, pf.nickname, m.login_id, cm.member_id
+from club_member cm, profile pf, image i, member m
+where cm.club_id = #{param2} and m.id = pf.member_id and cm.club_id = pf.club_id and cm.member_id = pf.member_id and pf.image_id=i.id and cm.verify='N' and cm.member_id ! = #{param1}
+</select>
+<select id="getClubMemberList" resultType="com.teamproject.club_application.data.ClubMemberView">
+select i.img_db_name, pf.nickname, m.login_id, cm.member_id
+from club_member cm, profile pf, image i, member m
+where cm.club_id = #{param2} and m.id = pf.member_id and cm.club_id = pf.club_id and cm.member_id = pf.member_id and pf.image_id=i.id and cm.verify='Y' and cm.member_id ! = #{param1}
 </select>
 <select id="getClubMember" resultType="Integer">
 select count(*) from club_member where member_id=#{param1} and club_id=#{param2} and verify='Y'
@@ -116,15 +143,81 @@ where id in (select image_id from profile where club_id = #{param1} and member_i
 <select id="getMynickname" resultType="String">
 select nickname from profile where club_id = #{param1} and member_id = #{param2}
 </select>
+<select id="checkClubLeader" resultType="Integer">
+select count(*) from club where member_id=#{param1} and id=#{param2}
+</select>
+<update id="updateClubMember">
+UPDATE club_member
+     SET verify = 'Y'
+     WHERE club_id = #{param1} and member_id=#{param2}
+</update>
 
-
+<select id="getMyProfile" resultType="com.teamproject.club_application.data.Profile">
+select * from profile where club_id=#{param1} and member_id = #{param2} 
+</select>
+<delete id="deleteProfileImage">
+delete image
+WHERE id in (select image_id from profile where club_id = #{param1} and member_id = #{param2} and image_id != -2)
+</delete>
+<delete id="deleteClubMember">
+delete club_member
+WHERE club_id=#{param1} and member_id =#{param2}
+</delete>
+<delete id="deleteClubProfile">
+delete profile
+WHERE club_id=#{param1} and member_id =#{param2}
+</delete>
+<update id="updateClubImageId">
+update club set image_id=#{param2} where id=#{param1}
+</update>
+<update id="updateClubImage">
+update image set img_db_name=#{param2}, img_ori_name=#{param3}
+where id=#{param1}
+</update>
+<update id="updateProfileImageId">
+update profile set image_id=#{param3}
+where club_id=#{param1} and member_id=#{param2}
+</update>
+<update id="updateProfileImage">
+update image set img_db_name=#{param2}, img_ori_name=#{param3}
+where id = #{param1}
+</update>
+<update id="updateClubInfo">
+update club set intro=#{param2}, max_people=#{param3}
+where id=#{param1}
+</update>
+<update id="updateNickname">
+update profile set nickname= #{param3}
+where club_id=#{param1} and member_id = #{param2}
+</update>
 
 <!-- 동호회 게시판 관련 -->
 <select id="getPostProfile" resultMap="PostProfile">
-select * from Post A, Profile B where A.club_id = #{param1} and B.club_id = #{param1} Order by A.id desc
+<![CDATA[
+SELECT * FROM (
+SELECT A.*, 
+ROWNUM AS RNUM,
+COUNT(*) OVER() AS TOTCNT FROM (
+
+select C.id, C.club_id, C.content, C.create_date, D.nickname from Post C, Profile D where C.club_id = #{param1} and C.club_id = D.club_id and C.member_id = D.member_id and C.content like '%'||#{param4}||'%' Order by C.id desc
+
+) A
+) WHERE RNUM > #{param2} AND RNUM <= #{param3}
+]]>
 </select>
+<select id="getTotalCount" resultType="Integer">
+select COUNT(*) from Post C, Profile D where C.club_id = #{param1} and C.club_id = D.club_id and C.member_id = D.member_id and C.content like '%'||#{param2}||'%' Order by C.id desc
+</select>
+<select id="getTotalCount2" resultType="Integer">
+select COUNT(*) from club where name like '%'||#{param1}||'%' Order by id desc
+</select>
+
 <select id="postProfileDetail" resultMap="PostProfile">
-select * from Post A, Profile B where A.club_id = #{param1} and B.club_id = #{param1} and A.id = #{param2}
+select * from Post A, Profile B where
+A.club_id = #{param1}
+and A.club_id = B.club_id
+and A.member_id = B.member_id
+and A.id = #{param2}
 </select>
 <insert id="writePost" parameterType="com.teamproject.club_application.data.Post">
 insert into post values(post_seq.nextval, #{club_id}, #{member_id}, #{content}, sysdate)
@@ -133,7 +226,7 @@ insert into post values(post_seq.nextval, #{club_id}, #{member_id}, #{content}, 
 </selectKey>
 </insert>
 <insert id="insertPostImage">
-insert into post_image values(post_image_seq.nextval, #{param1}, #{param2}, #{param3})
+insert into post_image values(post_image_seq.nextval, #{param1}, #{param2})
 </insert>
 <select id="getProfileImage" resultType="String">
 select img_db_name from image where id=#{param1}
@@ -141,18 +234,45 @@ select img_db_name from image where id=#{param1}
 <select id="getPostImage" resultType="String">
 select img_db_name from image where id in (select image_id from post_image where post_id=#{param1})
 </select>
+<select id="getPostImageList" resultType="String">
+select img_db_name from image
+where id in (select image_id from post_image where post_id=#{param1})
+</select>
+<update id="updatePostContent">
+UPDATE post SET content= #{param2}
+WHERE id = #{param1}
+</update>
+<delete id="deletePostLinkedImage">
+delete image
+where id in (select image_id from post_image where post_id=#{param1})
+</delete>
+<delete id="deletePostImage">
+delete post_image
+where post_id = #{param1}
+</delete>
+<delete id="deletePost">
+delete post
+where post_id = #{param1}
+</delete>
 
 <!-- 댓글 관련 -->
 <insert id="insertComment">
 insert into comments values(comments_seq.nextval, #{param1}, #{param2}, #{param3}, sysdate)
 </insert>
+<delete id="deleteComment">
+delete comments
+WHERE id=#{param1} 
+</delete>
 <select id="getCommentList" resultType="com.teamproject.club_application.data.CommentView">
-select comments.id, pf.nickname, comments.content, comments.create_date, i.img_db_name from (select * from comments where post_id=#{param1}) 
+select comments.id, comments.member_id, pf.nickname, comments.content, comments.create_date, i.img_db_name from (select * from comments where post_id=#{param1}) 
                 comments, post p, profile pf, image i
 where comments.member_id=pf.member_id and comments.post_id=p.id and
         p.club_id=pf.club_id and pf.image_id=i.id order by id desc
 </select>
-
+<delete id="deletePostComment">
+delete comments
+WHERE post_id=#{param1} 
+</delete>
 
 
 <!-- oracle 쿼리문 작성 끝-->

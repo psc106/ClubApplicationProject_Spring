@@ -8,6 +8,11 @@
 ArrayList<ClubView> getClubList = (ArrayList<ClubView>)request.getAttribute("getClubList");
 ArrayList<Integer> getClubMemberCount = (ArrayList<Integer>)request.getAttribute("getClubMemberCount");
 
+Integer totalCount = (Integer)request.getAttribute("totalCount");
+Integer pageCount = (Integer)request.getAttribute("pageCount");
+Integer mpage = (Integer)request.getAttribute("page");
+String search = (String)request.getAttribute("search");
+
 String url = request.getRequestURL().toString().replace(request.getRequestURI(),"") + request.getContextPath();
 String attach_path = "resources/upload/";
 %>
@@ -36,7 +41,20 @@ table tr, td {
 
 <script>
 function search() {
-	document.location.href = ".do";
+	var search_input = document.getElementById("search");	
+	/*
+	if (search_input.value == "") {
+		window.alert("검색어를 입력하세요.");
+		search_input.focus();
+		return;
+	}
+	*/
+	
+	document.location.href="search.do?search=" + escape(encodeURIComponent(search_input.value)) + "&page=" + <%=mpage%>;
+}
+
+function movePage(page) {
+	document.location.href="search.do?search=" + escape(encodeURIComponent("<%=search%>")) + "&page=" + page;
 }
 </script>
 </head>
@@ -46,18 +64,19 @@ function search() {
 </div>
 
 <div id="wrap">
+<br>
 <h3>검색</h3>
 
-<form>
+
 <p>
-<input type="text" id="search_parameter" /><button type="button" onclick="search();">검색</button>
+<input type="text" id="search" placeholder="검색어 입력" /> <button type="button" onclick="search();">검색</button>
 </p>
-</form>
+
 <%for(int i=0; i<getClubList.size(); i++) { %>
 <table class="club_info">
 <tr>
 	<td rowspan="3" class="club_profile"><img class="club_profile" src="<%=url+"/"+attach_path+getClubList.get(i).getImg_db_name() %>" /></td>
-	<td colspan="2" ><%=getClubList.get(i).getName() %></td>
+	<td colspan="2" ><a href="myclub_board.do?id=<%=getClubList.get(i).getId()%>"><%=getClubList.get(i).getName() %></a></td>
 </tr>
 <tr>
 	<td id="max_member">멤버 수: <%=getClubMemberCount.get(i) %>명</td>
@@ -68,6 +87,12 @@ function search() {
 </tr>
 </table>
 <%} %>
+
+<div id="page">
+	<%for (int i = 0 ; i < Math.ceil((float)totalCount/(float)pageCount) ; i++) { %>
+		<a href="#" onclick="movePage(<%=i+1 %>);">[<%=i+1 %>]</a> 
+	<%} %>
+</div>
 
 </div>
 </body>

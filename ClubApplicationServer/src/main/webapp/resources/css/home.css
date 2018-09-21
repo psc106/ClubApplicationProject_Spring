@@ -6,9 +6,8 @@
 
 #wrap {
 	margin:0 auto;
-	margin-top:70px;
-	border:1px solid black;
+	margin-top:100px;
 	width:900px;
-	height: 1000px;
+	
 	display: block;
 }

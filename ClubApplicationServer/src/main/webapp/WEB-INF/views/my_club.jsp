@@ -1,9 +1,10 @@
+<%@page import="com.teamproject.club_application.data.Club"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="com.teamproject.club_application.data.Member"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
-ArrayList<String> getMyclubList = (ArrayList<String>)request.getAttribute("getMyclubList");
+ArrayList<Club> getMyclubList = (ArrayList<Club>)request.getAttribute("getMyclubList");
 
 %>
 <!DOCTYPE html>
@@ -30,11 +31,16 @@ ArrayList<String> getMyclubList = (ArrayList<String>)request.getAttribute("getMy
 
 <div id="right_content">
 <h3>내 동호회 목록</h3>
-<ul>
+
+<table>
 <%for(int i=0; i<getMyclubList.size(); i++) { %>
-	<li><%=getMyclubList.get(i) %></li>
+	<tr>
+	<td><a href="myclub_board.do?id=<%=getMyclubList.get(i).getId()%>"><%=getMyclubList.get(i).getName() %></a></td>
+	</tr>
 <%} %>
-</ul>
+</table>
+
+
 </div>
 
 

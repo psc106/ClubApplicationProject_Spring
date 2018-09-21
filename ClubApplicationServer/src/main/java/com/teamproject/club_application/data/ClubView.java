@@ -6,6 +6,7 @@ public class ClubView {
 	private String name;
 	private String nickname;
 	private String intro;
+	
 	public ClubView() {
 		super();
 	}

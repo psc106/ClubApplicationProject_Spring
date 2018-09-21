@@ -121,7 +121,7 @@
 			var err_local = document.getElementById("err_local");
 			err_local.style.display = "none";
 		}
-		alert('선택된 local value 값=' + local.options[local.selectedIndex].value);
+		//alert('선택된 local value 값=' + local.options[local.selectedIndex].value);
 
 
 		if (checkMail.value == "0") {

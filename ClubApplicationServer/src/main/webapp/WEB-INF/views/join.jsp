@@ -10,8 +10,11 @@
 	width: 800px;
 	height: 900px;
 	margin-top: 200px;
-	border: 1px solid black;
+	border: 1px solid #e2c3c3;
 	margin: 0px auto;
+}
+#content {
+	margin-left:10px;
 }
 
 .err_msg {
@@ -146,6 +149,7 @@
 </head>
 <body>
 	<div id="wrap">
+	<div id="content">
 		<h3>회원가입</h3>
 
 		<form action="join_ok.do" id="join_form" method="post">
@@ -154,18 +158,18 @@
 			<input type="text" name="login_mail" id="login_mail"
 				placeholder="이메일" />
 			<button type="button" onclick="checkIdPopup();">중복 확인</button>
-			</br>
+			</br></br>
 			<div id="err_mail" class="err_msg"></div>
 
 			<input type="password" name="login_pw" id="login_pw"
-				placeholder="비밀번호" /></br>
+				placeholder="비밀번호" /></br></br>
 			<div id="err_pw_1" class="err_msg"></div>
 
 			<input type="password" name="login_pw2" id="login_pw2"
-				placeholder="비밀번호 확인" /></br>
+				placeholder="비밀번호 확인" /></br></br>
 			<div id="err_pw_2" class="err_msg"></div>
 
-			<input type="text" name="name" id="name" placeholder="이름" /></br>
+			<input type="text" name="name" id="name" placeholder="이름" /></br></br>
 			<div id="err_name" class="err_msg"></div>
 
 			생년월일 <input type="text" name="birthday" id="birthday"
@@ -178,11 +182,11 @@
   <%} %>
 </select> --%>
 
-			</br>
+			</br></br>
 			<div id="err_birth" class="err_msg"></div>
 
 			성별 <input type="radio" name="gender" value="0" />남 <input
-				type="radio" name="gender" value="1" />여</br>
+				type="radio" name="gender" value="1" />여</br></br>
 			<div id="err_gender" class="err_msg"></div>
 
 			지역 <select id="local" name="local">
@@ -191,15 +195,15 @@
 				<option value="경기">경기</option>
 				<option value="충청">충청</option>
 				<option value="전라">전라</option>
-			</select></br>
+			</select></br></br>
 			<div id="err_local" class="err_msg"></div>
 
 			전화번호 <input type="text" name="phone" id="phone" placeholder="전화번호" /></br>
-			<div id="err_phone" class="err_msg"></div></br>
+			<div id="err_phone" class="err_msg"></div></br></br>
 			
 			<button type="button" onclick="checkInfo();">가입</button>
 		</form>
-
+	</div>
 	</div>
 </body>
 </html>

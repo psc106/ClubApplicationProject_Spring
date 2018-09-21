@@ -5,14 +5,14 @@
 <head>
 <meta charset="UTF-8">
 <title>로그인</title>
-<link rel="stylesheet" href="resources/css/home.css" type="text/css">
+<link rel="stylesheet" href="resources/css/home.css?ver=1" type="text/css">
 <style>
 #wrap {
 	width:400px;
 	height:auto;
 	margin:0px auto;
 	margin-top:150px;
-	border:1px solid black;
+	
 }
 
 input[type=text],input[type=password] {
@@ -102,7 +102,7 @@ function login_ok() {
 </head>
 <body>
 <div id="wrap">
-<div id="login_logo" name="login_logo"><img width="400px" height="250px" src="resources/main_logo.png" /></div><br>
+<div id="login_logo" name="login_logo"><img width="400px" height="400px" src="resources/main_logo.png" /></div><br>
 <form action="login_ok.do" id="login_form" method="post">
 
 	<table id="table_login">

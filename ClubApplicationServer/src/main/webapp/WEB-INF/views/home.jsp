@@ -18,7 +18,7 @@ ArrayList<Club> myclub = (ArrayList<Club>)session.getAttribute("myclub");
 	height:auto;
 	margin:0px auto;
 	margin-top:150px;
-	border:1px solid black;
+	
 }
 
 #login {
@@ -27,7 +27,7 @@ ArrayList<Club> myclub = (ArrayList<Club>)session.getAttribute("myclub");
 
 #home {
 	width:400px;
-	height:150px;
+	height:180px;
 	border:1px solid #e2c3c3;
 	padding:10px;
 }
@@ -45,7 +45,7 @@ ArrayList<Club> myclub = (ArrayList<Club>)session.getAttribute("myclub");
 
 #setting_icon {
 	vertical-align: bottom;
-	style=cursor:pointer;
+	cursor:pointer;
 }
 
 #header_login_btn {
@@ -64,7 +64,7 @@ function logout() {
 }
 
 function my_setting() {
-	document.location.href = "my_schedule.do";
+	document.location.href = "my_club.do";
 }
 
 function change_myclub(club_value) {
@@ -74,6 +74,10 @@ function change_myclub(club_value) {
 	form.submit();
 }
 
+function create_club() {
+	document.location.href = "create_club.do";
+}
+
 function go_search() {
 	document.location.href = "search.do";
 }
@@ -81,7 +85,7 @@ function go_search() {
 <body>
 
 <div id="wrap">
-<div id="login_logo" name="login_logo"><img width="400px" height="250px" src="resources/main_logo.png" /></div><br>
+<div id="login_logo" name="login_logo"><img width="400px" height="400px" src="resources/main_logo.png" /></div><br>
 
 	<div id="home">
 	<%
@@ -90,7 +94,7 @@ function go_search() {
 		<center><button style="margin-top:50px;" id="header_login_btn" class="btn" id="header_login_btn" onclick="login();">로그인</button></center>	
 	<%} else { // 로그인 %>
 	<p><%=login_member.getName() %>님 환영합니다.
-	<img width="30px" height="30px" id="setting_icon" onclick="my_setting();" src="resources/setting_icon.png" />
+	<img width="30px" height="30px" id="setting_icon" onclick="my_setting();" src="resources/setting_icon.png" /> 
 	<button onclick="logout();">로그아웃</button></p>
 	<form id="myclub_sel" action="myclub_sel.do" method="get" >
 	<select id="myclub" name="myclub" onchange="change_myclub(this.value)">
@@ -99,9 +103,10 @@ function go_search() {
 		<option value="<%=myclub.get(i).getId() %>"><%=myclub.get(i).getName() %></option>
 	<%} %>
 	</select>
+	<button onclick="create_club();" type="button">동호회 생성</button>
 	</form>
 	
-	<button onclick="go_search();">검색</button>
+	<button onclick="go_search();" type="button">검색</button>
 	
 	<%} %>
 	

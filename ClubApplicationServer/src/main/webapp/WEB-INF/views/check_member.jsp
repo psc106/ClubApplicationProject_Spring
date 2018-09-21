@@ -14,9 +14,11 @@ String url = (String) request.getAttribute("url");
 var msgCheck = "<%=msgCheck%>";
 var message = "<%=msg%>";
 var returnUrl = "<%=url%>";
+/*
 alert(msgCheck+"1");
 alert(message+"2");
 alert(returnUrl+"3");
+*/
 if(msgCheck == 2) {
 	document.location.href = returnUrl;
 }

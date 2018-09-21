@@ -21,18 +21,19 @@ ArrayList<Club> myclub = (ArrayList<Club>)session.getAttribute("myclub");
 
 #header {
 	position:fixed;
-	border:1px solid black;
+	border:1px solid #e2c3c3;
 	top: 0;
 	left: 0;
 	width: 100%;
-	height: 70px;
+	height: 100px;
 	box-sizing: border-box;
-	background-color: #9FF781;
+	background-color: #FAAC58;
 }
 
 #logo {
-	margin-top: 10px;
-	margin-left: 10px;
+	margin-top:10px;
+	margin-left:10px;
+	vertical-align: middle;
 }
 
 .header_search {
@@ -42,8 +43,14 @@ ArrayList<Club> myclub = (ArrayList<Club>)session.getAttribute("myclub");
 #header_box {
 	display: inline;
 	float: right;
-	margin-top: 20px;
-	margin-right: 50px;
+	height: 80px;
+    line-height: 80px;
+    margin-right:20px;
+}
+
+#setting_icon {
+	vertical-align: middle;
+	cursor:pointer;
 }
 
 #myclub_sel {
@@ -66,24 +73,37 @@ function logout() {
 }
 
 function my_setting() {
-	document.location.href = "my_schedule.do";
+	document.location.href = "my_club.do";
 }
 
 function change_myclub(club_value) {
-	alert(club_value + "!");
+	//alert(club_value + "!");
 	
 	var form = document.getElementById("myclub_sel");
 	form.submit();
+}
+
+function search() {
+	var search_input = document.getElementById("header_search");	
+	/*
+	if (search_input.value == "") {
+		window.alert("검색어를 입력하세요.");
+		search_input.focus();
+		return;
+	}
+	*/
+	
+	document.location.href="search.do?search=" + escape(encodeURIComponent(search_input.value)) + "&page=1";
 }
 </script>
 </head>
 <body>
 <div id="header">
-<a href="home.do"><img id="logo" width="50px" height="50px" src="resources/logo.png" /></a>
+<a href="home.do"><img id="logo" width="80px" height="80px" src="resources/logo.png" /></a>
 
 <div class="header_search">
 	<input type="text" id="header_search" name="header_search" placeholder="검색어 입력" />
-	<button id="header_search_btn" name="header_search_btn">검색</button>
+	<button id="header_search_btn" name="header_search_btn" onclick="search();">검색</button>
 </div>
 
 <div id="header_box" name="header_box">
@@ -103,7 +123,7 @@ if(login == null) { // 비로그인 %>
 	</select>
 	</form>
 	
-	<img width="30px" height="30px" onclick="my_setting();" style="cursor:pointer" src="resources/setting_icon.png" />
+	<img width="30px" height="30px" onclick="my_setting();" id="setting_icon" src="resources/setting_icon.png" />
 	</font>
 	<button onclick="logout();">로그아웃</button>
 <%}%>

@@ -9,7 +9,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>글쓰기 : 밴드제목</title>
+<title>글쓰기 : <%=club_info.getName() %></title>
 <link rel="stylesheet" href="resources/css/myclub.css" type="text/css">
 <style>
 .imgs_wrap {
@@ -69,16 +69,17 @@ function handleImgsFilesSelect(e) {
 		}
 		
 		sel_files.push(f);
+		console.log("sel_files : " + sel_files);
 		
 		var reader = new FileReader();
 		reader.onload = function(e) {
-			var html = "<a href=\"javascript:void(0);\" onclick=\"deleteImageAction("+index+")\" id=\"img_id_"+index+"\"><img src=\"" + e.target.result +"\" data-file='"+f.name+"' class='selProductFile' title='Click to remove' width=200px height=200px></a>";
+			var html = "<a href=\"javascript:void(0);\" onclick=\"\" id=\"img_id_"+index+"\"><img src=\"" + e.target.result +"\" data-file='"+f.name+"' class='selProductFile' title='Click to remove' width=200px height=200px></a>";
 		    /* var img_html = "<img src=\"" + e.target.result + "\" width=200px height=200px />";
 		    $(".imgs_wrap").append(img_html); */
 		    $(".imgs_wrap").append(html);
 		    index++;
 		}
-		
+		//onclick--> deleteImageAction("+index+")
 		
 		
 		reader.readAsDataURL(f);
@@ -89,6 +90,7 @@ function handleImgsFilesSelect(e) {
 	});
 }
 
+/*
 function deleteImageAction(index){
 	  console.log("index : "+index);
 	  sel_files.splice(index, 1);
@@ -98,9 +100,9 @@ function deleteImageAction(index){
 	  var img_id = "#img_id_" + index;
 	  $(img_id).remove();
 	  
-	  console.log(sel_files);
-	 }
-
+	  console.log("sel_files2 : " + sel_files);
+}
+*/
 
 </script>
 </head>
@@ -115,7 +117,7 @@ function deleteImageAction(index){
 </div>
 
 <div id="club_content">
-<jsp:include page="club_tab_menu.jsp"></jsp:include>
+
 
 <form id="write_form" action="write_ok.do?id=<%=club_info.getId() %>" method="post" enctype="multipart/form-data">
 	<table border="1">

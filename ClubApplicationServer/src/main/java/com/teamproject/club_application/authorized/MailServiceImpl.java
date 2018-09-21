@@ -1,6 +1,7 @@
 package com.teamproject.club_application.authorized;
 
 import java.io.UnsupportedEncodingException;
+import javax.servlet.http.HttpServletRequest;
 
 import javax.inject.Inject;
 import javax.mail.MessagingException;
@@ -81,9 +82,12 @@ public class MailServiceImpl implements MailService {
 	
 	@Transactional
 	@Override
-	public boolean findPw(String id) {
+	public boolean findPw(String id, HttpServletRequest request) {
+		
 		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
 		int userCount = dao.selectFindPw(id);
+		
+		String url = request.getRequestURL().toString().replace(request.getRequestURI(),"") + request.getContextPath();
 		
 		//reset방식
 		if(userCount==1) {
@@ -99,7 +103,8 @@ public class MailServiceImpl implements MailService {
 						append("당신의 새 비밀번호는 다음과 같습니다.<br>").
 						append("<h1>"+pw+"</h1>").
 						append("아래의 링크를 누르면 비밀번호가 변경됩니다.<br>").
-						append("<a href='http://192.168.0.70:8090/club_application/updatePw.do?login_id=").
+						append("<a href='"+url+"/updatePw.do?login_id=").
+						//append("<a href='http://192.168.0.70:8090/club_application/updatePw.do?login_id=").
 						append(id).
 						append("&pw=").
 						append(pw).

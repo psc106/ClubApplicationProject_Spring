@@ -70,7 +70,7 @@ function my_setting() {
 }
 
 function change_myclub(club_value) {
-	alert(club_value + "!");
+	//alert(club_value + "!");
 	
 	var form = document.getElementById("myclub_sel");
 	form.submit();

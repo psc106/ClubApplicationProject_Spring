@@ -1,4 +1,3 @@
-
 <%@page import="com.teamproject.club_application.data.CommentView"%>
 <%@page import="com.teamproject.club_application.data.Member"%>
 <%@page import="java.util.ArrayList"%>
@@ -26,7 +25,7 @@ String attach_path = "resources/upload/";
 <html>
 <head>
 <meta charset="UTF-8">
-<title>글제목</title>
+<title>글보기</title>
 <link rel="stylesheet" href="resources/css/myclub.css" type="text/css">
 <style>
 #club_board_write_profile {
@@ -47,7 +46,7 @@ String attach_path = "resources/upload/";
   display: grid;
   grid-template-columns: 255px 255px 255px;
   grid-auto-rows: 250px;
-  border: solid 1px black;
+  
 }
 .board_picture_content {
 	width:250px;
@@ -77,6 +76,11 @@ String attach_path = "resources/upload/";
 function back_board() {
 	document.location.href = "myclub_board.do?id=" + "<%=club_info.getId()%>";
 }
+
+function delete_comment(comment_id) {
+	document.location.href = "delete_comment.do?id=" + "<%=club_info.getId()%>" + "&post_id=" + "<%=postProfileDetail.getPost().getId()%>" + "&comment_id=" + comment_id;
+}
+
 function insert_comment() {
 	var comment_content = document.getElementById("comment_content");
 	
@@ -90,6 +94,20 @@ function insert_comment() {
 	form.submit();
 	alert("댓글 입력 완료");
 }
+
+function modify_board() {
+	document.location.href = "myclub_modify.do?id=" + "<%=club_info.getId()%>" + "&post_id=" + "<%=postProfileDetail.getPost().getId()%>";
+}
+
+function delete_board() {
+	if (confirm("정말 삭제하시겠습니까??") == true){ //확인
+		alert("삭제되었습니다.");
+		document.location.href = "myclub_delete_ok.do?id=" + "<%=club_info.getId()%>" + "&post_id=" + "<%=postProfileDetail.getPost().getId()%>";
+	}else{   //취소
+	    return;
+	}
+}
+
 </script>
 </head>
 <body>
@@ -103,7 +121,7 @@ function insert_comment() {
 </div>
 
 <div id="club_content">
-<jsp:include page="club_tab_menu.jsp"></jsp:include>
+<!--<jsp:include page="club_tab_menu.jsp"></jsp:include>-->
 
 
 <div id="club_board_write_profile">
@@ -112,7 +130,7 @@ function insert_comment() {
 </span>
 <span class="user_profile">
 <div id="board_user_name"><%=postProfileDetail.getProfile().getNickname() %></div>
-<time id="board_time" datetime="2018-08-21">3시간 전(구현안됨)</time>
+<time id="board_time" datetime="2018-08-21"></time>
 </span>
 </div>
 
@@ -128,11 +146,19 @@ function insert_comment() {
 </div>
 <%}%>
 
-<button class="btn" type="button" onclick="back_board();">목록</button><button class="btn" type="button">수정</button><button class="btn" type="button">삭제</button>
+<button class="btn" type="button" onclick="back_board();">목록</button>
+<%
+Member login = login_member;
+if(login != null) { // 로그인
+	if(postProfileDetail.getProfile().getMember_id() == login_member.getId()) { %>
+		<button class="btn" type="button" onclick="modify_board();">수정</button><button class="btn" type="button" onclick="delete_board();">삭제</button>
+<%}
+} %>
+
 <div class="club_board_comment">
 <p>댓글</p>
 <%
-Member login = login_member;
+login = login_member;
 if(login != null) { // 로그인 %>
 <div id="club_board_comment">
 <span class="user_comment_profile">
@@ -159,9 +185,18 @@ if(login != null) { // 로그인 %>
 </span>
 <span class="user_profile">
 <div id="board_user_name"><%=getCommentList.get(i).getNickname() %></div>
-<time id="board_time" datetime="2018-08-21">5시간 전</time>
+<time id="board_time" datetime=""></time>
 </span>
-<p><%=getCommentList.get(i).getContent()%></p>
+<p><%=getCommentList.get(i).getContent()%>
+
+<%
+login = login_member;
+if(login != null) { // 로그인
+	if(getCommentList.get(i).getMember_id() == login_member.getId()) { %>
+	<button type="button" onclick="delete_comment(<%=getCommentList.get(i).getId() %>);">삭제</button>
+<%}%>
+<%}%>
+</p>
 
 <%} %>
 </div>

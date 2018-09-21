@@ -93,14 +93,14 @@ function create_club() {
 		err_intro.style.display = "none";
 	}
 	
-	alert("club_name:"+club_name.value+"///category:"+category.options[category.selectedIndex].value+"///max_people:"+max_people.value+"///local:"+local.options[local.selectedIndex].value+"///intro:"+intro.value);
+	//alert("club_name:"+club_name.value+"///category:"+category.options[category.selectedIndex].value+"///max_people:"+max_people.value+"///local:"+local.options[local.selectedIndex].value+"///intro:"+intro.value);
 	
 	// 파일확장자 검사 다시
 	var input = document.getElementById("att_image");
 	pathpoint = input.value.lastIndexOf('.');
 	filepoint = input.value.substring(pathpoint+1, input.length);
 	filetype = filepoint.toLowerCase();
-	alert("input.value:"+input.value+", pathpoint:"+pathpoint+", filepoint:"+filepoint+", filetype:"+filetype);
+	//alert("input.value:"+input.value+", pathpoint:"+pathpoint+", filepoint:"+filepoint+", filetype:"+filetype);
 	if(filetype!="" && !(filetype=='jpg' || filetype=='gif' || filetype=='png' || filetype=='jpeg' || filetype=='bmp')) {	
 		alert("프로필은 이미지만 가능합니다.");
 		return;

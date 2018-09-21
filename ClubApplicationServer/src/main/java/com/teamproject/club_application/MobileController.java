@@ -494,7 +494,7 @@ public class MobileController {
 	@ResponseBody
 	public String findPw_toMobile(HttpServletRequest request) {
 		String id = request.getParameter("id");
-		mailService.findPw(id);
+		mailService.findPw(id, request);
 		Gson gson = new Gson();
 		return gson.toJson("");
 	}

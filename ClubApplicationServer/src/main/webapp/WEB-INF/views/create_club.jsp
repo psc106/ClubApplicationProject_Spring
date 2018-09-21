@@ -26,8 +26,12 @@ document.location.href="login.do";
 	width: 800px;
 	height: 900px;
 	margin-top: 200px;
-	border: 1px solid black;
+	border: 1px solid #e2c3c3;
 	margin: 0px auto;
+}
+
+#content {
+	margin-left:10px;
 }
 
 .err_msg {
@@ -138,10 +142,11 @@ function fileCheck(input) {
 </head>
 <body>
 	<div id="wrap">
-	<h3>동호회 가입</h3>
+	<div id="content">
+	<h3>동호회 만들기</h3>
 
-	<form id="create_club_form" action="create_club_ok.do" id="create_club_form" method="post" enctype="multipart/form-data">
-	<input type="text" name="club_name" id="club_name" placeholder="동호회 이름" />	</br>
+	<form id="create_club_form" action="create_club_ok.do" method="post" enctype="multipart/form-data">
+	<input type="text" name="club_name" id="club_name" placeholder="동호회 이름" />	</br><br>
 	<div id="err_club_name" class="err_msg"></div>
 	
 	주제<select id="category" name="category">
@@ -149,7 +154,7 @@ function fileCheck(input) {
 <%for(int i=1; i<=category_items.size(); i++) { %>
 		<option value="<%= i%>"><%=category_items.get(i-1).getName() %></option>
 <%} %>		
-	</select></br>
+	</select></br><br>
 	<div id="err_category" class="err_msg"></div>
 	
 	<input type="text" id="max_people" name="max_people" placeholder="인원수"/>
@@ -161,16 +166,16 @@ function fileCheck(input) {
 		<option value="경기">경기</option>
 		<option value="충청">충청</option>
 		<option value="전라">전라</option>
-	</select></br>
+	</select></br><br>
 	<div id="err_local" class="err_msg"></div>
 	
-	대표 이미지</br>
+	대표 이미지</br><br>
 	<img id="pre_img" src="resources/default_club.png" alt="pre_img" width="80px" height="80px" /></br>
 
 	첨부파일 :	<input type="file" id="att_image" name="image" onchange="fileCheck(this)" accept="image/gif,image/jpeg,image/png" />
 
 	</br>
-	소개</br>
+	소개</br><br>
 	<textarea id="intro" name="intro" cols="30" rows="3"></textarea></br>
 	<div id="err_intro" class="err_msg"></div>
 	
@@ -178,6 +183,7 @@ function fileCheck(input) {
 	
 	
 </form>
+</div>
 </div>
 </body>
 </html>
