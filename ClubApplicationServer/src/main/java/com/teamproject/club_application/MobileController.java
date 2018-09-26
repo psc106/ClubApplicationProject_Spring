@@ -479,7 +479,7 @@ public class MobileController {
 			return gson.toJson(null);
 		}
 
-		ArrayList<CommentView> items = dao.selectPostComment(postId, 1);
+		ArrayList<CommentView> items = dao.selectPostComment(postId, 1, 4);
 
 		return gson.toJson(items);
 	}
@@ -526,8 +526,7 @@ public class MobileController {
 		} else {
 			return gson.toJson(null);
 		}
-
-		ArrayList<CommentView> items = dao.selectPostComment(postId, page);
+		ArrayList<CommentView> items = dao.selectPostComment(postId, page, 7);
 
 		return gson.toJson(items);
 	}
@@ -550,7 +549,28 @@ public class MobileController {
 
 		return gson.toJson(items);
 	}
-	
+
+
+	@RequestMapping(value = "mobile/getImageCount.do", produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String getImageCount_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		String postIdStr = request.getParameter("postId");
+		Long postId;
+		Integer page;
+		Gson gson = new Gson();
+
+		if (postIdStr != null) {
+			postId = Long.parseLong(postIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+
+		int item = dao.getImageCount(postId);
+
+		return gson.toJson(item);
+	}
+
 	@RequestMapping(value = "mobile/selectPostImg.do", produces = "application/json; charset=utf8")
 	@ResponseBody
 	public String selectPostImg_toMobile(HttpServletRequest request) {

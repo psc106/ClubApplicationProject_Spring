@@ -58,11 +58,12 @@ public interface iDaoMobile {
     public ArrayList<PostView> selectClubPost(Long club_id, Integer page);
     public Integer getAlbumCount(Long club_id);
     public ArrayList<AlbumView> selectClubAlbum(Long club_id, Integer page);
-
+    
     public PostView selectCurrPost(Long post_id);
+    public Integer getImageCount(Long post_id);
     public ArrayList<String> selectPostImg(Long post_id);
     public Integer getCommentCount(Long post_id);
-    public ArrayList<CommentView> selectPostComment(Long post_id, Integer page);
+    public ArrayList<CommentView> selectPostComment(Long post_id, Integer page, Integer pageCount);
     
     public ArrayList<MemberView> selectJoinMember(Long clubId);
     public ArrayList<MemberView> selectWaitingMember(Long clubId);

@@ -330,19 +330,24 @@
 
 
 
+	<select id="getImageCount" resultType="Integer">
+		SELECT count(*)
+		from post_image pi, image i
+		where pi.post_id=#{param1} and pi.image_id=i.id
+	</select>
+	
 	<select id="selectPostImg" resultType="String">
 		SELECT i.img_db_name
 		FROM
-		post_image pi, post p, image i
-		where p.id=#{param1} and pi.post_id=p.id
-		and pi.image_id=i.id
+		post_image pi,image i
+		where pi.post_id=#{param1} and pi.image_id=i.id
 	</select>
 
 	<select id="getCommentCount" resultType="Integer">
 		SELECT count(*)
 		from
 		comments c
-		where c.id=#{param1}
+		where c.post_id=#{param1}
 	</select>
 
 	<select id="selectPostComment"
@@ -352,7 +357,7 @@
             FROM (	SELECT c.*, ROW_NUMBER() OVER(ORDER BY rownum desc) RN 
                     from comments c
                     where c.post_id=#{param1}) SUB, profile pf, post p
-            where SUB.RN <= #{param2}*3 and SUB.RN > (#{param2}-1)*3 		and 
+            where SUB.RN <= #{param2}*#{param3} and SUB.RN > (#{param2}-1)*#{param3} 		and 
             		pf.member_id=SUB.member_id and SUB.post_id=p.id and p.club_id = pf.club_id
 	]]>
 	</select>

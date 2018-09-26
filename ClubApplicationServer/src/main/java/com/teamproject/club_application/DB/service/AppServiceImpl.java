@@ -98,7 +98,7 @@ public class AppServiceImpl implements AppService {
 			}
 			post.get(i).setImgUrl(imgUrl);
 
-			ArrayList<CommentView> comments = dao.selectPostComment(post.get(i).getId(), 1);
+			ArrayList<CommentView> comments = dao.selectPostComment(post.get(i).getId(), 1, 4);
 			if (comments != null && comments.size() > 0) {
 				for (int j = 0; j < comments.size(); ++j) {
 					String imgUrlComment = dao.selectUserProfileImg(club_id, comments.get(j).getMember_id());
