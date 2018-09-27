@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"      
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="com.teamproject.club_application.DB.iDaoMobile">
+	<!-- 맵핑 데이터 -->
+	<!-- -->
+	<resultMap
+		type="com.teamproject.club_application.data.MemberView"
+		id="memberView">
+		<result property="memberId" column="id" />
+		<result property="loginId" column="login_id" />
+		<result property="name" column="name" />
+		<result property="birthday" column="birthday" />
+		<result property="gender" column="gender" />
+		<result property="local" column="local" />
+		<result property="phone" column="phone" />
+		<result property="nickname" column="nickname" />
+		<result property="imgUrl" column="img_db_name" />
+	</resultMap>
+	<!-- 맵핑 데이터 끝 -->
+
+	<!-- oracle 쿼리문 작성 시작 -->
+
+	<!-- 테스트 항목 -->
+	<select id="getTestData"
+		resultType="com.teamproject.club_application.data.TestData">
+		select * from TestData
+	</select>
+	<!-- 테스트 항목 끝 -->
+
+	<!-- 공통 항목 -->
+	<insert id="insertImage"
+		parameterType="com.teamproject.club_application.data.Image">
+		<selectKey keyProperty="id" resultType="Integer"
+			order="BEFORE">
+			select Image_seq.nextval from dual
+		</selectKey>
+		insert into image values ( #{id}, #{img_db_name}, #{img_ori_name})
+	</insert>
+	<!-- 로그인 항목 끝 -->
+
+
+	<!-- 로그인 항목 -->
+	<select id="selectLoginUser"
+		resultType="com.teamproject.club_application.data.Member">
+		select * from Member where login_id=#{param1} and
+		login_pw=#{param2}
+	</select>
+	<select id="refreshLoginUser"
+		resultType="com.teamproject.club_application.data.Member">
+		select * from Member where id=#{param1}
+	</select>
+	<!-- 로그인 항목 끝 -->
+
+	<!-- 회원가입 항목 -->
+	<select id="checkId" resultType="Integer">
+		select count(*) from Member
+		where login_id=#{param1}
+	</select>
+
+	<insert id="insertMember"
+		parameterType="com.teamproject.club_application.data.Member">
+		<selectKey keyProperty="id" resultType="Integer"
+			order="BEFORE">
+			select member_seq.nextval from dual
+		</selectKey>
+		insert into member values ( #{id}, #{login_id}, #{login_pw}, #{name},
+		#{birthday}, #{gender}, #{local}, #{phone}, #{verify})
+	</insert>
+
+	<!-- 이메일 인증 -->
+
+	<insert id="createAuth">
+		insert into Auth values ( #{param1}, #{param2})
+	</insert>
+
+	<select id="checkAuth" resultType="Integer">
+		select count(*) from Auth A,
+		Member m where A.login_id=#{param1} and A.key=#{param2} and
+		m.verify='N'
+	</select>
+
+	<update id="updateAuth" parameterType="String">
+		update Member set
+		VERIFY='Y' where login_id=#{loginId}
+	</update>
+
+	<delete id="deleteAuth">
+		delete from auth where login_id=#{param1}
+	</delete>
+
+	<!-- 이메일 인증 끝 -->
+	<!-- 회원가입 항목 끝 -->
+
+	<!-- 정보찾기 항목 -->
+	<select id="selectFindId" resultType="String">
+		select M.login_id from
+		Member M where M.login_id=#{param1}
+	</select>
+	<select id="selectFindPw" resultType="Integer">
+		select count(*) from Member
+		M where M.login_id=#{param1}
+	</select>
+	<update id="updatePw">
+		update Member set login_pw=#{param2} where
+		login_id=#{param1}
+	</update>
+	<!-- 임시 비밀번호 항목 -->
+
+	<insert id="createTmpPw">
+		insert into tmp_pw values ( #{param1}, #{param2})
+	</insert>
+
+	<select id="checkTmpPw" resultType="Integer">
+		select count(*) from tmp_pw A
+		where A.login_id=#{param1} and A.pw=#{param2}
+	</select>
+
+	<delete id="deleteTmpPw">
+		delete from tmp_pw where login_id=#{param1}
+	</delete>
+
+	<!-- 임시 비밀번호 항목 끝 -->
+	<!-- 정보찾기 항목 끝 -->
+
+	<!-- 메뉴 항목 -->
+	<select id="selectMyAlarm"
+		resultType="com.teamproject.club_application.data.Alarm">
+		select * from Alarm where member_id=#{param1}
+	</select>
+
+	<select id="selectMyPost"
+		resultType="com.teamproject.club_application.data.Post">
+		select * from Post where member_id=#{param1}
+	</select>
+
+	<select id="selectMyComment"
+		resultType="com.teamproject.club_application.data.Comment">
+		select * from Comments where member_id=#{param1}
+	</select>
+
+	<select id="selectMySchedule"
+		resultType="com.teamproject.club_application.data.Schedule">
+		select S.* from schedule S, schedule_member SM where
+		S.start_date>=sysdate
+		and S.id=SM.schedule_id and
+		SM.member_id=#{param1}
+	</select>
+
+	<select id="selectMyClub"
+		resultType="com.teamproject.club_application.data.ClubView">
+	<![CDATA[
+	select sub.id, sub.category_id, sub.member_id, sub.nickname, CASE
+								WHEN sub.image_id=-1 THEN 'null'
+								WHEN sub.image_id>0 THEN i.img_db_name
+								end as imgUrl, 
+								sub.name, sub.local, 
+								sub.max_people, 0 as cur_people, 
+								sub.intro, sub.create_date
+	from 	(	select  sub1.id, sub1.category_id, sub1.member_id, sub1.image_id, p.nickname, sub1.name, sub1.local, sub1.max_people, sub1.intro, sub1.create_date
+				from    (	select c.* 
+							from Club_member cm, Club c 
+							where cm.member_id=#{param1} and cm.club_id=c.id) SUB1, profile P
+				where   P.club_id=sub1.id and p.member_id=#{param1}) sub, image I
+    WHERE I.id=sub.image_id
+	]]>
+	</select>
+
+	<select id="selectMyDaySchedule"
+		resultType="com.teamproject.club_application.data.Schedule">
+		select S.*
+		from schedule S, schedule_member SM
+		where
+		S.start_date BETWEEN TO_DATE(#{param2}, 'yyyymmdd') and
+		(TO_DATE(#{param2}, 'yyyymmdd')+1-(1/(24*60*60)))
+		and
+		S.id=SM.schedule_id and SM.member_id=#{param1}
+	</select>
+	<!-- 메뉴 항목 끝 -->
+
+
+	<!-- 클럽 항목 -->
+	<insert id="insertClub"
+		parameterType="com.teamproject.club_application.data.Club">
+		<selectKey keyProperty="id" resultType="Integer"
+			order="BEFORE">
+			select club_seq.nextval from dual
+		</selectKey>
+		insert into club values ( #{id}, #{category_id}, #{member_id},
+		#{image_id}, #{name}, #{local}, #{max_people}, #{intro}, sysdate)
+	</insert>
+	<insert id="makeClubProfile">
+		insert into profile(id, club_id, member_id, image_id,
+		nickname)
+		select profile_seq.nextval, #{param1}, #{param2}, -1, M.name
+		from member M
+		where M.id=#{param2}
+	</insert>
+
+	<select id="selectClub"
+		resultType="com.teamproject.club_application.data.ClubView">
+	<![CDATA[
+		select C.id, C.category_id, C.member_id, p.nickname, CASE
+										WHEN c.image_id=-1 THEN null
+										when c.image_id>0 then (select i.img_db_name from image i where c.image_id=i.id)
+										end as imgUrl, C.name, C.local, C.max_people, 
+										0 as cur_people, C.intro, C.create_date
+		from Club C, profile p
+		where C.id = #{param1} and c.member_id = p.member_id and p.club_id=c.id
+	]]>
+	</select>
+
+	<select id="getCurrentMemberCount" resultType="Integer">
+		select count(*)
+		from Club_member CM
+		where CM.club_id = #{param1} and verify like 'Y'
+	</select>
+
+	<select id="selectClubMemberClass" resultType="String">
+		select CM.verify
+		from Club_Member CM
+		where CM.club_id = #{param1} and CM.member_id =
+		#{param2}
+	</select>
+
+	<insert id="joinClub">
+		insert into club_member
+		values(club_member_seq.nextval, #{param1},
+		#{param2}, #{param3})
+
+	</insert>
+
+	<select id="checkClubProfileImg" resultType="Long">
+		select C.image_id
+		from club C
+		where C.id = #{param1}
+	</select>
+
+	<select id="selectClubProfileImg"
+		resultType="com.teamproject.club_application.data.Image">
+		select I.*
+		from image I, club C
+		where C.image_id = I.id and
+		C.id = #{param1}
+	</select>
+
+
+
+	<select id="getNoticeCount" resultType="Integer">
+		SELECT count(*)
+		from
+		notice N
+		where N.club_id=#{param1}
+	</select>
+
+	<select id="selectClubNotice"
+		resultType="com.teamproject.club_application.data.Notice">
+	<![CDATA[
+	SELECT id, club_id, content, create_date 
+	FROM (	SELECT N.*, ROW_NUMBER() OVER(ORDER BY rownum desc) RN 
+			from notice N 
+			where N.club_id=#{param1})	
+	where RN <= #{param2}*10 and RN > (#{param2}-1)*10
+	]]>
+	</select>
+
+
+	<select id="getPostCount" resultType="Integer">
+		SELECT count(*)
+		from post p
+		where p.club_id=#{param1}
+	</select>
+
+	<select id="selectClubPost"
+		resultType="com.teamproject.club_application.data.PostView">
+	<![CDATA[
+	SELECT SUB.id, SUB.member_id, pf.nickname, SUB.content, SUB.create_date, 0 as imgUrl,
+						                    LAG(SUB.id, 1, -1) OVER(ORDER BY SUB.id desc) AS nextId, 
+						                    LEAD(SUB.id, 1, -1) OVER(ORDER BY SUB.id desc) AS previousId
+            FROM (	SELECT P.*, ROW_NUMBER() OVER(ORDER BY rownum desc) RN 
+                    from post P
+                    where P.club_id=#{param1}) SUB, profile pf
+            where SUB.RN <= #{param2}*4 and SUB.RN > (#{param2}-1)*4 		and 
+            		pf.member_id=SUB.member_id and SUB.club_id=pf.club_id
+	]]>
+	
+	
+	
+	</select>
+	<select id="selectUserProfileImg" resultType="String">
+		select i.img_db_name
+		from image i, profile pf
+		where pf.member_id=#{param2} and pf.club_id=#{param1} and pf.image_id>0 and pf.image_id=i.id
+	</select>
+
+	<select id="getAlbumCount" resultType="Integer">
+		SELECT count(*)
+		from album a
+		where a.club_id=#{param1}
+	</select>
+
+	<select id="selectClubAlbum"
+		resultType="com.teamproject.club_application.data.AlbumView">
+	<![CDATA[
+	            SELECT sub.id, i.img_db_name as url, pf.nickname, i.img_ori_name as realName, sub.create_date, 0 as img_size 
+            FROM (	SELECT A.*, ROW_NUMBER() OVER(ORDER BY rownum desc) RN 
+                    from album A
+                    where A.club_id=#{param1}) sub, profile pf, image i
+            where sub.RN <= #{param2}*10 and sub.RN > (#{param2}-1)*10 		and
+            		 pf.member_id=SUB.member_id and SUB.club_id=pf.club_id 	and 
+            		 i.id=sub.image_id  
+	]]>
+	</select>
+
+
+	<select id="selectCurrPost"
+		resultType="com.teamproject.club_application.data.PostView">
+	<![CDATA[
+			SELECT p.id, p.member_id, pf.nickname, p.content, p.create_date, sub.nextId, sub.previousId
+            FROM post p, profile pf, (  select  p.id, LAG(p.id, 1, -1) OVER(ORDER BY p.id desc) AS nextId, 
+                                                LEAD(p.id, 1, -1) OVER(ORDER BY p.id desc) AS previousId
+                                        from    post p, (select club_id from post where id=#{parma1}) sub
+                                        where   p.club_id=sub.club_id) sub
+            where pf.member_id=p.member_id and p.club_id=pf.club_id and sub.id=#{parma1} and p.id=#{parma1}
+	]]>
+	</select>
+
+
+
+
+	<select id="getImageCount" resultType="Integer">
+		SELECT count(*)
+		from post_image pi, image i
+		where pi.post_id=#{param1} and pi.image_id=i.id
+	</select>
+	
+	<select id="selectPostImg" resultType="String">
+		SELECT i.img_db_name
+		FROM
+		post_image pi,image i
+		where pi.post_id=#{param1} and pi.image_id=i.id
+	</select>
+
+	<select id="getCommentCount" resultType="Integer">
+		SELECT count(*)
+		from
+		comments c
+		where c.post_id=#{param1}
+	</select>
+
+	<select id="selectPostComment"
+		resultType="com.teamproject.club_application.data.CommentView">
+	<![CDATA[
+			SELECT SUB.id, sub.member_id, pf.nickname, SUB.content, SUB.create_date, 0 as imgUrl
+            FROM (	SELECT c.*, ROW_NUMBER() OVER(ORDER BY rownum desc) RN 
+                    from comments c
+                    where c.post_id=#{param1}) SUB, profile pf, post p
+            where SUB.RN <= #{param2}*#{param3} and SUB.RN > (#{param2}-1)*#{param3} 		and 
+            		pf.member_id=SUB.member_id and SUB.post_id=p.id and p.club_id = pf.club_id
+	]]>
+	</select>
+<select id="refreshPostComment"
+		resultType="com.teamproject.club_application.data.CommentView">
+	<![CDATA[
+			SELECT SUB.id, sub.member_id, pf.nickname, SUB.content, SUB.create_date, 0 as imgUrl
+            FROM (	SELECT c.*, ROW_NUMBER() OVER(ORDER BY rownum desc) RN 
+                    from comments c
+                    where c.post_id=#{param1}) SUB, profile pf, post p
+            where 
+            		SUB.RN <= case 	when #{param2}*#{param3}<60 then #{param2}*#{param3}
+            						else 60 end
+            		and SUB.RN > 0 and 
+            		pf.member_id=SUB.member_id and SUB.post_id=p.id and p.club_id = pf.club_id
+	]]>
+	</select>
+
+
+	<select id="selectWaitingMember" resultMap="memberView">
+	<![CDATA[
+	
+		select SUB.id,
+		sub.login_id, sub.name, sub.birthday, sub.gender, sub.local,
+		sub.phone, sub.nickname, CASE
+		WHEN sub.image_id=-1 THEN 'null'
+		when
+		sub.image_id>0 then (select i.img_db_name from image i where i.id=sub.image_id)
+		end as imgUrl
+		from ( select SUB.id,
+		sub.login_id, sub.name, sub.birthday, sub.gender,
+		sub.local, sub.phone,
+		P.nickname, P.image_id
+		from ( select M.*
+		from member M, club_member CM
+		where CM.club_id=#{param1} and CM.member_id=M.id and CM.verify like
+		'N')
+		SUB, profile P
+		where P.club_id=#{param1} and P.member_id=SUB.id)
+		SUB
+		
+	]]>
+	</select>
+	<select id="selectJoinMember" resultMap="memberView">
+		select SUB.id,
+		sub.login_id, sub.name, sub.birthday, sub.gender, sub.local,
+		sub.phone, sub.nickname, CASE
+		WHEN sub.image_id=-1 THEN 'null'
+		when
+		sub.image_id>0 then (select i.img_db_name from image i where i.id=sub.image_id)
+		end as imgUrl
+		from ( select SUB.id,
+		sub.login_id, sub.name, sub.birthday, sub.gender,
+		sub.local, sub.phone,
+		P.nickname, P.image_id
+		from ( select M.*
+		from member M, club_member CM
+		where CM.club_id=#{param1} and CM.member_id=M.id and CM.verify like
+		'Y')
+		SUB, profile P
+		where P.club_id=#{param1} and P.member_id=SUB.id)
+		SUB
+	</select>
+	<update id="updateMember">
+		update club_member cm 
+		set	cm.verify='Y'
+		where cm.member_id=#{param1} and cm.club_id=(select c.id from club c where c.id=#{param3} and c.member_id=#{param2})
+	</update>
+	
+	<delete id="deleteMember">
+		delete from club_member cm
+		where cm.member_id=#{param1} and 	#{param2}!=(select c.member_id from club c where c.id=#{param3})
+									 and 	(cm.club_id=(select c.id from club c where c.id=#{param3} and c.member_id=#{param2}) or
+											(cm.club_id=#{param3} and cm.member_id=#{param2}))
+	</delete>
+	<update id="updateAdmin">
+		update club c
+		set	c.member_id=#{param1}
+		where c.id=#{param3} and c.member_id=#{param2}
+		
+	</update>
+	
+	<insert id="insertComment">
+		insert into comments values (comments_seq.nextval, #{param1}, #{param2}, #{param3}, sysdate)
+	</insert>	
+	
+	
+	<update id="updateComment">
+		update comments set
+		CONTENT=#{param3} where id=#{param1} and member_id=#{param2}
+	</update>	
+	
+	<delete id="deleteComment">	
+		delete from comments where id=#{param1} and member_id=#{param2}
+	</delete>
+	
+	<select id="checkPostId" resultType="Integer">
+		select count(*) 
+		from post p 
+		where p.id=#{param1} and p.member_id=#{param2}
+	</select>
+	
+	<delete id="deletePost">	
+		delete from post where id=#{param1} and member_id=#{param2}
+	</delete>	
+	<delete id="deletePostComment">	
+		delete from comments where post_id=#{param1}
+	</delete>	
+	<delete id="deletePostImage">
+	delete
+	from image i
+	where EXISTS
+	(
+	    SELECT 1
+	    FROM post_image pi
+	    WHERE i.ID = pi.image_id and pi.post_id=#{param1}
+	)
+	</delete>	
+	<delete id="deletePostImageRelation">
+		delete from post_image pi where pi.post_id=#{param1}
+	</delete>
+		
+	<update id="updatePost">
+		update comments set
+		CONTENT=#{param3} where id=#{param1} and member_id=#{param2}
+	</update>	
+	<delete id="deleteImage">
+		delete from image I where I.img_db_name like #{param2}
+	</delete>	
+	<delete id="deleteImageRelation">
+		delete from post_image pi where pi.post_id=#{param1} and pi.image_id = (select i.id from image i where i.img_db_name like #{param1})
+	</delete>
+	
+	<insert id="insertPost"
+		parameterType="com.teamproject.club_application.data.Post">
+		<selectKey keyProperty="id" resultType="Integer"
+			order="BEFORE">
+			select post_seq.nextval from dual
+		</selectKey>
+		insert into post values ( #{id}, #{club_id}, #{member_id}, #{content}, sysdate)
+	</insert>
+		
+	<insert id="insertAlbum"
+		parameterType="com.teamproject.club_application.data.Album">
+		<selectKey keyProperty="id" resultType="Integer"
+			order="BEFORE">
+			select album_seq.nextval from dual
+		</selectKey>
+		insert into Album values ( #{id}, #{club_id}, #{member_id}, #{image_id}, sysdate)
+	</insert>
+	
+	<insert id="insertTag"
+		parameterType="com.teamproject.club_application.data.Tag">
+		<selectKey keyProperty="id" resultType="Integer"
+			order="BEFORE">
+			select Tag_seq.nextval from dual
+		</selectKey>
+		insert into tag values ( #{id}, #{club_id}, #{name})
+	</insert>
+		
+	<insert id="relationPostImage">
+		insert into Post_Image values (Post_image_seq.nextval, #{param1}, #{param2})
+	</insert>
+	
+	<insert id="relationTag">
+		insert into Tag_reference values (tag_reference_seq.nextval, #{param1}, #{param1}, #{param3})
+	</insert>
+	
+	<select id="selectTag" resultType="com.teamproject.club_application.data.Tag">
+		select * from Tag t where t.name like #{param1}
+	</select>
+	
+	<!-- 클럽 항목 끝 -->
+
+	<!-- oracle 쿼리문 작성 끝 -->
+</mapper>
+
+
+
+
+<!-- public ArrayList<Alarm> selectMyAlarm(Long userId); public ArrayList<Post> 
+	selectMyPost(Long userId); public ArrayList<Comment> selectMyComment(Long 
+	userId); public ArrayList<Schedule> selectMySchedule(Long userId); public 
+	ArrayList<Club> selectMyClub(Long userId); -->
