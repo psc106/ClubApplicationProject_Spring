@@ -16,6 +16,7 @@ public interface AppService {
 	public void joinClub(Long club_id, Long user_id); 
 	
 	public ArrayList<PostFrame> selectBoardView(Long club_id, int page);
+	public ArrayList<PostFrame> searchBoardView(Long club_id, int page, String keyword);
 	
 	public void insertPost(ArrayList<Image> image, Post post, String tag, boolean check);
 

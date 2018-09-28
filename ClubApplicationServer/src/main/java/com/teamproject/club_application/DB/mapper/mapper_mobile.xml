@@ -153,7 +153,7 @@
 		resultType="com.teamproject.club_application.data.ClubView">
 	<![CDATA[
 	select sub.id, sub.category_id, sub.member_id, sub.nickname, CASE
-								WHEN sub.image_id=-1 THEN 'null'
+								WHEN sub.image_id=-1 THEN 'noImage'
 								WHEN sub.image_id>0 THEN i.img_db_name
 								end as imgUrl, 
 								sub.name, sub.local, 
@@ -203,7 +203,7 @@
 		resultType="com.teamproject.club_application.data.ClubView">
 	<![CDATA[
 		select C.id, C.category_id, C.member_id, p.nickname, CASE
-										WHEN c.image_id=-1 THEN null
+										WHEN c.image_id=-1 THEN 'noImage'
 										when c.image_id>0 then (select i.img_db_name from image i where c.image_id=i.id)
 										end as imgUrl, C.name, C.local, C.max_people, 
 										0 as cur_people, C.intro, C.create_date
@@ -276,7 +276,12 @@
 	<select id="selectClubPost"
 		resultType="com.teamproject.club_application.data.PostView">
 	<![CDATA[
-	SELECT SUB.id, SUB.member_id, pf.nickname, SUB.content, SUB.create_date, 0 as imgUrl,
+	SELECT SUB.id, SUB.member_id, pf.nickname, SUB.content, SUB.create_date, CASE
+															WHEN pf.image_id=-1 THEN 'noImage'
+															when pf.image_id>0 then (	select i.img_db_name 
+																						from image i
+																						where i.id=pf.image_id)
+															end as imgUrl,
 						                    LAG(SUB.id, 1, -1) OVER(ORDER BY SUB.id desc) AS nextId, 
 						                    LEAD(SUB.id, 1, -1) OVER(ORDER BY SUB.id desc) AS previousId
             FROM (	SELECT P.*, ROW_NUMBER() OVER(ORDER BY rownum desc) RN 
@@ -285,10 +290,14 @@
             where SUB.RN <= #{param2}*4 and SUB.RN > (#{param2}-1)*4 		and 
             		pf.member_id=SUB.member_id and SUB.club_id=pf.club_id
 	]]>
-	
-	
-	
 	</select>
+	<select id="selectProfile" resultType="com.teamproject.club_application.data.Profile">
+		select pf.*
+		from profile pf
+		where pf.member_id=#{param2} and pf.club_id=#{param1}
+	</select>
+	
+	
 	<select id="selectUserProfileImg" resultType="String">
 		select i.img_db_name
 		from image i, profile pf
@@ -353,7 +362,12 @@
 	<select id="selectPostComment"
 		resultType="com.teamproject.club_application.data.CommentView">
 	<![CDATA[
-			SELECT SUB.id, sub.member_id, pf.nickname, SUB.content, SUB.create_date, 0 as imgUrl
+			SELECT SUB.id, sub.member_id, pf.nickname, SUB.content, SUB.create_date,  CASE
+															WHEN pf.image_id=-1 THEN 'noImage'
+															when pf.image_id>0 then (	select i.img_db_name 
+																						from image i
+																						where i.id=pf.image_id)
+															end as imgUrl
             FROM (	SELECT c.*, ROW_NUMBER() OVER(ORDER BY rownum desc) RN 
                     from comments c
                     where c.post_id=#{param1}) SUB, profile pf, post p
@@ -364,7 +378,12 @@
 <select id="refreshPostComment"
 		resultType="com.teamproject.club_application.data.CommentView">
 	<![CDATA[
-			SELECT SUB.id, sub.member_id, pf.nickname, SUB.content, SUB.create_date, 0 as imgUrl
+			SELECT SUB.id, sub.member_id, pf.nickname, SUB.content, SUB.create_date,  CASE
+															WHEN pf.image_id=-1 THEN 'noImage'
+															when pf.image_id>0 then (	select i.img_db_name 
+																						from image i
+																						where i.id=pf.image_id)
+															end as imgUrl
             FROM (	SELECT c.*, ROW_NUMBER() OVER(ORDER BY rownum desc) RN 
                     from comments c
                     where c.post_id=#{param1}) SUB, profile pf, post p
@@ -383,10 +402,10 @@
 		select SUB.id,
 		sub.login_id, sub.name, sub.birthday, sub.gender, sub.local,
 		sub.phone, sub.nickname, CASE
-		WHEN sub.image_id=-1 THEN 'null'
+		WHEN sub.image_id=-1 THEN 'noImage'
 		when
 		sub.image_id>0 then (select i.img_db_name from image i where i.id=sub.image_id)
-		end as imgUrl
+		end as img_db_name
 		from ( select SUB.id,
 		sub.login_id, sub.name, sub.birthday, sub.gender,
 		sub.local, sub.phone,
@@ -397,18 +416,17 @@
 		'N')
 		SUB, profile P
 		where P.club_id=#{param1} and P.member_id=SUB.id)
-		SUB
-		
+		SUB		
 	]]>
 	</select>
 	<select id="selectJoinMember" resultMap="memberView">
 		select SUB.id,
 		sub.login_id, sub.name, sub.birthday, sub.gender, sub.local,
 		sub.phone, sub.nickname, CASE
-		WHEN sub.image_id=-1 THEN 'null'
+		WHEN sub.image_id=-1 THEN 'noImage'
 		when
 		sub.image_id>0 then (select i.img_db_name from image i where i.id=sub.image_id)
-		end as imgUrl
+		end as img_db_name
 		from ( select SUB.id,
 		sub.login_id, sub.name, sub.birthday, sub.gender,
 		sub.local, sub.phone,
@@ -421,6 +439,29 @@
 		where P.club_id=#{param1} and P.member_id=SUB.id)
 		SUB
 	</select>
+	
+	
+	<select id="getCurrentMember" resultMap="memberView">
+		select SUB.id,
+		sub.login_id, sub.name, sub.birthday, sub.gender, sub.local,
+		sub.phone, sub.nickname, CASE
+		WHEN sub.image_id=-1 THEN 'noImage'
+		when
+		sub.image_id>0 then (select i.img_db_name from image i where i.id=sub.image_id)
+		end as img_db_name
+		from ( select SUB.id,
+		sub.login_id, sub.name, sub.birthday, sub.gender,
+		sub.local, sub.phone,
+		P.nickname, P.image_id
+		from ( select M.*
+		from member M, club_member CM
+		where M.id=#{param2} and M.id=CM.member_id and CM.club_id=#{param1})
+		SUB, profile P
+		where P.club_id=#{param1} and P.member_id=SUB.id)
+		SUB
+	</select>
+	
+	
 	<update id="updateMember">
 		update club_member cm 
 		set	cm.verify='Y'
@@ -436,9 +477,18 @@
 	<update id="updateAdmin">
 		update club c
 		set	c.member_id=#{param1}
-		where c.id=#{param3} and c.member_id=#{param2}
-		
+		where c.id=#{param3} and c.member_id=#{param2}		
 	</update>
+	<update id="updateProfile"
+		parameterType="com.teamproject.club_application.data.Profile" >
+		update profile pf
+		set	pf.nickname=#{nickname}, pf.image_id=#{image_id}
+		where pf.id=#{id}
+	</update>
+	
+	<delete id="deleteProfileImage">
+		delete from Image where id=#{param1}
+	</delete>
 	
 	<insert id="insertComment">
 		insert into comments values (comments_seq.nextval, #{param1}, #{param2}, #{param3}, sysdate)

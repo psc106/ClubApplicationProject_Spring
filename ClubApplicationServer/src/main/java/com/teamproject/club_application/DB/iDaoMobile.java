@@ -38,7 +38,7 @@ public interface iDaoMobile {
     public ArrayList<Alarm> selectMyAlarm(Long userId);
     public ArrayList<PostView> selectMyPost(Long userId);
     public ArrayList<Comment> selectMyComment(Long userId);
-    public ArrayList<ClubView> selectMyClub(Long userId);   
+    public ArrayList<ClubView> selectMyClub(Long userId);
     public ArrayList<Schedule> selectMySchedule(Long userId);
     public ArrayList<Schedule> selectMyDaySchedule(Long userId, String dateFormat);//yyyymmdd
     
@@ -78,6 +78,8 @@ public interface iDaoMobile {
     public void deleteComment(Long commentId, Long memberId);
     
     public void insertPost(Post post);
+    
+    public MemberView getCurrentMember(Long clubId, Long memberId);
     
     public Integer checkPostId(Long postId, Long memberId);
     public void deletePost(Long postId, Long memberId);

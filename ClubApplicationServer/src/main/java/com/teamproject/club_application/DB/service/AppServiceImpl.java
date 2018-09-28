@@ -55,6 +55,8 @@ public class AppServiceImpl implements AppService {
 		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
 		ClubMemberClass clubMemberClass;
 		ClubView club = dao.selectClub(club_id);
+		int count = dao.getCurrentMemberCount(club_id);
+		club.setCur_people(count);
 		String memberClass = dao.selectClubMemberClass(club_id, user_id);
 		if (memberClass == null) {
 			if (user_id == -1L) {
@@ -87,6 +89,41 @@ public class AppServiceImpl implements AppService {
 	@Override
 	public ArrayList<PostFrame> selectBoardView(Long club_id, int page) {
 		System.out.println("start "+club_id);
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		ArrayList<PostFrame> items = new ArrayList<PostFrame>();
+		ArrayList<PostView> post = dao.selectClubPost(club_id, page);
+		
+		for (int i = 0; i < post.size(); ++i) {
+			System.out.println(post.get(i).toString());
+			String imgUrl = dao.selectUserProfileImg(club_id, post.get(i).getMember_id());
+			if (imgUrl == null) {
+				imgUrl = "";
+			}
+			post.get(i).setImgUrl(imgUrl);
+
+			ArrayList<CommentView> comments = dao.selectPostComment(post.get(i).getId(), 1, 4);
+			if (comments != null && comments.size() > 0) {
+				for (int j = 0; j < comments.size(); ++j) {
+					String imgUrlComment = dao.selectUserProfileImg(club_id, comments.get(j).getMember_id());
+					if (imgUrl == null) {
+						imgUrlComment = "";
+					}
+					comments.get(j).setImgUrl(imgUrlComment);
+				}
+			}
+			PostFrame postFrame = new PostFrame(1, post.get(i), comments);
+
+			items.add(postFrame);
+		}
+		
+
+		return items;
+	}
+	
+
+	@Transactional
+	@Override
+	public ArrayList<PostFrame> searchBoardView(Long club_id, int page, String keyword) {
 		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
 		ArrayList<PostFrame> items = new ArrayList<PostFrame>();
 		ArrayList<PostView> post = dao.selectClubPost(club_id, page);
@@ -196,6 +233,10 @@ public class AppServiceImpl implements AppService {
 	}
 	
 	public void updateProfile(Image image, Long clubId, Long memberId) {
+		
+		System.out.println(image.getId()+"/"+image.getImg_db_name());
+		System.out.println(clubId);
+		System.out.println(memberId);
 
 		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
 		Profile profile = dao.selectProfile(clubId, memberId);

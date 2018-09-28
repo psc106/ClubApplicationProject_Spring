@@ -258,6 +258,33 @@ public class MobileController {
 
 		return gson.toJson(items);
 	}
+	
+//	@RequestMapping(value = "mobile/searchClubPost.do", produces = "application/json; charset=utf8")
+//	@ResponseBody
+//	public String searchClubPost_toMobile(HttpServletRequest request) {
+//		String clubIdStr = request.getParameter("clubId");
+//		String pageStr = request.getParameter("page");
+//		String keyword = request.getParameter("keyword");
+//		Long clubId;
+//		Integer page;
+//		Gson gson = new Gson();
+//
+//		if (clubIdStr != null) {
+//			clubId = Long.parseLong(clubIdStr);
+//		} else {
+//			return gson.toJson(null);
+//		}
+//		if (pageStr != null) {
+//			page = Integer.parseInt(pageStr);
+//		} else {
+//			return gson.toJson(null);
+//			
+//		}
+//
+//		ArrayList<PostFrame> items = appService.searchClubPost(clubId, page, keyword);
+//
+//		return gson.toJson(items);
+//	}
 
 	@RequestMapping(value = "mobile/insertComment.do", produces = "application/json; charset=utf8")
 	@ResponseBody
@@ -928,6 +955,34 @@ public class MobileController {
 
 		return gson.toJson(items);
 	}
+	
+
+	@RequestMapping(value = "mobile/getCurrentMember.do", produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String getCurrentMember_toMobile(HttpServletRequest request) {
+		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
+		String clubIdStr = request.getParameter("clubId");
+		String memberIdStr = request.getParameter("memberId");
+		Long clubId;
+		Long memberId;
+		Gson gson = new Gson();
+		if (clubIdStr != null) {
+			clubId = Long.parseLong(clubIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+		if (memberIdStr != null) {
+			memberId = Long.parseLong(memberIdStr);
+		} else {
+			return gson.toJson(null);
+		}
+		MemberView item = dao.getCurrentMember(clubId, memberId);
+		System.out.println(clubId);
+		System.out.println(memberId);
+		System.out.println( gson.toJson(item));
+
+		return gson.toJson(item);
+	}
 
 	@RequestMapping(value = "mobile/selectWaitingMember.do", produces = "application/json; charset=utf8")
 	@ResponseBody
@@ -1127,6 +1182,7 @@ public class MobileController {
 		
 	}
 
+	
 	@RequestMapping(value = "mobile/insertMember.do", produces = "application/json; charset=utf8")
 	@ResponseBody
 	public String insertMember_toMobile(HttpServletRequest request) {
