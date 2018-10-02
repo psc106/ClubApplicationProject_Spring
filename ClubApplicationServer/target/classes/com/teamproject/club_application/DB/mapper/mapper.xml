@@ -71,7 +71,7 @@ SELECT * FROM (
 SELECT A.*, 
 ROWNUM AS RNUM,
 COUNT(*) OVER() AS TOTCNT FROM (
-select c.id, i.img_db_name, c.name, pf.nickname, c.intro
+select c.id, i.img_db_name as imgUrl, c.name, pf.nickname, c.intro
 from image i, club c, profile pf, club_member cm
 where i.id=c.image_id and c.member_id=pf.member_id and c.id=pf.club_id and cm.club_id=c.id and cm.member_id=pf.member_id and c.name like '%'||#{param3}||'%'  order by c.id asc
 ) A
@@ -265,7 +265,7 @@ delete comments
 WHERE id=#{param1} 
 </delete>
 <select id="getCommentList" resultType="com.teamproject.club_application.data.CommentView">
-select comments.id, comments.member_id, pf.nickname, comments.content, comments.create_date, i.img_db_name from (select * from comments where post_id=#{param1}) 
+select comments.id, comments.member_id, pf.nickname, comments.content, comments.create_date, i.img_db_name as imgUrl from (select * from comments where post_id=#{param1}) 
                 comments, post p, profile pf, image i
 where comments.member_id=pf.member_id and comments.post_id=p.id and
         p.club_id=pf.club_id and pf.image_id=i.id order by id desc
