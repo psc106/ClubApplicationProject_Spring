@@ -4,7 +4,7 @@
 
 <mapper namespace="com.teamproject.club_application.DB.iDao">
 
-<resultMap type="com.teamproject.club_application.data.Post" id="PostProfile">
+<resultMap type="com.teamproject.club_application.data.PostProfile" id="PostProfile">
 	<result property="post.id" column="id"/>
 	<result property="post.club_id" column="club_id"/>
 	<result property="post.member_id" column="member_id"/>
