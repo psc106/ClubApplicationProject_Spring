@@ -49,6 +49,5 @@ public class Post {
 	public void setCreate_date(String create_date) {
 		this.create_date = create_date;
 	}
-
     
 }

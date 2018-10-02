@@ -1,0 +1,126 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>로그인</title>
+<link rel="stylesheet" href="resources/css/home.css?ver=1" type="text/css">
+<style>
+#wrap {
+	width:400px;
+	height:auto;
+	margin:0px auto;
+	margin-top:150px;
+	
+}
+
+input[type=text],input[type=password] {
+	width:150px;
+	margin-left:10px;
+}
+
+
+#login {
+	width:100%;
+}
+
+table, th, td {
+	border:1px solid #e2c3c3;
+}
+
+#table_login {
+	width:400px;
+	height:150px;
+}
+
+.loginBtn {
+	width:100%;
+	height:100%;
+	border:0;
+	background:#fc9255;
+	color:#ffffff;
+	text-shadow:0 1px rgba(0,0,0,.2);
+	font-size:18px;
+	cursor:pointer;
+}
+
+#footer {
+	margin-top:10px;
+	color:#cacaca;
+}
+
+#findIdPwBtn {
+	width:120px;
+	height:40px;
+	border:0;
+	border-radius:5px;
+	background:#fc9255;
+	color:#ffffff;
+	text-shadow:0 1px rgba(0,0,0,.2);
+	font-size:13px;
+	cursor:pointer;
+}
+
+#joinBtn {
+	float:right;
+	width:70px;
+	height:40px;
+	border:0;
+	border-radius:5px;
+	background:#fc9255;
+	color:#ffffff;
+	text-shadow:0 1px rgba(0,0,0,.2);
+	font-size:13px;
+	cursor:pointer;
+}
+
+</style>
+
+<script>
+function login_ok() {
+	var login_mail = document.getElementById("login_mail");
+	var login_pw = document.getElementById("login_pw");
+	
+	if(login_mail.value == ""){
+		window.alert("이메일을 입력하세요.");
+		login_id.focus();
+		return;
+	}
+	
+	if(login_pw.value == ""){
+		window.alert("비밀번호를 입력하세요.");
+		login_pw.focus();
+		return;
+	}
+	
+	var form = document.getElementById("login_form");
+	form.submit();
+	
+}
+</script>
+</head>
+<body>
+<div id="wrap">
+<div id="login_logo" name="login_logo"><img width="400px" height="400px" src="resources/main_logo.png" /></div><br>
+<form action="login_ok.do" id="login_form" method="post">
+
+	<table id="table_login">
+	<tr>
+		<td><input type="text" tabindex="1" placeholder="이메일" name="login_mail" id="login_mail" /></td>
+		<td rowspan="2"><input type="button" tabindex="3" value="login" class="loginBtn" onclick="login_ok();" /></td>
+	</tr>
+	<tr>
+		<td><input type="password" tabindex="2" placeholder="비밀번호" name="login_pw" id="login_pw" value="" /></td>
+	</tr>
+	</table>
+	</form>
+	<div id="footer">
+	<button type="button" tabindex="-1" id="findIdPwBtn" onclick="location.href='findIdPw.do'">id / 비밀번호 찾기</button>
+	<button type="button" tabindex="-1" id="joinBtn" onclick="location.href='join.do'">회원가입</button>
+	</div>
+</div>
+
+
+</body>
+</html>

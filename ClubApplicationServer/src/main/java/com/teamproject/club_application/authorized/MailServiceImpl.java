@@ -1,16 +1,13 @@
 package com.teamproject.club_application.authorized;
-
 import java.io.UnsupportedEncodingException;
-
+import javax.servlet.http.HttpServletRequest;
 import javax.inject.Inject;
 import javax.mail.MessagingException;
-
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.teamproject.club_application.DB.iDaoMobile;
 import com.teamproject.club_application.data.Member;
 
@@ -25,13 +22,11 @@ public class MailServiceImpl implements MailService {
 	
 	@Inject
 	private JavaMailSender mailSender;
-
 	@Transactional
 	@Override
 	public void authCreate(Member member) {
 		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
 		dao.insertMember(member); // 회원가입 DAO
-
 		String key = new TempKey().getKey(50, false); // 인증키 생성
 		dao.createAuth(member.getLogin_id(), key);
 		
@@ -81,9 +76,12 @@ public class MailServiceImpl implements MailService {
 	
 	@Transactional
 	@Override
-	public boolean findPw(String id) {
+	public boolean findPw(String id, HttpServletRequest request) {
+		
 		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
 		int userCount = dao.selectFindPw(id);
+		
+		String url = request.getRequestURL().toString().replace(request.getRequestURI(),"") + request.getContextPath();
 		
 		//reset방식
 		if(userCount==1) {
@@ -99,7 +97,8 @@ public class MailServiceImpl implements MailService {
 						append("당신의 새 비밀번호는 다음과 같습니다.<br>").
 						append("<h1>"+pw+"</h1>").
 						append("아래의 링크를 누르면 비밀번호가 변경됩니다.<br>").
-						append("<a href='http://192.168.0.70:8090/club_application/updatePw.do?login_id=").
+						append("<a href='"+url+"/updatePw.do?login_id=").
+						//append("<a href='http://192.168.0.70:8090/club_application/updatePw.do?login_id=").
 						append(id).
 						append("&pw=").
 						append(pw).
@@ -122,7 +121,6 @@ public class MailServiceImpl implements MailService {
 		}
 	}
 
-
 	@Transactional
 	@Override
 	public boolean tmpPwUpdate(String loginId, String pw) {
@@ -130,7 +128,7 @@ public class MailServiceImpl implements MailService {
 		System.out.println(loginId+"\t"+pw);
 		
 		//1, 0
-		int userCount = dao.checkTmpPw(loginId, pw);
+		int userCount = dao.checkTmpPw(loginId, pw); 
 		System.out.println(userCount);
 		
 		if(userCount==1) {

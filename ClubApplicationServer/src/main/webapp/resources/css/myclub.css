@@ -1,0 +1,26 @@
+@charset "UTF-8";
+
+#wrap {
+	width: 1200px;
+	
+    margin: 0px auto;
+    margin-top: 120px;
+	
+}
+
+#left_nav {
+	margin-right: 30px;
+    width: 19%;
+    
+    float: left;
+    
+}
+
+#club_content {
+    width: 75%;
+    
+    float:right;
+	display: inline;
+	
+}
+

@@ -212,7 +212,6 @@ public class MobileController {
 	}
 	
 
-
 	@RequestMapping(value = "mobile/getPostCount.do", produces = "application/json; charset=utf8")
 	@ResponseBody
 	public String getPostCount_toMobile(HttpServletRequest request) {
@@ -342,7 +341,6 @@ public class MobileController {
 		return gson.toJson(true);
 	}
 	
-
 
 	@RequestMapping(value = "mobile/deleteComment.do", produces = "application/json; charset=utf8")
 	@ResponseBody
@@ -572,7 +570,6 @@ public class MobileController {
 			return gson.toJson(null);
 		}
 
-
 		File dir = new File(uploadPath);
 		if (!dir.isDirectory()) {
 			dir.mkdirs();
@@ -690,7 +687,6 @@ public class MobileController {
 	}
 	
 
-
 	@RequestMapping(value = "mobile/getCommentCount.do", produces = "application/json; charset=utf8")
 	@ResponseBody
 	public String getCommentCount_toMobile(HttpServletRequest request) {
@@ -760,7 +756,6 @@ public class MobileController {
 
 		return gson.toJson(items);
 	}
-
 
 	@RequestMapping(value = "mobile/getImageCount.do", produces = "application/json; charset=utf8")
 	@ResponseBody
@@ -869,7 +864,6 @@ public class MobileController {
 
 		return gson.toJson("");
 	}
-
 
 	@RequestMapping(value = "mobile/deleteMember.do", produces = "application/json; charset=utf8")
 	@ResponseBody
@@ -1221,7 +1215,7 @@ public class MobileController {
 	@ResponseBody
 	public String findPw_toMobile(HttpServletRequest request) {
 		String id = request.getParameter("id");
-		mailService.findPw(id);
+		mailService.findPw(id, request);
 		Gson gson = new Gson();
 		return gson.toJson("");
 	}

@@ -21,7 +21,6 @@ public class Profile {
 		this.image_id = image_id;
 		this.nickname = nickname;
 	}
-	
 
 	
 	public long getId() {
