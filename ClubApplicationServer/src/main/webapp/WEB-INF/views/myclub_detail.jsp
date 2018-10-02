@@ -84,12 +84,12 @@ function delete_comment(comment_id) {
 function insert_comment() {
 	var comment_content = document.getElementById("comment_content");
 	
-	alert(comment_content.value);
+	//alert(comment_content.value);
 	if(comment_content.value == "") {
 		alert("댓글내용을 입력하세요.");
 		return;
 	}
-	alert("실행...");
+	//alert("실행...");
 	var form = document.getElementById("insert_comment_form");
 	form.submit();
 	alert("댓글 입력 완료");

@@ -26,7 +26,7 @@ function checkMail() {
 
 function useMail() {
 	var use_mail = <%=use_mail %>;
-	alert(use_mail);
+	//alert(use_mail);
 	if(use_mail == null || use_mail.value == "0") {
 		alert("중복 체크를 하세요");
 		return;
