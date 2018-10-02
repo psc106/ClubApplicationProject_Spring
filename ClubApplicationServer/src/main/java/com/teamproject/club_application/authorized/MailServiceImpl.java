@@ -29,12 +29,14 @@ public class MailServiceImpl implements MailService {
 
 	@Transactional
 	@Override
-	public void authCreate(Member member) {
+	public void authCreate(Member member, HttpServletRequest request) {
 		iDaoMobile dao = sqlSession.getMapper(iDaoMobile.class);
 		dao.insertMember(member); // 회원가입 DAO
 
 		String key = new TempKey().getKey(50, false); // 인증키 생성
 		dao.createAuth(member.getLogin_id(), key);
+		
+		String url = request.getRequestURL().toString().replace(request.getRequestURI(),"") + request.getContextPath();
 		
 		MailHandler sendMail;
 		try {
@@ -42,7 +44,8 @@ public class MailServiceImpl implements MailService {
 			sendMail.setSubject("[\"동호회\" 이메일 인증해주세요]");
 			sendMail.setText(
 					new StringBuffer().append("<h1>메일인증</h1>").
-					append("<a href='http://localhost:8090/club_application/authOk.do?login_id=").
+					append("<a href='"+url+"/authOk.do?login_id=").
+					//append("<a href='http://localhost:8090/club_application/authOk.do?login_id=").
 					append(member.getLogin_id()).
 					append("&key=").
 					append(key).

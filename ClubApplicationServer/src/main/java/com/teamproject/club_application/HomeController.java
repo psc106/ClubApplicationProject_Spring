@@ -934,7 +934,7 @@ public class HomeController{
 		//iDAO.insertMember(login_mail, pw, name, birthday, i_gender, local, phone);
 		
 		Member member = new Member(-1, login_mail, pw, name, birthday, i_gender, local, phone, "N");
-		service.authCreate(member);
+		service.authCreate(member, request);
 		
 		return "redirect:login.do";
 	}
@@ -1108,7 +1108,6 @@ public class HomeController{
 		
 		System.out.println(id+"_"+key);
 		
-		
 		boolean isSuccess = service.authUpdate(id, key);
 		
 		if(isSuccess) {	
@@ -1119,7 +1118,6 @@ public class HomeController{
 			return "fail";
 		}
 	}
-	
 
 	@RequestMapping(value="/updatePw.do", method=RequestMethod.GET)
 	public String updatePw(HttpServletRequest request) {

@@ -475,7 +475,7 @@ public class MobileController {
 			return gson.toJson("fail");
 		}
 		Member member = new Member(-1, loginId, loginPw, name, birthday, gender, local, phone, "N");
-		mailService.authCreate(member);
+		mailService.authCreate(member, request);
 		return gson.toJson("");
 	}
 
