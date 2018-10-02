@@ -501,7 +501,12 @@ public class HomeController{
         String root_path = request.getSession().getServletContext().getRealPath("/");
 		String attach_path = "resources/upload/";
 		String path = root_path + attach_path;
-        
+
+		File dir = new File(path);
+		if (!dir.isDirectory()) {
+			dir.mkdirs();
+		}
+
 		for (MultipartFile mf : fileList) {
 			String origName = mf.getOriginalFilename();
 			
