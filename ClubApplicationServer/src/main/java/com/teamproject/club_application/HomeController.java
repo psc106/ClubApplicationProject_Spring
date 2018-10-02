@@ -270,7 +270,7 @@ public class HomeController{
 		String gender = request.getParameter("gender");
 		Integer i_gender = Integer.parseInt(gender);
 		String local = request.getParameter("local");
-		String phone = request.getParameter("phone");
+		String phone = request.getParameter("phone"); 
 		System.out.println("마이인포 수정 : "+pw+name+birthday+i_gender+local+ phone);
 		iDao iDAO = sqlSession.getMapper(iDao.class);
 		HttpSession httpSession = request.getSession();
