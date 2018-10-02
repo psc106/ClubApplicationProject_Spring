@@ -253,7 +253,7 @@ where post_id = #{param1}
 </delete>
 <delete id="deletePost">
 delete post
-where post_id = #{param1}
+where id = #{param1}
 </delete>
 
 <!-- 댓글 관련 -->
